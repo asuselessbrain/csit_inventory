@@ -35,6 +35,13 @@ const getAllStudentFromDB = async (query: any) => {
     };
 }
 
+const getSingleStudentFromDB = async (id: string) => {
+    const student = await prisma.student.findUniqueOrThrow({
+        where: { id }
+    })
+    return student;
+}
+
 const updateStudentIntoDB = async (id: string, updateData: any) => {
     const isStudentExist = await prisma.student.findUniqueOrThrow({
         where: { id }
@@ -51,5 +58,6 @@ const updateStudentIntoDB = async (id: string, updateData: any) => {
 }
 export const StudentService = {
     getAllStudentFromDB,
-    updateStudentIntoDB
+    updateStudentIntoDB,
+    getSingleStudentFromDB
 }

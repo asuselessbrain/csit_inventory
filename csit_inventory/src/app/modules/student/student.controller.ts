@@ -9,6 +9,12 @@ const getAllStudentFromDB = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, 200, result);
 })
 
+const getSingleStudentFromDB = catchAsync(async (req: Request, res: Response) => {
+    const id = req.params.id!;
+    const result = await StudentService.getSingleStudentFromDB(id);
+    sendResponse(res, 200, result);
+})
+
 const updateStudentIntoDB = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const studentId = req.params.id!;
     const updateData = req.body;
@@ -18,5 +24,6 @@ const updateStudentIntoDB = catchAsync(async (req: Request, res: Response, next:
 
 export const StudentController = {
     getAllStudentFromDB,
-    updateStudentIntoDB
+    updateStudentIntoDB,
+    getSingleStudentFromDB
 }
