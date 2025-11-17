@@ -34,8 +34,8 @@ model Student {
   name               String
   phoneNumber        String
   address            String
-  studentId          Int         @unique
-  registrationNumber Int         @unique
+  studentId          String         @unique
+  registrationNumber String         @unique
   profilePhoto       String?
   dateOfBirth        DateTime
   session            String

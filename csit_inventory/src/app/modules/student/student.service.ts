@@ -1,14 +1,21 @@
+import { equal } from "assert";
 import { Prisma } from "../../../../generated/prisma";
 import { prisma } from "../../../shared/prisma";
+import { searching } from "../../../shared/searching";
 
 const getAllStudentFromDB = async (query) => {
-    const searchFields = ['name', 'email', 'address'];
+    const { searchTerm, ...filterData } = query;
+    console.log(filterData)
+    const searchFields = ['name', 'email', 'address', 'studentId', 'registrationNumber'];
     let inputFilter: Prisma.StudentWhereInput[] = []
 
-    if (query.searchTerm) {
+    if (searchTerm) {
+        searching(inputFilter, searchFields, searchTerm);
+    }
+
+    if (Object.keys(filterData).length > 0) {
         inputFilter.push({
-            OR: searchFields.map(field => ({ [field]: { contains: String(query.searchTerm), mode: 'insensitive' } })
-            )
+            AND: Object.keys(filterData).map((item: string) => ({ [item]: { equals: filterData[item] } }))
         })
     }
 
