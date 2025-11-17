@@ -1,4 +1,3 @@
-import { equal } from "assert";
 import { Prisma } from "../../../../generated/prisma";
 import { prisma } from "../../../shared/prisma";
 import { searching } from "../../../shared/searching";
@@ -23,7 +22,7 @@ const getAllStudentFromDB = async (query: any) => {
 
     const whereCondition: Prisma.StudentWhereInput = { AND: inputFilter }
 
-    const students = await prisma.student.findMany({ where: whereCondition, skip: skipValue, take: takeValue , orderBy: { [sortByField]: sortOrderValue } });
+    const students = await prisma.student.findMany({ where: whereCondition, skip: skipValue, take: takeValue, orderBy: { [sortByField]: sortOrderValue } });
 
     const total = await prisma.student.count({ where: whereCondition });
     return {
@@ -36,6 +35,21 @@ const getAllStudentFromDB = async (query: any) => {
     };
 }
 
+const updateStudentIntoDB = async (id: string, updateData: any) => {
+    const isStudentExist = await prisma.student.findUniqueOrThrow({
+        where: { id }
+    })
+
+    if (isStudentExist) {
+        const updateStudent = await prisma.student.update({
+            where: { id: isStudentExist.id },
+            data: updateData
+        })
+        return updateStudent;
+    }
+
+}
 export const StudentService = {
-    getAllStudentFromDB
+    getAllStudentFromDB,
+    updateStudentIntoDB
 }
