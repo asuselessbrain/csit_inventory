@@ -34,14 +34,15 @@ model Student {
   name               String
   phoneNumber        String
   address            String
-  studentId          String         @unique
-  registrationNumber String         @unique
+  studentId          String      @unique
+  registrationNumber String      @unique
   profilePhoto       String?
   dateOfBirth        DateTime
   session            String
   schoolName         String
   collageName        String
   status             UserStatus  @default(ACTIVE)
+  isDeleted          Boolean     @default(false)
   createdAt          DateTime    @default(now())
   updatedAt          DateTime    @updatedAt
 

@@ -1,4 +1,4 @@
-import { Prisma } from "../../../../generated/prisma";
+import { Prisma, UserStatus } from "../../../../generated/prisma";
 import { prisma } from "../../../shared/prisma";
 import { searching } from "../../../shared/searching";
 import { filtering } from "../../../shared/filtering";
@@ -56,8 +56,41 @@ const updateStudentIntoDB = async (id: string, updateData: any) => {
     }
 
 }
+
+const deleteStudentFromDB = async (id: string) => {
+    const isStudentExist = await prisma.student.findUniqueOrThrow({
+        where: { id }
+    })
+
+    if(isStudentExist.isDeleted){
+        throw new Error('Student already deleted');
+    }
+
+    const isUserExist = await prisma.user.findUniqueOrThrow({
+        where: { email: isStudentExist.email }
+    })
+
+    if(isUserExist.userStatus === UserStatus.DELETED){
+        throw new Error('User already deleted');
+    }
+
+    if (isStudentExist) {
+       await prisma.$transaction(async (transactionClient) => {
+            await transactionClient.student.update({
+                where: { id: isStudentExist.id },
+                data: { isDeleted: true }
+            })
+            await transactionClient.user.updateMany({
+                where: { email: isStudentExist.email },
+                data: { userStatus: UserStatus.DELETED }
+            })
+        })
+    } return null;
+
+}
 export const StudentService = {
     getAllStudentFromDB,
     updateStudentIntoDB,
-    getSingleStudentFromDB
+    getSingleStudentFromDB,
+    deleteStudentFromDB
 }
