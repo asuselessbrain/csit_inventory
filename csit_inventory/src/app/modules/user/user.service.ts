@@ -1,11 +1,15 @@
 import { UserRole } from '../../../../generated/prisma';
+import { config } from '../../../config';
 import { prisma } from '../../../shared/prisma';
+import bcrypt from 'bcrypt';
 
 const createStudentIntoDB = async (studentInfo: any) => {
 
+    const hashedPassword = await bcrypt.hash(studentInfo.password, Number(config.salt_rounds))
+
     const userData = {
         email: studentInfo.email,
-        password: studentInfo.password,
+        password: hashedPassword,
         role: UserRole.STUDENT
     }
 
