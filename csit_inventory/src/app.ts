@@ -12,7 +12,11 @@ app.use('/api/v1/users', UserRoutes);
 
 
 app.get("/", (req :Request, res: Response)=> {
-    res.send("Hello, World!");
+    res.status(200).json({
+        message: "CSIT Inventory Server is Running",
+        DevelopBy: "Arfan Ahmed",
+        version: "1.0.0",
+    });
 })
 
 
