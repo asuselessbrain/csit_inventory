@@ -59,6 +59,7 @@ model Admin {
   email       String   @unique
   name        String
   phoneNumber String
+  photoUrl    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -73,6 +74,7 @@ model Teacher {
   name        String
   phoneNumber String
   address     String
+  photoUrl    String?
   faculty     String
   department  Department
   designation TeacherDesignation @default(LECTURER)
