@@ -42,7 +42,27 @@ const createAdminIntoDB = async(adminInfo:any) => {
     return result;
 }
 
+const createTeacherIntoDB = async(teacherInfo:any) => {
+    const hashedPassword = await bcrypt.hash(teacherInfo.password, Number(config.salt_rounds))
+    const userData = {
+        email: teacherInfo.email,
+        password: hashedPassword,
+        role: UserRole.TEACHER
+    }
+    const result = await prisma.$transaction(async(transactionClient)=>{
+        await transactionClient.user.create({
+            data: userData
+        })
+        const createTeacher = await transactionClient.teacher.create({
+            data: teacherInfo.teacher
+        })
+        return createTeacher;
+    })
+    return result;
+}
+
 export const UserService = {
     createStudentIntoDB,
-    createAdminIntoDB
+    createAdminIntoDB,
+    createTeacherIntoDB
 }

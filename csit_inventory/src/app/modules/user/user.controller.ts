@@ -13,8 +13,14 @@ const createAdminIntoDB = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, 201, "Admin created successfully", result)
 })
 
+const createTeacherIntoDB = catchAsync(async (req: Request, res: Response) => {
+    const result = await UserService.createTeacherIntoDB(req.body);
+    sendResponse(res, 201, "Teacher created successfully", result)
+})
+
 
 export const UserController = {
     createStudentIntoDB,
-    createAdminIntoDB
+    createAdminIntoDB,
+    createTeacherIntoDB
 }
