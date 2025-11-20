@@ -3,6 +3,9 @@ import { AdminController } from './admin.controller';
 
 const router = express.Router()
 
-router.post('/create-admin', AdminController.createAdminIntoDB)
+router.get('/', AdminController.getAllAdminFromDB)
+router.get('/:id', AdminController.getSingleAdminFromDB)
+router.patch('/:id', AdminController.updateAdminIntoDB)
+router.patch('/delete-admin/:id', AdminController.deleteAdminFromDB)
 
 export const adminRouter = router;

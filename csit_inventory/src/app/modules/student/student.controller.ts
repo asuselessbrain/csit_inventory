@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { StudentService } from "./student.service";
 import { catchAsync } from "../../../shared/catchAsync";
 import { sendResponse } from "../../../shared/responser";

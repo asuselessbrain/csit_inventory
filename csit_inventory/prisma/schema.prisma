@@ -60,6 +60,7 @@ model Admin {
   name        String
   phoneNumber String
   photoUrl    String?
+  isDeleted   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -81,6 +82,7 @@ model Teacher {
   isChairman  Boolean            @default(false)
   joinedAt    DateTime
   status      TeacherStatus      @default(ACTIVE)
+  isDeleted   Boolean            @default(false)
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
 
