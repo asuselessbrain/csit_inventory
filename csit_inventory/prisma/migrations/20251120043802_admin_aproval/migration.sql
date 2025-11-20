@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "students" ADD COLUMN     "isApproved" BOOLEAN NOT NULL DEFAULT false;

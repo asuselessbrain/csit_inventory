@@ -10,7 +10,7 @@ const getAllStudentFromDB = async (query: any) => {
     const searchFields = ['name', 'email', 'address', 'studentId', 'registrationNumber'];
     let inputFilter: Prisma.StudentWhereInput[] = []
 
-    if (searchTerm) {
+    if (searchTerm) {  
         searching(inputFilter, searchFields, searchTerm);
     }
 
