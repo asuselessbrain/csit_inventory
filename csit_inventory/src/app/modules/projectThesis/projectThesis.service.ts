@@ -1,3 +1,5 @@
+import { pagination } from './../../../shared/pagination';
+import { CONNREFUSED } from "dns"
 import { prisma } from "../../../shared/prisma"
 
 const createProjectThesisIntoDB = async (projectThesisInfo: any) => {
@@ -10,6 +12,8 @@ const createProjectThesisIntoDB = async (projectThesisInfo: any) => {
 }
 
 
+
 export const ProjectThesisService = {
-    createProjectThesisIntoDB
+    createProjectThesisIntoDB,
+    getAllProjectThesesFromDB
 }

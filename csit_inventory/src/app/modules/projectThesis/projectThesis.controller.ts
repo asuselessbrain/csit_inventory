@@ -8,6 +8,12 @@ const createProjectThesisIntoDB = catchAsync(async (req: Request, res: Response)
     sendResponse(res, 201, "Project or Thesis created successfully", result)
 })
 
+const getAllProjectThesesFromDB = catchAsync(async (req: Request, res: Response) => {
+    const result = await ProjectThesisService.getAllProjectThesesFromDB();
+    sendResponse(res, 200, "Project and Thesis fetched successfully", result)
+})
+
 export const ProjectThesisController = {
-    createProjectThesisIntoDB
+    createProjectThesisIntoDB,
+    getAllProjectThesesFromDB
 }
