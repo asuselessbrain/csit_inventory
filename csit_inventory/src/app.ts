@@ -3,6 +3,7 @@ import { StudentRoutes } from './app/modules/student/student.route';
 import { UserRoutes } from './app/modules/user/user.route';
 import { adminRouter } from './app/modules/admin/admin.route';
 import { teacherRouter } from './app/modules/teacher/teacher.route';
+import { ProjectThesisRoutes } from './app/modules/projectThesis/projectThesis.route';
 
 const app: Application = express();
 
@@ -13,6 +14,7 @@ app.use('/api/v1/students', StudentRoutes);
 app.use('/api/v1/users', UserRoutes);
 app.use('/api/v1/admins', adminRouter);
 app.use('/api/v1/teachers', teacherRouter);
+app.use('/api/v1/project-thesis', ProjectThesisRoutes);
 
 
 app.get("/", (req :Request, res: Response)=> {

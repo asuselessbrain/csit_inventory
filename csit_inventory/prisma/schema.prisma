@@ -49,7 +49,8 @@ model Student {
   createdAt          DateTime   @default(now())
   updatedAt          DateTime   @updatedAt
 
-  user User @relation(fields: [email], references: [email])
+  user          User            @relation(fields: [email], references: [email])
+  projectTheses ProjectThesis[]
 
   @@map("students")
 }
@@ -86,9 +87,59 @@ model Teacher {
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
 
-  user User @relation(fields: [email], references: [email])
+  user          User            @relation(fields: [email], references: [email])
+  projectTheses ProjectThesis[]
 
   @@map("teachers")
+}
+
+model ProjectThesis {
+  id           String              @id @default(uuid())
+  title        String
+  description  String
+  type         ProjectThesisType
+  status       ProjectThesisStatus @default(PENDING)
+  studentId    String
+  student      Student             @relation(fields: [studentId], references: [id])
+  supervisorId String
+  supervisor   Teacher             @relation(fields: [supervisorId], references: [id])
+  semester     SemesterType        @default(FIRST)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tasks                   Task[]
+  projectThesisUpdateLogs ProjectThesisUpdateLog[]
+
+  @@map("projects")
+}
+
+model Task {
+  id                      String                   @id @default(uuid())
+  title                   String
+  description             String
+  dueDate                 DateTime
+  status                  TaskStatus               @default(TODO)
+  projectThesisId         String
+  projectThesis           ProjectThesis            @relation(fields: [projectThesisId], references: [id])
+  note                    String?
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  projectThesisUpdateLogs ProjectThesisUpdateLog[]
+
+  @@map("tasks")
+}
+
+model ProjectThesisUpdateLog {
+  id              String        @id @default(uuid())
+  projectThesisId String
+  projectThesis   ProjectThesis @relation(fields: [projectThesisId], references: [id])
+  taskId          String
+  task            Task          @relation(fields: [taskId], references: [id])
+  fileUrl         String
+  updatedAt       DateTime      @default(now())
+
+  @@map("project_thesis_update_logs")
 }
 
 enum UserRole {
@@ -128,4 +179,36 @@ enum Department {
   Electrical_And_Electronic_Engineering
   Physics_And_Mechanical_Engineering
   Mathematics
+}
+
+enum ProjectThesisType {
+  PROJECT
+  THESIS
+}
+
+enum ProjectThesisStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  in_PROGRESS
+  COMPLETED
+}
+
+enum SemesterType {
+  FIRST   @map("1st")
+  SECOND  @map("2nd")
+  THIRD   @map("3rd")
+  FOURTH  @map("4th")
+  FIFTH   @map("5th")
+  SIXTH   @map("6th")
+  SEVENTH @map("7th")
+  EIGHTH  @map("8th")
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  REVIEW
+  DONE
+  REJECTED
 }
