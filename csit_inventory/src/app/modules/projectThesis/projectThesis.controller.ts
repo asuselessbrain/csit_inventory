@@ -19,8 +19,15 @@ const getSingleProjectThesisFromDB = catchAsync(async(req: Request, res: Respons
     sendResponse(res, 200, "Project or Thesis fetched successfully", result)
 })
 
+const updateProjectThesisInDB = catchAsync(async(req: Request, res: Response) => {
+    const {id} = req.params;
+    const result = await ProjectThesisService.updateProjectThesisInDB(id as string, req.body);
+    sendResponse(res, 200, "Project or Thesis updated successfully", result)
+})
+
 export const ProjectThesisController = {
     createProjectThesisIntoDB,
     getAllProjectThesesFromDB,
-    getSingleProjectThesisFromDB
+    getSingleProjectThesisFromDB,
+    updateProjectThesisInDB
 }

@@ -70,17 +70,41 @@ const getAllProjectThesesFromDB = async (query: any) => {
     }
 }
 
-const getSingleProjectThesisFromDB = async(id: string) => {
+const getSingleProjectThesisFromDB = async (id: string) => {
     const result = await prisma.projectThesis.findUniqueOrThrow({
-        where: {id},
-        include: {tasks: true, student: true, supervisor: true}
+        where: { id },
+        include: { tasks: true, student: true, supervisor: true }
     })
     return result
 }
 
+const updateProjectThesisInDB = async (id: string, updateInfo: any) => {
+
+    const isProjectThesisExist = await prisma.projectThesis.findUnique({
+        where: { id }
+    })
+
+    if (!isProjectThesisExist) {
+        throw new Error("Project or Thesis not found")
+    }
+
+    const updateData = {
+        ...updateInfo,
+        status: isProjectThesisExist.status
+    }
+    console.log(updateData)
+
+    const result = await prisma.projectThesis.update({
+        where: { id },
+        data: updateData
+    })
+
+    return result
+}
 
 export const ProjectThesisService = {
     createProjectThesisIntoDB,
     getAllProjectThesesFromDB,
-    getSingleProjectThesisFromDB
+    getSingleProjectThesisFromDB,
+    updateProjectThesisInDB
 }
