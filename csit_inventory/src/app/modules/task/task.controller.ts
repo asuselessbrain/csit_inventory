@@ -28,12 +28,16 @@ const updateStatusToDoneInDB = catchAsync(async (req: Request, res: Response) =>
     sendResponse(res, 200, "Task status updated to done successfully", result)
 })
 
-
+const updateStatusToRejectedInDB = catchAsync(async (req: Request, res: Response) => {
+    const result = await TaskService.updateStatusToRejectedInDB(req.params.id as string, req.body);
+    sendResponse(res, 200, "Task status updated to rejected successfully", result)
+})
 
 export const TaskController = {
     createTaskIntoDB,
     updateTaskInDB,
     updateStatusToInProgressInDB,
     updateStatusToReviewInDB,
-    updateStatusToDoneInDB
+    updateStatusToDoneInDB,
+    updateStatusToRejectedInDB
 }

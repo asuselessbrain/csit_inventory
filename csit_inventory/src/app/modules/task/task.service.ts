@@ -91,7 +91,7 @@ const updateStatusToRejectedInDB = async (id: string, rejectionNote: any) => {
 
     const data = {
         ...rejectionNote,
-        status: TaskStatus.REJECTED
+        status: TaskStatus.IN_PROGRESS
     }
 
     const result = await prisma.task.update({

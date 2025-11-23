@@ -8,4 +8,5 @@ router.patch('/:id', TaskController.updateTaskInDB)
 router.patch('/in-progress/:id', TaskController.updateStatusToInProgressInDB)
 router.patch('/review/:id', TaskController.updateStatusToReviewInDB)
 router.patch('/done/:id', TaskController.updateStatusToDoneInDB)
+router.patch('/rejected/:id', TaskController.updateStatusToRejectedInDB)
 export const TaskRoutes = router;
