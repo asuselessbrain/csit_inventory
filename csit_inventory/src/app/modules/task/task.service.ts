@@ -10,59 +10,103 @@ const createTaskIntoDB = async (taskInfo: any) => {
     return result
 }
 
-const updateTaskInDB = async(id: string, taskInfo: any) =>{
-    const isTaskExist = await prisma.task.findUniqueOrThrow({where: {id}})
+const updateTaskInDB = async (id: string, taskInfo: any) => {
+    const isTaskExist = await prisma.task.findUniqueOrThrow({ where: { id } })
 
-    if(!isTaskExist){
+    if (!isTaskExist) {
         throw new Error("Task not found")
     }
 
     const result = await prisma.task.update({
-        where: {id: isTaskExist.id},
+        where: { id: isTaskExist.id },
         data: taskInfo
     })
 
     return result
 }
 
-const updateStatusToInProgressInDB = async(id: string) => {
-    const isTaskExist = await prisma.task.findUniqueOrThrow({where: {id}})
+const updateStatusToInProgressInDB = async (id: string) => {
+    const isTaskExist = await prisma.task.findUniqueOrThrow({ where: { id } })
 
-    if(!isTaskExist){
+    if (!isTaskExist) {
         throw new Error("Task not found")
     }
 
-    if(isTaskExist.status !== TaskStatus.TODO){
+    if (isTaskExist.status !== TaskStatus.TODO) {
         throw new Error("Only todo task can be set to in-progress")
     }
 
     const result = await prisma.task.update({
-        where: {id: isTaskExist.id},
-        data: {status: TaskStatus.IN_PROGRESS}
+        where: { id: isTaskExist.id },
+        data: { status: TaskStatus.IN_PROGRESS }
     })
 
     return result
 }
 
-const updateStatusToReviewInDB = async(id: string) => {
-    const isTaskExist = await prisma.task.findUniqueOrThrow({where: {id}})
-    if(!isTaskExist){
+const updateStatusToReviewInDB = async (id: string) => {
+    const isTaskExist = await prisma.task.findUniqueOrThrow({ where: { id } })
+    if (!isTaskExist) {
         throw new Error("Task not found")
     }
-    if(isTaskExist.status !== TaskStatus.IN_PROGRESS){
+    if (isTaskExist.status !== TaskStatus.IN_PROGRESS) {
         throw new Error("Only in-progress task can be set to review")
     }
     const result = await prisma.task.update({
-        where: {id: isTaskExist.id},
-        data: {status: TaskStatus.REVIEW}
+        where: { id: isTaskExist.id },
+        data: { status: TaskStatus.REVIEW }
     })
     return result
 }
 
+const updateStatusToDoneInDB = async (id: string) => {
+    const isTaskExist = await prisma.task.findUniqueOrThrow({ where: { id } })
+
+    if (!isTaskExist) {
+        throw new Error("Task not found")
+    }
+
+    if (isTaskExist.status !== TaskStatus.REVIEW) {
+        throw new Error("Only review task can be set to done")
+    }
+
+    const result = await prisma.task.update({
+        where: { id: isTaskExist.id },
+        data: { status: TaskStatus.DONE }
+    })
+
+    return result
+}
+
+const updateStatusToRejectedInDB = async (id: string, rejectionNote: any) => {
+    const isTaskExist = await prisma.task.findUniqueOrThrow({ where: { id } })
+
+    if (!isTaskExist) {
+        throw new Error("Task not found")
+    }
+
+    if (isTaskExist.status !== TaskStatus.REVIEW) {
+        throw new Error("Only review task can be rejected")
+    }
+
+    const data = {
+        ...rejectionNote,
+        status: TaskStatus.REJECTED
+    }
+
+    const result = await prisma.task.update({
+        where: { id: isTaskExist.id },
+        data: data
+    })
+
+    return result
+}
 
 export const TaskService = {
     createTaskIntoDB,
     updateTaskInDB,
     updateStatusToInProgressInDB,
-    updateStatusToReviewInDB
+    updateStatusToReviewInDB,
+    updateStatusToDoneInDB,
+    updateStatusToRejectedInDB
 }

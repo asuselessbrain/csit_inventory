@@ -23,9 +23,17 @@ const updateStatusToReviewInDB = catchAsync(async (req: Request, res: Response) 
     sendResponse(res, 200, "Task status updated to review successfully", result)
 })
 
+const updateStatusToDoneInDB = catchAsync(async (req: Request, res: Response) => {
+    const result = await TaskService.updateStatusToDoneInDB(req.params.id as string);
+    sendResponse(res, 200, "Task status updated to done successfully", result)
+})
+
+
+
 export const TaskController = {
     createTaskIntoDB,
     updateTaskInDB,
     updateStatusToInProgressInDB,
-    updateStatusToReviewInDB
+    updateStatusToReviewInDB,
+    updateStatusToDoneInDB
 }
