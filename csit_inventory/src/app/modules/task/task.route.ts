@@ -5,4 +5,6 @@ const router = express.Router();
 
 router.post('/', TaskController.createTaskIntoDB)
 router.patch('/:id', TaskController.updateTaskInDB)
+router.patch('/in-progress/:id', TaskController.updateStatusToInProgressInDB)
+router.patch('/review/:id', TaskController.updateStatusToReviewInDB)
 export const TaskRoutes = router;
