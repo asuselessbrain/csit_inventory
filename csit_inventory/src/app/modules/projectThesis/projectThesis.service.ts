@@ -155,11 +155,32 @@ const rejectProjectThesisInDB = async(id: string) => {
     return result
 }
 
+const startProjectThesisInDB = async (id: string) => {
+   const isProjectThesisExist = await prisma.projectThesis.findUnique({
+        where: { id }
+    })
+
+    if (!isProjectThesisExist) {
+        throw new Error("Project or Thesis not found")
+    }
+
+    if(isProjectThesisExist.status !== ProjectThesisStatus.APPROVED){
+        throw new Error("Only approved Project or Thesis can be started")
+    }
+
+    const result = await prisma.projectThesis.update({
+        where: { id },
+        data: { status: ProjectThesisStatus.in_PROGRESS }
+    })
+    return result
+}
+
 export const ProjectThesisService = {
     createProjectThesisIntoDB,
     getAllProjectThesesFromDB,
     getSingleProjectThesisFromDB,
     updateProjectThesisInDB,
     approveProjectThesisInDB,
-    rejectProjectThesisInDB
+    rejectProjectThesisInDB,
+    startProjectThesisInDB
 }

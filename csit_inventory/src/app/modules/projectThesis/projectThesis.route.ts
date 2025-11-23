@@ -9,5 +9,7 @@ router.get('/:id', ProjectThesisController.getSingleProjectThesisFromDB)
 router.patch('/:id', ProjectThesisController.updateProjectThesisInDB)
 router.patch('/approve-project-thesis/:id', ProjectThesisController.approveProjectThesis)
 router.patch('/reject-project-thesis/:id', ProjectThesisController.rejectProjectThesis)
+router.patch('/start-project-thesis/:id', ProjectThesisController.startProjectThesisInDB)
+
 
 export const ProjectThesisRoutes = router;

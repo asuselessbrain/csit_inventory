@@ -37,11 +37,18 @@ const rejectProjectThesis = catchAsync(async(req: Request, res: Response) => {
     sendResponse(res, 200, "Project or Thesis rejected successfully", result)
 })
 
+const startProjectThesisInDB = catchAsync(async(req: Request, res: Response) => {
+    const {id} = req.params;
+    const result = await ProjectThesisService.startProjectThesisInDB(id as string);
+    sendResponse(res, 200, "Project or Thesis started successfully", result)
+})
+
 export const ProjectThesisController = {
     createProjectThesisIntoDB,
     getAllProjectThesesFromDB,
     getSingleProjectThesisFromDB,
     updateProjectThesisInDB,
     approveProjectThesis,
-    rejectProjectThesis
+    rejectProjectThesis,
+    startProjectThesisInDB
 }
