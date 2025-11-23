@@ -2,7 +2,6 @@ import { pagination } from './../../../shared/pagination';
 import { CONNREFUSED } from "dns"
 import { prisma } from "../../../shared/prisma"
 import { Prisma } from '../../../../generated/prisma';
-import { searching } from '../../../shared/searching';
 
 const createProjectThesisIntoDB = async (projectThesisInfo: any) => {
 
@@ -14,7 +13,7 @@ const createProjectThesisIntoDB = async (projectThesisInfo: any) => {
 }
 const getAllProjectThesesFromDB = async (query: any) => {
 
-    const { searchTerm, ...filterData } = query
+    const { searchTerm, skip, take, sortBy, sortOrder, ...filterData } = query
     console.log(filterData)
 
     let inputFields: Prisma.ProjectThesisWhereInput[] = []
@@ -49,8 +48,17 @@ const getAllProjectThesesFromDB = async (query: any) => {
     }
 
     const whereCondition: Prisma.ProjectThesisWhereInput = { AND: inputFields }
-    const { currentPage, skipValue, takeValue, sortByField, sortOrderValue } = pagination()
-    const result = await prisma.projectThesis.findMany({ where: whereCondition, include: { tasks: true, student: true, supervisor: true }, skip: skipValue, take: takeValue, orderBy: { [sortByField]: sortOrderValue } })
+
+    const { currentPage, skipValue, takeValue, sortByField, sortOrderValue } = pagination(skip, take, sortBy, sortOrder)
+
+    const result = await prisma.projectThesis.findMany({
+        where: whereCondition,
+        include: { tasks: true, student: true, supervisor: true },
+        skip: skipValue,
+        take: takeValue,
+        orderBy: { [sortByField]: sortOrderValue }
+    })
+
     const total = await prisma.projectThesis.count({ where: whereCondition })
     return {
         meta: {
@@ -62,8 +70,17 @@ const getAllProjectThesesFromDB = async (query: any) => {
     }
 }
 
+const getSingleProjectThesisFromDB = async(id: string) => {
+    const result = await prisma.projectThesis.findUniqueOrThrow({
+        where: {id},
+        include: {tasks: true, student: true, supervisor: true}
+    })
+    return result
+}
+
 
 export const ProjectThesisService = {
     createProjectThesisIntoDB,
-    getAllProjectThesesFromDB
+    getAllProjectThesesFromDB,
+    getSingleProjectThesisFromDB
 }
