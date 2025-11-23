@@ -25,9 +25,23 @@ const updateProjectThesisInDB = catchAsync(async(req: Request, res: Response) =>
     sendResponse(res, 200, "Project or Thesis updated successfully", result)
 })
 
+const approveProjectThesis = catchAsync(async(req: Request, res: Response) => {
+    const {id} = req.params;
+    const result = await ProjectThesisService.approveProjectThesisInDB(id as string);
+    sendResponse(res, 200, "Project or Thesis approved successfully", result)
+})
+
+const rejectProjectThesis = catchAsync(async(req: Request, res: Response) => {
+    const {id} = req.params;
+    const result = await ProjectThesisService.rejectProjectThesisInDB(id as string);
+    sendResponse(res, 200, "Project or Thesis rejected successfully", result)
+})
+
 export const ProjectThesisController = {
     createProjectThesisIntoDB,
     getAllProjectThesesFromDB,
     getSingleProjectThesisFromDB,
-    updateProjectThesisInDB
+    updateProjectThesisInDB,
+    approveProjectThesis,
+    rejectProjectThesis
 }

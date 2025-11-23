@@ -1,7 +1,7 @@
 import { pagination } from './../../../shared/pagination';
 import { CONNREFUSED } from "dns"
 import { prisma } from "../../../shared/prisma"
-import { Prisma } from '../../../../generated/prisma';
+import { Prisma, ProjectThesisStatus } from '../../../../generated/prisma';
 
 const createProjectThesisIntoDB = async (projectThesisInfo: any) => {
 
@@ -102,9 +102,64 @@ const updateProjectThesisInDB = async (id: string, updateInfo: any) => {
     return result
 }
 
+const approveProjectThesisInDB = async (id: string) => {
+
+    const isProjectThesisExist = await prisma.projectThesis.findUnique({
+        where: { id }
+    })
+    if (!isProjectThesisExist) {
+        throw new Error("Project or Thesis not found")
+    }
+
+    if(isProjectThesisExist.status === ProjectThesisStatus.APPROVED){
+        throw new Error("Project or Thesis is already approved")
+    }
+
+    if(isProjectThesisExist.status === ProjectThesisStatus.REJECTED){
+        throw new Error("Project or Thesis is already rejected")
+    }
+
+    const approveStatus = ProjectThesisStatus.APPROVED
+
+    const result = await prisma.projectThesis.update({
+        where: { id },
+        data: { status: approveStatus }
+    })
+    return result
+}
+
+const rejectProjectThesisInDB = async(id: string) => {
+    const isProjectThesisExist = await prisma.projectThesis.findUnique({
+        where: { id }
+    })
+
+    if (!isProjectThesisExist) {
+        throw new Error("Project or Thesis not found")
+    }
+
+    if(isProjectThesisExist.status === ProjectThesisStatus.REJECTED){
+        throw new Error("Project or Thesis is already rejected")
+    }
+
+    if(isProjectThesisExist.status === ProjectThesisStatus.APPROVED){
+        throw new Error("Project or Thesis is already approved")
+    }
+
+    const rejectionStatus = ProjectThesisStatus.REJECTED
+
+    const result = await prisma.projectThesis.update({
+        where: {id},
+        data: {status: rejectionStatus}
+    })
+
+    return result
+}
+
 export const ProjectThesisService = {
     createProjectThesisIntoDB,
     getAllProjectThesesFromDB,
     getSingleProjectThesisFromDB,
-    updateProjectThesisInDB
+    updateProjectThesisInDB,
+    approveProjectThesisInDB,
+    rejectProjectThesisInDB
 }
