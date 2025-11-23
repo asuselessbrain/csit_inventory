@@ -1,7 +1,7 @@
 import { pagination } from './../../../shared/pagination';
 import { CONNREFUSED } from "dns"
 import { prisma } from "../../../shared/prisma"
-import { Prisma, ProjectThesisStatus } from '../../../../generated/prisma';
+import { Prisma, ProjectThesisStatus, TaskStatus } from '../../../../generated/prisma';
 
 const createProjectThesisIntoDB = async (projectThesisInfo: any) => {
 
@@ -111,11 +111,11 @@ const approveProjectThesisInDB = async (id: string) => {
         throw new Error("Project or Thesis not found")
     }
 
-    if(isProjectThesisExist.status === ProjectThesisStatus.APPROVED){
+    if (isProjectThesisExist.status === ProjectThesisStatus.APPROVED) {
         throw new Error("Project or Thesis is already approved")
     }
 
-    if(isProjectThesisExist.status === ProjectThesisStatus.REJECTED){
+    if (isProjectThesisExist.status === ProjectThesisStatus.REJECTED) {
         throw new Error("Project or Thesis is already rejected")
     }
 
@@ -128,7 +128,7 @@ const approveProjectThesisInDB = async (id: string) => {
     return result
 }
 
-const rejectProjectThesisInDB = async(id: string) => {
+const rejectProjectThesisInDB = async (id: string) => {
     const isProjectThesisExist = await prisma.projectThesis.findUnique({
         where: { id }
     })
@@ -137,26 +137,26 @@ const rejectProjectThesisInDB = async(id: string) => {
         throw new Error("Project or Thesis not found")
     }
 
-    if(isProjectThesisExist.status === ProjectThesisStatus.REJECTED){
+    if (isProjectThesisExist.status === ProjectThesisStatus.REJECTED) {
         throw new Error("Project or Thesis is already rejected")
     }
 
-    if(isProjectThesisExist.status === ProjectThesisStatus.APPROVED){
+    if (isProjectThesisExist.status === ProjectThesisStatus.APPROVED) {
         throw new Error("Project or Thesis is already approved")
     }
 
     const rejectionStatus = ProjectThesisStatus.REJECTED
 
     const result = await prisma.projectThesis.update({
-        where: {id},
-        data: {status: rejectionStatus}
+        where: { id },
+        data: { status: rejectionStatus }
     })
 
     return result
 }
 
 const startProjectThesisInDB = async (id: string) => {
-   const isProjectThesisExist = await prisma.projectThesis.findUnique({
+    const isProjectThesisExist = await prisma.projectThesis.findUnique({
         where: { id }
     })
 
@@ -164,13 +164,43 @@ const startProjectThesisInDB = async (id: string) => {
         throw new Error("Project or Thesis not found")
     }
 
-    if(isProjectThesisExist.status !== ProjectThesisStatus.APPROVED){
+    if (isProjectThesisExist.status !== ProjectThesisStatus.APPROVED) {
         throw new Error("Only approved Project or Thesis can be started")
     }
 
     const result = await prisma.projectThesis.update({
         where: { id },
         data: { status: ProjectThesisStatus.in_PROGRESS }
+    })
+    return result
+}
+
+const completeProjectThesisInDB = async (id: string) => {
+    const isProjectThesisExist = await prisma.projectThesis.findUnique({
+        where: { id }
+    })
+    if (!isProjectThesisExist) {
+        throw new Error("Project or Thesis not found")
+    }
+
+    if (isProjectThesisExist.status !== ProjectThesisStatus.in_PROGRESS) {
+        throw new Error("Only in-progress Project or Thesis can be completed")
+    }
+
+    const isTasksIncomplete = await prisma.task.findFirst({
+        where: {
+            projectThesisId: id,
+            status: { not: TaskStatus.DONE }
+        }
+    })
+
+    if (isTasksIncomplete) {
+        throw new Error("Cannot complete Project or Thesis with incomplete tasks")
+    }
+
+    const result = await prisma.projectThesis.update({
+        where: { id },
+        data: { status: ProjectThesisStatus.COMPLETED }
     })
     return result
 }
@@ -182,5 +212,6 @@ export const ProjectThesisService = {
     updateProjectThesisInDB,
     approveProjectThesisInDB,
     rejectProjectThesisInDB,
-    startProjectThesisInDB
+    startProjectThesisInDB,
+    completeProjectThesisInDB
 }
