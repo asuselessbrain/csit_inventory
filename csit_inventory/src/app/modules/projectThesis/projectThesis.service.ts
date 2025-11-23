@@ -15,6 +15,7 @@ const createProjectThesisIntoDB = async (projectThesisInfo: any) => {
 const getAllProjectThesesFromDB = async (query: any) => {
 
     const { searchTerm, ...filterData } = query
+    console.log(filterData)
 
     let inputFields: Prisma.ProjectThesisWhereInput[] = []
 
@@ -23,9 +24,28 @@ const getAllProjectThesesFromDB = async (query: any) => {
             OR: [
                 { title: { contains: searchTerm, mode: 'insensitive' } },
                 { description: { contains: searchTerm, mode: 'insensitive' } },
-                { student: { name: { contains: searchTerm, mode: "insensitive" } } }
+                { student: { name: { contains: searchTerm, mode: "insensitive" } } },
+                { supervisor: { name: { contains: searchTerm, mode: "insensitive" } } },
+                { student: { studentId: { contains: searchTerm, mode: "insensitive" } } }
             ]
         })
+    }
+    if (Object.keys(filterData).length) {
+        Object.entries(filterData).forEach(([field, value]) => {
+            if (field === 'session') {
+                inputFields.push({
+                    student: {
+                        session: { equals: value as string }
+                    }
+                })
+            }
+            else {
+                inputFields.push({
+                    [field]: { equals: value }
+                })
+            }
+        }
+        )
     }
 
     const whereCondition: Prisma.ProjectThesisWhereInput = { AND: inputFields }
