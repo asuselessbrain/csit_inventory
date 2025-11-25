@@ -1,5 +1,4 @@
 import { pagination } from './../../../shared/pagination';
-import { CONNREFUSED } from "dns"
 import { prisma } from "../../../shared/prisma"
 import { Prisma, ProjectThesisStatus, TaskStatus } from '../../../../generated/prisma';
 

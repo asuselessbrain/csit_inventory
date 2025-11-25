@@ -87,10 +87,38 @@ model Teacher {
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
 
-  user          User            @relation(fields: [email], references: [email])
-  projectTheses ProjectThesis[]
+  user           User            @relation(fields: [email], references: [email])
+  projectTheses  ProjectThesis[]
+  courseTeachers CourseTeacher[]
 
   @@map("teachers")
+}
+
+model Courses {
+  id          String   @id @default(uuid())
+  courseCode  String   @unique
+  courseName  String
+  description String?
+  credits     Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  projectTheses  ProjectThesis[]
+  courseTeachers CourseTeacher[]
+
+  @@map("courses")
+}
+
+model CourseTeacher {
+  id        String   @id @default(uuid())
+  courseId  String
+  course    Courses  @relation(fields: [courseId], references: [id])
+  teacherId String
+  teacher   Teacher  @relation(fields: [teacherId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("course_teachers")
 }
 
 model ProjectThesis {
@@ -99,6 +127,8 @@ model ProjectThesis {
   description  String
   type         ProjectThesisType
   status       ProjectThesisStatus @default(PENDING)
+  courseId     String
+  course       Courses             @relation(fields: [courseId], references: [id])
   studentId    String
   student      Student             @relation(fields: [studentId], references: [id])
   supervisorId String
