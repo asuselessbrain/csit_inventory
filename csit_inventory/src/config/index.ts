@@ -1,10 +1,12 @@
 import dotenv from 'dotenv';
 import path from 'path';
 
-dotenv.config({path: path.join(process.cwd(), 'env')});
+dotenv.config({ path: path.join(process.cwd(), 'env') });
 
 
 export const config = {
     port: process.env.PORT || 5000,
     salt_rounds: process.env.SALT_ROUNDS,
+    email: process.env.EMAIL,
+    email_password: process.env.EMAIL_PASSWORD
 }
