@@ -82,10 +82,18 @@ const reActivateCourseInDB = async (id: string) => {
     return result
 }
 
+const getSingleCourseFromDB = async (id: string) => {
+    const result = await prisma.courses.findUniqueOrThrow({
+        where: { id }
+    })
+    return result
+}
+
 export const CourseService = {
     createCourseIntoDB,
     getAllCoursesFromDB,
     updateCoursesIntoDB,
     courseSetInTrashInDB,
-    reActivateCourseInDB
+    reActivateCourseInDB,
+    getSingleCourseFromDB
 }
