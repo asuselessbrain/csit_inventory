@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "courses" ALTER COLUMN "credits" SET DATA TYPE DOUBLE PRECISION;

@@ -95,13 +95,14 @@ model Teacher {
 }
 
 model Courses {
-  id          String   @id @default(uuid())
-  courseCode  String   @unique
+  id          String       @id @default(uuid())
+  courseCode  String       @unique
   courseName  String
   description String?
-  credits     Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  credits     Float
+  status      CourseStatus @default(ACTIVE)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 
   projectTheses  ProjectThesis[]
   courseTeachers CourseTeacher[]
@@ -240,4 +241,9 @@ enum TaskStatus {
   IN_PROGRESS
   REVIEW
   DONE
+}
+
+enum CourseStatus {
+  ACTIVE
+  ARCHIVED
 }

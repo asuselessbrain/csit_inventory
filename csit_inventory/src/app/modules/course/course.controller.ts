@@ -30,8 +30,30 @@ const updateCoursesIntoDB = catchAsync(async(req: Request, res: Response) => {
     });
 })
 
+const courseSetInTrashInDB = catchAsync(async(req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await CourseService.courseSetInTrashInDB(id as string);
+    res.status(200).json({
+        success: true,
+        message: "Course archived successfully",
+        data: result
+    });
+})
+
+const reActivateCourseInDB = catchAsync(async(req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await CourseService.reActivateCourseInDB(id as string);
+    res.status(200).json({
+        success: true,
+        message: "Course reactivated successfully",
+        data: result
+    });
+})
+
 export const CourseController = {
     createCourseIntoDB,
     getAllCoursesFromDB,
-    updateCoursesIntoDB
+    updateCoursesIntoDB,
+    courseSetInTrashInDB,
+    reActivateCourseInDB
 }

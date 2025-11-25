@@ -55,8 +55,37 @@ const updateCoursesIntoDB = async (id: string, data: Partial<Prisma.CoursesUpdat
     return result
 }
 
+const courseSetInTrashInDB = async (id: string) => {
+    const isCourseExist = await prisma.courses.findUnique({ where: { id } })
+
+    if (!isCourseExist) {
+        throw new Error("Course not found")
+    }
+
+    const result = await prisma.courses.update({
+        where: { id },
+        data: { status: 'ARCHIVED' }
+    })
+    return result
+}
+
+const reActivateCourseInDB = async (id: string) => {
+    const isCourseExist = await prisma.courses.findUnique({ where: { id } })
+    if (!isCourseExist) {
+        throw new Error("Course not found")
+    }
+
+    const result = await prisma.courses.update({
+        where: { id },
+        data: { status: 'ACTIVE' }
+    })
+    return result
+}
+
 export const CourseService = {
     createCourseIntoDB,
     getAllCoursesFromDB,
-    updateCoursesIntoDB
+    updateCoursesIntoDB,
+    courseSetInTrashInDB,
+    reActivateCourseInDB
 }
