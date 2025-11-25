@@ -18,9 +18,16 @@ const createTeacherIntoDB = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, 201, "Teacher created successfully", result)
 })
 
+const verifyEmail = catchAsync(async (req: Request, res: Response) => {
+    const { token, email } = req.body;
+    const result =await UserService.verifyEmailInDB(token as string, email as string);
+    sendResponse(res, 200, "Email verified successfully", result);
+})
+
 
 export const UserController = {
     createStudentIntoDB,
     createAdminIntoDB,
-    createTeacherIntoDB
+    createTeacherIntoDB,
+    verifyEmail
 }

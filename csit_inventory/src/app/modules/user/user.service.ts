@@ -1,12 +1,12 @@
 import { Secret } from 'jsonwebtoken';
 import { UserRole } from '../../../../generated/prisma';
 import { config } from '../../../config';
-import { jwtGenerator } from '../../../shared/jwtGenerator';
+import { jwtGenerator, jwtVerifier } from '../../../shared/jwtGenerator';
 import { prisma } from '../../../shared/prisma';
 import bcrypt from 'bcrypt';
 import type { StringValue } from 'ms';
 import sendEmail from '../../../shared/mailSender';
-import { verifyEmailTemplate } from '../../../utils/emailTempletes/verifyLink';
+import { verifyEmailTemplate } from '../../../utils/emailTemplates/verifyEmailTemplate';
 
 const verifyEmail = async (info: { email: string, role: UserRole }) => {
     const generateEmailVerificationToken = jwtGenerator({ userInfo: { email: info.email, role: info.role }, createSecretKey: config.jwt.email_verification_token as Secret, expiresIn: config.jwt.email_verification_token_expires_in as StringValue })
@@ -100,8 +100,35 @@ const createTeacherIntoDB = async (teacherInfo: any) => {
     return result;
 }
 
+const verifyEmailInDB = async (token: string, email: string) => {
+
+    if (!token) {
+        throw new Error("Token is required");
+    }
+
+    const decoded = jwtVerifier({ token, secretKey: config.jwt.email_verification_token as Secret })
+
+    if (decoded.email !== email) {
+        throw new Error("Invalid token");
+    }
+
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+        throw new Error("User not found");
+    }
+
+    const result = await prisma.user.update({
+        where: { email },
+        data: { isEmailVerified: true }
+    })
+
+    return result
+}
+
 export const UserService = {
     createStudentIntoDB,
     createAdminIntoDB,
-    createTeacherIntoDB
+    createTeacherIntoDB,
+    verifyEmailInDB
 }

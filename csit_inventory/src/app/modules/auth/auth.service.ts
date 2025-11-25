@@ -7,6 +7,7 @@ import { jwtGenerator } from "../../../shared/jwtGenerator";
 import { config } from "../../../config";
 import { Secret } from "jsonwebtoken";
 import type { StringValue } from 'ms';
+import { otpTemplate } from "../../../utils/emailTemplates/otpTemplate";
 
 const generateOtp = () => crypto.randomInt(100000, 999999).toString()
 
@@ -27,7 +28,7 @@ const loginUser = async (payload: { email: string, password: string }) => {
 
     const otp = generateOtp();
 
-    await sendEmail({ to: user.email, subject: "Your OTP Code", html: `<p>Your OTP code is: <b>${otp}</b></p>` });
+    await sendEmail({ to: user.email, subject: "Your OTP Code", html: otpTemplate(otp) });
 
     const otpExpire = new Date();
     otpExpire.setMinutes(otpExpire.getMinutes() + 10);
