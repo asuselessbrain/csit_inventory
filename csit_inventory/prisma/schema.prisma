@@ -20,6 +20,8 @@ model User {
   password   String
   role       UserRole   @default(STUDENT)
   userStatus UserStatus @default(ACTIVE)
+  otp        String?
+  otpExpiry  DateTime?
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
 
@@ -119,8 +121,8 @@ model CourseTeacher {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("course_teachers")
   @@unique([courseId, teacherId])
+  @@map("course_teachers")
 }
 
 model ProjectThesis {

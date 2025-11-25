@@ -8,5 +8,11 @@ export const config = {
     port: process.env.PORT || 5000,
     salt_rounds: process.env.SALT_ROUNDS,
     email: process.env.EMAIL,
-    email_password: process.env.EMAIL_PASSWORD
+    email_password: process.env.EMAIL_PASSWORD,
+    email_host: process.env.EMAIL_HOST,
+    email_port: process.env.EMAIL_PORT,
+    jwt: {
+        token_secret: process.env.TOKEN_SECRET,
+        token_expires_in: process.env.TOKEN_EXPIRES_IN,
+    }
 }

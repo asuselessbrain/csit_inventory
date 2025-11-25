@@ -2,25 +2,51 @@ import { prisma } from "../../../shared/prisma";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import { UserStatus } from "../../../../generated/prisma";
+import sendEmail from "../../../shared/mailSender";
+import { jwtGenerator } from "../../../shared/jwtGenerator";
+import { config } from "../../../config";
+import { Secret } from "jsonwebtoken";
+import type { StringValue } from 'ms';
 
 const generateOtp = () => crypto.randomInt(100000, 999999).toString()
 
-const loginUser = async(payload: {email: string, password: string}) => {
-    const {email, password} = payload;
+const loginUser = async (payload: { email: string, password: string }) => {
+    const { email, password } = payload;
 
     const user = await prisma.user.findUnique({ where: { email, userStatus: UserStatus.ACTIVE } });
 
-    if(!user){
+    if (!user) {
         throw new Error("User not found");
     }
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
 
-    if(!isPasswordMatch){
+    if (!isPasswordMatch) {
         throw new Error("Invalid password");
     }
 
     const otp = generateOtp();
 
-    
+    await sendEmail({ to: user.email, subject: "Your OTP Code", html: `<p>Your OTP code is: <b>${otp}</b></p>` });
+
+    const otpExpire = new Date();
+    otpExpire.setMinutes(otpExpire.getMinutes() + 10);
+
+    await prisma.user.update({
+        where: { id: user.id },
+        data: {
+            otp,
+            otpExpiry: otpExpire
+        }
+    })
+
+    return { message: "OTP sent to your email" };
+}
+
+
+
+
+export const AuthService = {
+    loginUser,
+
 }
