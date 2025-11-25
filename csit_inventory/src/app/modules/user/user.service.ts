@@ -1,7 +1,24 @@
+import { Secret } from 'jsonwebtoken';
 import { UserRole } from '../../../../generated/prisma';
 import { config } from '../../../config';
+import { jwtGenerator } from '../../../shared/jwtGenerator';
 import { prisma } from '../../../shared/prisma';
 import bcrypt from 'bcrypt';
+import type { StringValue } from 'ms';
+import sendEmail from '../../../shared/mailSender';
+import { verifyEmailTemplate } from '../../../utils/emailTempletes/verifyLink';
+
+const verifyEmail = async (info: { email: string, role: UserRole }) => {
+    const generateEmailVerificationToken = jwtGenerator({ userInfo: { email: info.email, role: info.role }, createSecretKey: config.jwt.email_verification_token as Secret, expiresIn: config.jwt.email_verification_token_expires_in as StringValue })
+
+    const verifyUrl = `http://localhost:5000/api/v1/auth/verify-email?token=${generateEmailVerificationToken}&email=${info.email}`;
+
+    await sendEmail({
+        to: info.email,
+        subject: "Email Verification",
+        html: verifyEmailTemplate(verifyUrl)
+    })
+}
 
 const createStudentIntoDB = async (studentInfo: any) => {
 
@@ -14,23 +31,30 @@ const createStudentIntoDB = async (studentInfo: any) => {
     }
 
     const result = await prisma.$transaction(async (transactionClient) => {
-        const user = await transactionClient.user.create({ data: userData });
+        await transactionClient.user.create({ data: userData });
         const student = await transactionClient.student.create({ data: studentInfo.student });
 
         return student
     })
 
-    return result
+    const info = {
+        email: studentInfo.email,
+        role: UserRole.STUDENT
+    }
+
+    await verifyEmail(info)
+
+    return result;
 }
 
-const createAdminIntoDB = async(adminInfo:any) => {
+const createAdminIntoDB = async (adminInfo: any) => {
     const hashedPassword = await bcrypt.hash(adminInfo.password, Number(config.salt_rounds))
     const userData = {
         email: adminInfo.email,
         password: hashedPassword,
         role: UserRole.ADMIN
     }
-    const result = await prisma.$transaction(async(transactionClient)=>{
+    const result = await prisma.$transaction(async (transactionClient) => {
         await transactionClient.user.create({
             data: userData
         })
@@ -39,17 +63,25 @@ const createAdminIntoDB = async(adminInfo:any) => {
         })
         return createAdmin;
     })
+
+    const info = {
+        email: adminInfo.email,
+        role: UserRole.ADMIN
+    }
+
+    await verifyEmail(info)
+
     return result;
 }
 
-const createTeacherIntoDB = async(teacherInfo:any) => {
+const createTeacherIntoDB = async (teacherInfo: any) => {
     const hashedPassword = await bcrypt.hash(teacherInfo.password, Number(config.salt_rounds))
     const userData = {
         email: teacherInfo.email,
         password: hashedPassword,
         role: UserRole.TEACHER
     }
-    const result = await prisma.$transaction(async(transactionClient)=>{
+    const result = await prisma.$transaction(async (transactionClient) => {
         await transactionClient.user.create({
             data: userData
         })
@@ -58,6 +90,13 @@ const createTeacherIntoDB = async(teacherInfo:any) => {
         })
         return createTeacher;
     })
+
+    const info = {
+        email: teacherInfo.email,
+        role: UserRole.TEACHER
+    }
+
+    await verifyEmail(info)
     return result;
 }
 

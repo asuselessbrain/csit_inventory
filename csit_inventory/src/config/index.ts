@@ -16,5 +16,7 @@ export const config = {
         token_expires_in: process.env.TOKEN_EXPIRES_IN,
         refresh_token_secret: process.env.REFRESH_TOKEN_SECRET,
         refresh_token_expires_in: process.env.REFRESH_TOKEN_EXPIRES_IN,
+        email_verification_token: process.env.EMAIL_VERIFICATION_TOKEN,
+        email_verification_token_expires_in: process.env.EMAIL_VERIFICATION_TOKEN_EXPIRES_IN
     }
 }
