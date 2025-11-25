@@ -44,9 +44,41 @@ const loginUser = async (payload: { email: string, password: string }) => {
 }
 
 
+const verifyOtp = async(email: string, otp: string) => {
+    const user = await prisma.user.findUnique({ where: { email, userStatus: UserStatus.ACTIVE } });
+    if (!user) {
+        throw new Error("User not found");
+    }
 
+    if (user.otp !== otp) {
+        throw new Error("Invalid OTP");
+    }
+
+    if (user.otpExpiry && user.otpExpiry < new Date()) {
+        throw new Error("OTP has expired");
+    }
+
+    await prisma.user.update({
+        where: { id: user.id },
+        data: {
+            otp: null,
+            otpExpiry: null
+        }
+    });
+
+    const jwtInfo = {
+        email: user.email,
+        role: user.role
+    }
+
+    const token = jwtGenerator({userInfo: jwtInfo, createSecretKey: config.jwt.token_secret as Secret, expiresIn: config.jwt.token_expires_in as StringValue} )
+
+    return {
+        token,
+    };
+}
 
 export const AuthService = {
     loginUser,
-
+    verifyOtp
 }
