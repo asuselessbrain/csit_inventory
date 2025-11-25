@@ -14,5 +14,7 @@ export const config = {
     jwt: {
         token_secret: process.env.TOKEN_SECRET,
         token_expires_in: process.env.TOKEN_EXPIRES_IN,
+        refresh_token_secret: process.env.REFRESH_TOKEN_SECRET,
+        refresh_token_expires_in: process.env.REFRESH_TOKEN_EXPIRES_IN,
     }
 }

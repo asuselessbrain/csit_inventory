@@ -8,11 +8,13 @@ import { TaskRoutes } from './app/modules/task/task.route';
 import { CourseRoutes } from './app/modules/course/course.route';
 import { CourseTeacherRoutes } from './app/modules/courseTeacher/courseTeacher.route';
 import { AuthRoutes } from './app/modules/auth/auth.route';
+import cookieParser from 'cookie-parser';
 
 const app: Application = express();
 
 
 app.use(express.json());
+app.use(cookieParser())
 
 app.use('/api/v1/students', StudentRoutes);
 app.use('/api/v1/users', UserRoutes);

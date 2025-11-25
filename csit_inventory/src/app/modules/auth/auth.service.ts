@@ -72,9 +72,11 @@ const verifyOtp = async(email: string, otp: string) => {
     }
 
     const token = jwtGenerator({userInfo: jwtInfo, createSecretKey: config.jwt.token_secret as Secret, expiresIn: config.jwt.token_expires_in as StringValue} )
+    const refreshToken = jwtGenerator({userInfo: jwtInfo, createSecretKey: config.jwt.refresh_token_secret as Secret, expiresIn: config.jwt.refresh_token_expires_in as StringValue } )
 
     return {
         token,
+        refreshToken
     };
 }
 
