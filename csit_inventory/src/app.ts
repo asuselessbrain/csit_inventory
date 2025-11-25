@@ -5,6 +5,7 @@ import { adminRouter } from './app/modules/admin/admin.route';
 import { teacherRouter } from './app/modules/teacher/teacher.route';
 import { ProjectThesisRoutes } from './app/modules/projectThesis/projectThesis.route';
 import { TaskRoutes } from './app/modules/task/task.route';
+import { CourseRoutes } from './app/modules/course/course.route';
 
 const app: Application = express();
 
@@ -15,6 +16,7 @@ app.use('/api/v1/students', StudentRoutes);
 app.use('/api/v1/users', UserRoutes);
 app.use('/api/v1/admins', adminRouter);
 app.use('/api/v1/teachers', teacherRouter);
+app.use('/api/v1/courses', CourseRoutes);
 app.use('/api/v1/project-thesis', ProjectThesisRoutes);
 app.use('/api/v1/tasks', TaskRoutes);
 
