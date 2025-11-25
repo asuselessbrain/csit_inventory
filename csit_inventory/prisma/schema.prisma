@@ -120,6 +120,7 @@ model CourseTeacher {
   updatedAt DateTime @updatedAt
 
   @@map("course_teachers")
+  @@unique([courseId, teacherId])
 }
 
 model ProjectThesis {
