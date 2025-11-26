@@ -8,10 +8,9 @@ import { UserStatus } from "../../../generated/prisma";
 const auth = (...roles: string[]) => {
     return async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
         const token = req.headers.authorization;
-        console.log(token)
 
         if (!token) {
-            throw new Error("No token provided");
+            throw new Error("invalid signature");
         }
 
         const bearerToken = token.split(" ")[1]
