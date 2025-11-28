@@ -204,10 +204,128 @@ const completeProjectThesisInDB = async (id: string) => {
     return result
 }
 
+const getSingleStudentProjectThesisFromDB = async (studentId: string, query: any) => {
+
+    const { searchTerm, skip, take, sortBy, sortOrder, ...filterData } = query;
+
+    let inputFields: Prisma.ProjectThesisWhereInput[] = [];
+
+    if (searchTerm) {
+        inputFields.push({
+            OR: [
+                { title: { contains: searchTerm, mode: 'insensitive' } },
+                { description: { contains: searchTerm, mode: 'insensitive' } },
+                { student: { name: { contains: searchTerm, mode: "insensitive" } } },
+                { supervisor: { name: { contains: searchTerm, mode: "insensitive" } } },
+                { student: { studentId: { contains: searchTerm, mode: "insensitive" } } }
+            ]
+        })
+    }
+    if (Object.keys(filterData).length) {
+        Object.entries(filterData).forEach(([field, value]) => {
+            if (field === 'session') {
+                inputFields.push({
+                    student: {
+                        session: { equals: value as string }
+                    }
+                })
+            }
+            else {
+                inputFields.push({
+                    [field]: { equals: value }
+                })
+            }
+        }
+        )
+    }
+
+    const whereCondition: Prisma.ProjectThesisWhereInput = { AND: inputFields }
+
+    const { currentPage, skipValue, takeValue, sortByField, sortOrderValue } = pagination(skip, take, sortBy, sortOrder)
+
+    const result = await prisma.projectThesis.findMany({
+        where: { studentId, ...whereCondition },
+        include: { tasks: true, student: true, supervisor: true },
+        skip: skipValue,
+        take: takeValue,
+        orderBy: { [sortByField]: sortOrderValue }
+    })
+
+    const total = await prisma.projectThesis.count({ where: { studentId, ...whereCondition } })
+    return {
+        meta: {
+            currentPage,
+            total,
+            limit: takeValue
+        },
+        data: result
+    }
+}
+
+const getSingleSupervisorProjectThesisFromDB = async (supervisorId: string, query: any) => {
+    const { searchTerm, skip, take, sortBy, sortOrder, ...filterData } = query;
+
+    let inputFields: Prisma.ProjectThesisWhereInput[] = [];
+
+    if (searchTerm) {
+        inputFields.push({
+            OR: [
+                { title: { contains: searchTerm, mode: 'insensitive' } },
+                { description: { contains: searchTerm, mode: 'insensitive' } },
+                { student: { name: { contains: searchTerm, mode: "insensitive" } } },
+                { supervisor: { name: { contains: searchTerm, mode: "insensitive" } } },
+                { student: { studentId: { contains: searchTerm, mode: "insensitive" } } }
+            ]
+        })
+    }
+    if (Object.keys(filterData).length) {
+        Object.entries(filterData).forEach(([field, value]) => {
+            if (field === 'session') {
+                inputFields.push({
+                    student: {
+                        session: { equals: value as string }
+                    }
+                })
+            }
+            else {
+                inputFields.push({
+                    [field]: { equals: value }
+                })
+            }
+        }
+        )
+    }
+
+    const whereCondition: Prisma.ProjectThesisWhereInput = { AND: inputFields }
+
+    const { currentPage, skipValue, takeValue, sortByField, sortOrderValue } = pagination(skip, take, sortBy, sortOrder)
+
+    const result = await prisma.projectThesis.findMany({
+        where: { supervisorId, ...whereCondition },
+        include: { tasks: true, student: true, supervisor: true },
+        skip: skipValue,
+        take: takeValue,
+        orderBy: { [sortByField]: sortOrderValue }
+    })
+
+    const total = await prisma.projectThesis.count({ where: { supervisorId, ...whereCondition } })
+    
+    return {
+        meta: {
+            currentPage,
+            total,
+            limit: takeValue
+        },
+        data: result
+    }
+}
+
 export const ProjectThesisService = {
     createProjectThesisIntoDB,
     getAllProjectThesesFromDB,
     getSingleProjectThesisFromDB,
+    getSingleStudentProjectThesisFromDB,
+    getSingleSupervisorProjectThesisFromDB,
     updateProjectThesisInDB,
     approveProjectThesisInDB,
     rejectProjectThesisInDB,
