@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { verifyOtp } from '@/services/authService';
 import { toast } from 'sonner';
 
@@ -13,6 +13,7 @@ export default function VerifyOtpPage() {
     const [resendTimer, setResendTimer] = useState(0);
 
     const searchParams = useSearchParams()
+    const router = useRouter()
 
     const email = searchParams.get('email')!;
 
@@ -52,8 +53,9 @@ export default function VerifyOtpPage() {
             toast.success(res.message || "OTP Verified Successfully!");
             localStorage.setItem("accessToken", res?.data?.token)
             setIsLoading(false);
+            router.push("/")
         }
-        
+
         if (!res.success) {
             toast.error(res.errorMessage || "OTP Verification Failed!");
             setIsLoading(false);
