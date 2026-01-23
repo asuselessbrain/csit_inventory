@@ -1,21 +1,22 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-
-interface OtpFormData {
-    otp: string;
-}
+import { useSearchParams } from 'next/navigation';
+import { verifyOtp } from '@/services/authService';
+import { toast } from 'sonner';
 
 export default function VerifyOtpPage() {
-    const { watch, setValue } = useForm<OtpFormData>({
-        defaultValues: { otp: '' },
-    });
     const [otpDigits, setOtpDigits] = useState<string[]>(['', '', '', '', '', '']);
     const [isLoading, setIsLoading] = useState(false);
     const [resendTimer, setResendTimer] = useState(0);
+
+    const searchParams = useSearchParams()
+
+    const email = searchParams.get('email')!;
+
+    console.log(email)
 
     const handleOtpChange = (index: number, value: string) => {
         if (value.length > 1) return;
@@ -24,8 +25,6 @@ export default function VerifyOtpPage() {
         const newOtp = [...otpDigits];
         newOtp[index] = value;
         setOtpDigits(newOtp);
-        setValue('otp', newOtp.join(''));
-
         // Auto-focus to next field
         if (value && index < 5) {
             const nextInput = document.getElementById(`otp-${index + 1}`);
@@ -47,16 +46,23 @@ export default function VerifyOtpPage() {
 
         setIsLoading(true);
         // Simulate API call
-        console.log(otpCode)
-        setTimeout(() => {
+        const res = await verifyOtp({ email, otp: otpCode })
+
+        if (res.success) {
+            toast.success(res.message || "OTP Verified Successfully!");
+            localStorage.setItem("accessToken", res?.data?.token)
             setIsLoading(false);
-        }, 2000);
+        }
+        
+        if (!res.success) {
+            toast.error(res.errorMessage || "OTP Verification Failed!");
+            setIsLoading(false);
+        }
     };
 
     const handleResendOtp = () => {
         setResendTimer(60);
         setOtpDigits(['', '', '', '', '', '']);
-        setValue('otp', '');
         const interval = setInterval(() => {
             setResendTimer((prev) => {
                 if (prev <= 1) {

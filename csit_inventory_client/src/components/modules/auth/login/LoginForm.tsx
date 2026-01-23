@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { loginUser } from "@/services/authService";
+import { useRouter } from "next/navigation";
 import { Controller, FieldValues, useForm } from "react-hook-form"
 import { toast } from "sonner";
 
 export default function LoginForm() {
     const form = useForm();
+    const router = useRouter()
 
     const { formState: { isSubmitting } } = form;
 
@@ -22,6 +24,7 @@ export default function LoginForm() {
 
         if (res.success) {
             toast.success(res.data.message, { id: toastId });
+            router.push(`/verify-otp?email=${data.email}`)
         }
 
         if (!res.success) {
