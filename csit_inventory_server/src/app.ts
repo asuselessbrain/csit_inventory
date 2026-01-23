@@ -16,7 +16,6 @@ app.use('/api/v1/admins', adminRouter);
 app.use('/api/v1/teachers', teacherRouter);
 app.use('/api/v1/project-thesis', ProjectThesisRoutes);
 
-
 app.get("/", (req :Request, res: Response)=> {
     res.status(200).json({
         message: "CSIT Inventory Server is Running",
@@ -24,6 +23,5 @@ app.get("/", (req :Request, res: Response)=> {
         version: "1.0.0",
     });
 })
-
 
 export default app;
