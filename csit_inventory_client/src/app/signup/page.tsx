@@ -1,4 +1,4 @@
-import RegistrationForm from "@/components/modules/auth/RegistrationForm";
+import RegistrationForm from "@/components/modules/auth/registration/RegistrationForm";
 import Image from "next/image";
 import Link from "next/link";
 
