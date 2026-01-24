@@ -19,10 +19,25 @@ const verifyOtp = catchAsync(async (req: Request, res: Response) => {
         httpOnly: true,
         maxAge: 30 * 24 * 60 * 60 * 1000,
     })
-    sendResponse(res, 200, "OTP verified successfully", { token });
+    sendResponse(res, 200, "OTP verified successfully", { token, refreshToken });
 });
+
+const generateNewToken = catchAsync(async (req: Request, res: Response) => {
+    const { refreshToken } = req.body;
+    const result = await AuthService.generateNewToken(refreshToken);
+
+    sendResponse(res, 200, "New token generated successfully", { data: result });
+});
+
+const resendOtp = catchAsync(async (req: Request, res: Response) => {
+    const { email } = req.body;
+    const result = await AuthService.resendOtp(email);
+    sendResponse(res, 200, "OTP resend Successfully", result)
+})
 
 export const AuthController = {
     login,
-    verifyOtp
+    verifyOtp,
+    generateNewToken,
+    resendOtp
 };
