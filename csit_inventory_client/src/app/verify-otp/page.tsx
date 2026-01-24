@@ -7,18 +7,18 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { resendOtp } from '@/services/authService';
 import { toast } from 'sonner';
 import { verifyOtp } from '@/services/authService/auth.client';
+import { useUser } from '@/context/UserContext';
 
 export default function VerifyOtpPage() {
     const [otpDigits, setOtpDigits] = useState<string[]>(['', '', '', '', '', '']);
     const [isLoading, setIsLoading] = useState(false);
     const [resendTimer, setResendTimer] = useState(0);
+    const user = useUser()
 
     const searchParams = useSearchParams()
     const router = useRouter()
 
     const email = searchParams.get('email')!;
-
-    console.log(email)
 
     const handleOtpChange = (index: number, value: string) => {
         if (value.length > 1) return;
@@ -52,6 +52,7 @@ export default function VerifyOtpPage() {
         if (res.success) {
             toast.success(res.message || "OTP Verified Successfully!");
             localStorage.setItem("accessToken", res?.data?.token)
+            user?.loadUser()
             setIsLoading(false);
             router.push("/")
         }
