@@ -40,3 +40,21 @@ export const verifyOtp = async (data: { email: string, otp: string }) => {
         throw error
     }
 }
+
+export const resendOtp = async (email: string) => {
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/auth/resend-otp`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email })
+        })
+
+        const result = await res.json()
+
+        return result
+    } catch (error) {
+        throw error
+    }
+}

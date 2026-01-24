@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { verifyOtp } from '@/services/authService';
+import { resendOtp, verifyOtp } from '@/services/authService';
 import { toast } from 'sonner';
 
 export default function VerifyOtpPage() {
@@ -46,7 +46,6 @@ export default function VerifyOtpPage() {
         if (otpCode.length !== 6) return;
 
         setIsLoading(true);
-        // Simulate API call
         const res = await verifyOtp({ email, otp: otpCode })
 
         if (res.success) {
@@ -62,18 +61,19 @@ export default function VerifyOtpPage() {
         }
     };
 
-    const handleResendOtp = () => {
+    const handleResendOtp = async () => {
         setResendTimer(60);
         setOtpDigits(['', '', '', '', '', '']);
-        const interval = setInterval(() => {
-            setResendTimer((prev) => {
-                if (prev <= 1) {
-                    clearInterval(interval);
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
+
+        const res = await resendOtp(email);
+        console.log(res)
+        if (res.success) {
+            toast.success(res.message || "OTP Resent Successfully!")
+        }
+
+        if (!res.success) {
+            toast.error(res.errorMessage || "Failed to Resend OTP!")
+        }
     };
 
     const isOtpComplete = otpDigits.every((digit) => digit !== '');
