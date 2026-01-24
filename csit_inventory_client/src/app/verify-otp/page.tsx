@@ -53,7 +53,6 @@ export default function VerifyOtpPage() {
             toast.success(res.message || "OTP Verified Successfully!");
             localStorage.setItem("accessToken", res?.data?.token)
             user?.loadUser()
-            setIsLoading(false);
             router.push("/")
         }
 
