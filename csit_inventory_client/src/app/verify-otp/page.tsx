@@ -4,8 +4,9 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { resendOtp, verifyOtp } from '@/services/authService';
+import { resendOtp } from '@/services/authService';
 import { toast } from 'sonner';
+import { verifyOtp } from '@/services/authService/auth.client';
 
 export default function VerifyOtpPage() {
     const [otpDigits, setOtpDigits] = useState<string[]>(['', '', '', '', '', '']);
