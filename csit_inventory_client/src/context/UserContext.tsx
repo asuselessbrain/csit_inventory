@@ -8,12 +8,14 @@ type UserContextType = {
     user: IUser | null;
     setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
     loadUser: () => void;
+    loading: boolean
 };
 
 export const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<IUser | null>(() => getCurrentUser());
+    const loading = false
 
     const loadUser = () => {
         setUser(getCurrentUser())
@@ -21,7 +23,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
     return (
         <UserContext.Provider
-            value={{ user, setUser, loadUser }}
+            value={{ user, setUser, loadUser, loading }}
         >
             {children}
         </UserContext.Provider>

@@ -2,15 +2,13 @@
 
 import { cookies } from "next/headers";
 
-export const baseApi = async (url: string, options: RequestInit = {}) => {
+export const baseApi = async (accessToken: string, url: string, options: RequestInit = {}) => {
     try {
-        const accessToken = localStorage.getItem("accessToken");
-
         const res = await fetch(url, {
             ...options,
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `${accessToken}`,
+                "Authorization": `Bearer ${accessToken}`,
                 ...options.headers
             }
         })
@@ -20,7 +18,7 @@ export const baseApi = async (url: string, options: RequestInit = {}) => {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": ((await cookies()).get("refreshToken"))?.value || ""
+                    "Authorization": `Bearer ${((await cookies()).get("refreshToken"))?.value}` || ""
                 }
             })
 
@@ -34,7 +32,7 @@ export const baseApi = async (url: string, options: RequestInit = {}) => {
                         ...options,
                         headers: {
                             "Content-Type": "application/json",
-                            "Authorization": `${refreshData?.data}`,
+                            "Authorization": `Bearer ${refreshData?.data}`,
                             ...options.headers
                         }
                     })
