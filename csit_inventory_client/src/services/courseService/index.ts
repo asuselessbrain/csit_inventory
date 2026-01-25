@@ -46,3 +46,51 @@ export const getSingleCourse = async (courseId: string) => {
         throw error
     }
 }
+
+export const updateCourse = async (courseId: string, courseData: FieldValues) => {
+    try {
+        const res = await baseApi(`${process.env.NEXT_PUBLIC_BASE_API}/courses/${courseId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(courseData)
+        })
+        revalidateTag("courses", "max");
+        return res
+    } catch (error) {
+        throw error
+    }
+}
+
+export const courseMoveToTrash = async (courseId: string) => {
+    try {
+        const res = await baseApi(`${process.env.NEXT_PUBLIC_BASE_API}/courses/trash/${courseId}`, {
+            method: "PATCH",
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        revalidateTag("courses", "max");
+        return res
+    } catch (error) {
+        throw error
+    }
+
+}
+
+export const courseReActivate = async (courseId: string) => {
+    try {
+        const res = await baseApi(`${process.env.NEXT_PUBLIC_BASE_API}/courses/reactivate/${courseId}`, {
+            method: "PATCH",
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        revalidateTag("courses", "max");
+        return res
+    } catch (error) {
+        throw error
+    }
+
+}

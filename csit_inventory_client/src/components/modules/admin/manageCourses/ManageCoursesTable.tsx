@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Trash2, Eye, Edit } from 'lucide-react'
+import { Trash2, Eye, Edit, Undo } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
     Table,
@@ -12,20 +12,12 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
 import { toast } from 'sonner'
 import { Course, Meta } from '@/types'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import ViewCourseDetails from './ViewCourseDetails'
-import { getSingleCourse } from '@/services/courseService'
+import { courseMoveToTrash, courseReActivate, getSingleCourse } from '@/services/courseService'
+import UpdateCourse from './UpdateCourse'
 
 
 
@@ -37,33 +29,9 @@ interface ManageCoursesTableProps {
 }
 
 export default function ManageCoursesTable({ courses }: ManageCoursesTableProps) {
-    const [deleteId, setDeleteId] = useState<string | null>(null)
-    const [isDeleting, setIsDeleting] = useState(false)
-    const [course, setCourse] = useState<Course | null>(null)
+    const [singleCourse, setSingleCourse] = useState<Course | null>(null)
 
-    // const handleDelete = async () => {
-    //     if (!deleteId) return
-
-    //     setIsDeleting(true)
-    //     try {
-    //         // Implement delete API call here
-    //         const response = await fetch(`/api/courses/${deleteId}`, {
-    //             method: 'DELETE',
-    //         })
-
-    //         if (response.ok) {
-    //             toast.success('Course deleted successfully')
-    //             // Revalidate or refetch courses
-    //         } else {
-    //             toast.error('Failed to delete course')
-    //         }
-    //     } catch (error) {
-    //         toast.error(error?.errorMessage ||'Error deleting course')
-    //     } finally {
-    //         setIsDeleting(false)
-    //         setDeleteId(null)
-    //     }
-    // }
+    const courseDetails = "courseDetails"
 
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -79,7 +47,28 @@ export default function ManageCoursesTable({ courses }: ManageCoursesTableProps)
     const viewCourseDetails = async (courseId: string) => {
         const course = await getSingleCourse(courseId)
         if (course?.success) {
-            setCourse(course?.data)
+            setSingleCourse(course?.data)
+        }
+    }
+
+    const moveToTrash = async (courseId: string) => {
+        const course = await courseMoveToTrash(courseId)
+
+        if (course?.success) {
+            toast.success(course?.message || "Course moved to trash successfully", { id: courseDetails })
+        } else {
+            toast.error(course?.errorMessage || "Failed to move course to trash", { id: courseDetails })
+        }
+    }
+
+    const reActivate = async (courseId: string) => {
+        const res = await courseReActivate(courseId)
+
+        console.log(res)
+        if (res?.success) {
+            toast.success(res?.message || "Course reactivated successfully", { id: courseDetails })
+        } else {
+            toast.error(res?.errorMessage || "Failed to reactivate course", { id: courseDetails })
         }
     }
 
@@ -130,25 +119,42 @@ export default function ManageCoursesTable({ courses }: ManageCoursesTableProps)
                                                     </Button>
 
                                                 </DialogTrigger>
-                                                <ViewCourseDetails course={course} />
+                                                <ViewCourseDetails course={singleCourse} />
                                             </Dialog>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="h-8 w-8"
-                                                title="Edit course"
-                                            >
-                                                <Edit className="h-4 w-4" />
-                                            </Button>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
-                                                onClick={() => setDeleteId(course.id)}
-                                                title="Delete course"
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
+                                            <Dialog>
+                                                <DialogTrigger asChild>
+                                                    <Button
+                                                        onClick={() => viewCourseDetails(course.id)}
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8"
+                                                        title="Edit course"
+                                                    >
+                                                        <Edit className="h-4 w-4" />
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <UpdateCourse course={singleCourse} />
+                                            </Dialog>
+
+                                            {
+                                                course.status === 'ACTIVE' ? <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                                    onClick={() => moveToTrash(course.id)}
+                                                    title="Delete course"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button> : <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                                                    onClick={() => reActivate(course.id)}
+                                                    title="Reactivate course"
+                                                >
+                                                    <Undo className="h-4 w-4" />
+                                                </Button>
+                                            }
                                         </div>
                                     </TableCell>
                                 </TableRow>
@@ -166,27 +172,6 @@ export default function ManageCoursesTable({ courses }: ManageCoursesTableProps)
                     </TableBody>
                 </Table>
             </div>
-
-            <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Course</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            Are you sure you want to delete this course? This action cannot be undone.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <div className="flex justify-end gap-3">
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                            // onClick={handleDelete}
-                            disabled={isDeleting}
-                            className="bg-red-600 hover:bg-red-700"
-                        >
-                            {isDeleting ? 'Deleting...' : 'Delete'}
-                        </AlertDialogAction>
-                    </div>
-                </AlertDialogContent>
-            </AlertDialog>
         </>
     )
 }
