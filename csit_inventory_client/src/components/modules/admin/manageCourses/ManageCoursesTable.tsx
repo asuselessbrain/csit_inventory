@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
-import { Pencil, Trash2, Eye } from 'lucide-react'
+import { Trash2, Eye, Edit } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
     Table,
@@ -24,6 +23,9 @@ import {
 } from '@/components/ui/alert-dialog'
 import { toast } from 'sonner'
 import { Course, Meta } from '@/types'
+import { Dialog, DialogTrigger } from '@/components/ui/dialog'
+import ViewCourseDetails from './ViewCourseDetails'
+import { getSingleCourse } from '@/services/courseService'
 
 
 
@@ -37,6 +39,7 @@ interface ManageCoursesTableProps {
 export default function ManageCoursesTable({ courses }: ManageCoursesTableProps) {
     const [deleteId, setDeleteId] = useState<string | null>(null)
     const [isDeleting, setIsDeleting] = useState(false)
+    const [course, setCourse] = useState<Course | null>(null)
 
     // const handleDelete = async () => {
     //     if (!deleteId) return
@@ -70,6 +73,13 @@ export default function ManageCoursesTable({ courses }: ManageCoursesTableProps)
                 return 'bg-red-100 text-red-800 hover:bg-red-100'
             default:
                 return 'bg-gray-100 text-gray-800 hover:bg-gray-100'
+        }
+    }
+
+    const viewCourseDetails = async (courseId: string) => {
+        const course = await getSingleCourse(courseId)
+        if (course?.success) {
+            setCourse(course?.data)
         }
     }
 
@@ -107,26 +117,29 @@ export default function ManageCoursesTable({ courses }: ManageCoursesTableProps)
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">
+                                            <Dialog>
+                                                <DialogTrigger asChild>
+                                                    <Button
+                                                        onClick={() => viewCourseDetails(course.id)}
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-green-600 hover:bg-green-50 hover:text-green-700"
+                                                        title="View course details"
+                                                    >
+                                                        <Eye className="h-4 w-4" />
+                                                    </Button>
+
+                                                </DialogTrigger>
+                                                <ViewCourseDetails course={course} />
+                                            </Dialog>
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="h-8 w-8 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
-                                                title="View course details"
+                                                className="h-8 w-8"
+                                                title="Edit course"
                                             >
-                                                <Eye className="h-4 w-4" />
+                                                <Edit className="h-4 w-4" />
                                             </Button>
-                                            <Link
-                                                href={`/admin/manage-courses/${course.id}`}
-                                            >
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-8 w-8 text-amber-600 hover:bg-amber-50 hover:text-amber-700"
-                                                    title="Edit course"
-                                                >
-                                                    <Pencil className="h-4 w-4" />
-                                                </Button>
-                                            </Link>
                                             <Button
                                                 variant="ghost"
                                                 size="icon"

@@ -33,3 +33,16 @@ export const getCourses = async () => {
         throw error
     }
 }
+
+export const getSingleCourse = async (courseId: string) => {
+    try {
+        const res = await baseApi(`${process.env.NEXT_PUBLIC_BASE_API}/courses/${courseId}`, {
+            next: {
+                tags: ['courses']
+            }
+        })
+        return res
+    } catch (error) {
+        throw error
+    }
+}
