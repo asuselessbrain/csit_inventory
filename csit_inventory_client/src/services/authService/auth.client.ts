@@ -1,6 +1,3 @@
-import { IUser } from "@/types";
-import { jwtDecode } from "jwt-decode";
-
 export const verifyOtp = async (data: { email: string, otp: string }) => {
     try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/auth/verify-otp`, {
@@ -31,14 +28,3 @@ export const logoutUser = async () => {
         throw error
     }
 }
-
-export const getCurrentUser = () => {
-  try {
-    const accessToken = localStorage.getItem("accessToken");
-    if (!accessToken) return null;
-
-    return jwtDecode<IUser>(accessToken);
-  } catch {
-    return null;
-  }
-};

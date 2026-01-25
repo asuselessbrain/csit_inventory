@@ -7,6 +7,5 @@ export const proposalSchema = z.object({
   methodology: z.string().min(20, 'Methodology description is required').max(1000, 'Methodology must not exceed 1000 characters'),
   expectedOutcomes: z.string().min(20, 'Expected outcomes are required').max(1000, 'Outcomes must not exceed 1000 characters'),
   technologiesTools: z.string().min(5, 'Technologies/tools are required'),
-  estimatedTimeline: z.string().min(5, 'Timeline is required'),
-  attachments: z.instanceof(FileList).optional(),
+  estimatedTimeline: z.string().min(5, 'Timeline is required')
 });

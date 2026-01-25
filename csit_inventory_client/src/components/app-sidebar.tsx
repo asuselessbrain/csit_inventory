@@ -19,7 +19,6 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { useUser } from "@/context/UserContext"
-import { useEffect, useState } from "react"
 
 // This is sample data.
 const data = {
@@ -39,21 +38,14 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const user = useUser()
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setMounted(true);
-    }, 0);
+  const [mounted, setMounted] = React.useState(false);
 
-    return () => clearTimeout(timer)
+  React.useEffect(() => {
+    setMounted(true);
   }, []);
 
   if (!mounted) {
-    return null;
-  }
-
-  if (!user?.user) {
     return null;
   }
 
@@ -90,6 +82,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       title: "Add Course",
       url: "/admin/add-course",
       icon: PlusSquare
+    },
+    {
+      title: "Manage Courses",
+      url: "/admin/manage-courses",
+      icon: ListChecks
     }
   ]
   return (

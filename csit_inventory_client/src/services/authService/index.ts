@@ -1,4 +1,7 @@
 "use server"
+import { IUser } from "@/types"
+import { jwtDecode } from "jwt-decode"
+import { cookies } from "next/headers"
 import { FieldValues } from "react-hook-form"
 
 export const loginUser = async (data: FieldValues) => {
@@ -36,3 +39,14 @@ export const resendOtp = async (email: string) => {
         throw error
     }
 }
+
+export const getCurrentUser = async () => {
+    try {
+        const accessToken = ((await cookies()).get("accessToken"))?.value || "";
+        if (!accessToken) return null;
+
+        return jwtDecode<IUser>(accessToken);
+    } catch {
+        return null;
+    }
+};

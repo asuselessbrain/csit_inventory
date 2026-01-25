@@ -3,7 +3,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Controller, FieldValues, useForm } from "react-hook-form";
 import { proposalSchema } from "./SubmitProposalSchema";
-import { AlertCircle, CheckCircle, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";

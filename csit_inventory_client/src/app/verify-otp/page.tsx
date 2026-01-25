@@ -51,8 +51,7 @@ export default function VerifyOtpPage() {
 
         if (res.success) {
             toast.success(res.message || "OTP Verified Successfully!");
-            localStorage.setItem("accessToken", res?.data?.token)
-            user?.loadUser()
+            user?.refreshUser()
             router.push("/")
         }
 

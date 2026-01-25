@@ -1,29 +1,40 @@
-"use client";
-
-import { getCurrentUser } from "@/services/authService/auth.client";
+import { getCurrentUser } from "@/services/authService";
 import { IUser } from "@/types";
-import { createContext, useContext, useState } from "react";
+import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 
-type UserContextType = {
+interface IUserProviderValue {
     user: IUser | null;
-    setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
-    loadUser: () => void;
-    loading: boolean
-};
+    setUser: (user: IUser | null) => void;
+    isLoading: boolean;
+    setIsLoading?: Dispatch<SetStateAction<boolean>>;
+    refreshUser: () => Promise<void>;
+}
 
-export const UserContext = createContext<UserContextType | null>(null);
+export const UserContext = createContext<IUserProviderValue | null>(null);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState<IUser | null>(() => getCurrentUser());
-    const loading = false
+    const [user, setUser] = useState<IUser | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    const loadUser = () => {
-        setUser(getCurrentUser())
+    const fetchUser = async () => {
+        setIsLoading(true);
+        try {
+            const data = await getCurrentUser();
+            setUser(data);
+        } catch (error) {
+            setUser(null);
+        } finally {
+            setIsLoading(false);
+        }
     };
+    
+    useEffect(() => {
+        fetchUser();
+    }, []);
 
     return (
         <UserContext.Provider
-            value={{ user, setUser, loadUser, loading }}
+            value={{ user, setUser, isLoading, setIsLoading, refreshUser: fetchUser }}
         >
             {children}
         </UserContext.Provider>

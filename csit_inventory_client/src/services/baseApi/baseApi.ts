@@ -2,13 +2,13 @@
 
 import { cookies } from "next/headers";
 
-export const baseApi = async (accessToken: string, url: string, options: RequestInit = {}) => {
+export const baseApi = async (url: string, options: RequestInit = {}) => {
     try {
         const res = await fetch(url, {
             ...options,
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${accessToken}`,
+                "Authorization": `Bearer ${((await cookies()).get("accessToken"))?.value}` || "",
                 ...options.headers
             }
         })
@@ -22,12 +22,11 @@ export const baseApi = async (accessToken: string, url: string, options: Request
                 }
             })
 
+            const refreshData = await refreshRes.json();
+            console.log(refreshData)
+
             if (refreshRes.ok) {
                 {
-                    const refreshData = await refreshRes.json();
-
-                    localStorage.setItem("accessToken", refreshData?.data)
-
                     const retryRes = await fetch(url, {
                         ...options,
                         headers: {
@@ -39,7 +38,6 @@ export const baseApi = async (accessToken: string, url: string, options: Request
                     return retryRes.json();
                 }
             } else {
-                localStorage.removeItem("accessToken");
                 window.location.href = "/login";
                 return;
             }

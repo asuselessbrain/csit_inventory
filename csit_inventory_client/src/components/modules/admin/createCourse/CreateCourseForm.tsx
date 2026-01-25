@@ -20,8 +20,6 @@ export default function CreateCourseForm() {
     const courseId = "create-course-toast";
 
     const onSubmit = async (data: FieldValues) => {
-        const accessToken = localStorage.getItem("accessToken")
-        data.accessToken = accessToken
         const res = await createCourse(data)
         if (res.success) {
             toast.success(res.data.message || "Course Created Successfully!", { id: courseId })

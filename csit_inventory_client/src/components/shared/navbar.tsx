@@ -15,21 +15,16 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [isHydrated, setIsHydrated] = useState(false);
   const user = useUser()
   const pathname = usePathname()
 
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsHydrated(true);
-    }, 0);
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
     };
     window.addEventListener('scroll', handleScroll);
     return () => {
-      clearTimeout(timer);
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
@@ -110,67 +105,64 @@ export default function Navbar() {
             <ModeToggle />
 
             {/* Profile Section - Only render after hydration */}
-            {isHydrated && (
-              <>
-                {user?.user ? (
-                  <div className="hidden md:block relative">
-                    <button
-                      onClick={toggleProfile}
-                      className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all duration-200 group"
-                    >
-                      <div className="relative">
-                        <Image
-                          width={32}
-                          height={32}
-                          src="https://api.dicebear.com/7.x/avataaars/svg?seed=user1"
-                          alt="Profile"
-                          unoptimized
-                          className="h-8 w-8 rounded-full"
-                        />
-                        <div className="absolute bottom-0 right-0 h-2.5 w-2.5 bg-green-500 border-2 border-white dark:border-slate-800 rounded-full"></div>
-                      </div>
-                      <ChevronDown className={`w-4 h-4 text-slate-600 dark:text-slate-400 transition-transform duration-300 ${isProfileOpen ? 'rotate-180' : ''}`} />
-                    </button>
 
-                    {/* Profile Dropdown Menu */}
-                    {isProfileOpen && (
-                      <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-xl shadow-xl dark:shadow-2xl border border-slate-200 dark:border-slate-700 py-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                        <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
-                          <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                            John Doe
-                          </p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                            Student ID: PST2021001
-                          </p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                            john.doe@pstu.edu.bd
-                          </p>
-                        </div>
-                        <div className="py-2 space-y-1">
-                          <Link href="/profile" className="flex items-center gap-3 px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors duration-150 group">
-                            <User className="w-4 h-4 text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
-                            <span className="text-sm font-medium">My Profile</span>
-                          </Link>
-                          <Link href="/settings" className="flex items-center gap-3 px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors duration-150 group">
-                            <Settings className="w-4 h-4 text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
-                            <span className="text-sm font-medium">Settings</span>
-                          </Link>
-                        </div>
-                        <div className="border-t border-slate-200 dark:border-slate-700 pt-2">
-                          <button onClick={handleLogOut} className="w-full flex items-center gap-3 px-4 py-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-150 group">
-                            <LogOut className="w-4 h-4 group-hover:text-red-700 dark:group-hover:text-red-300 transition-colors" />
-                            <span className="text-sm font-medium">Sign Out</span>
-                          </button>
-                        </div>
-                      </div>
-                    )}
+            {user?.user ? (
+              <div className="hidden md:block relative">
+                <button
+                  onClick={toggleProfile}
+                  className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all duration-200 group"
+                >
+                  <div className="relative">
+                    <Image
+                      width={32}
+                      height={32}
+                      src="https://api.dicebear.com/7.x/avataaars/svg?seed=user1"
+                      alt="Profile"
+                      unoptimized
+                      className="h-8 w-8 rounded-full"
+                    />
+                    <div className="absolute bottom-0 right-0 h-2.5 w-2.5 bg-green-500 border-2 border-white dark:border-slate-800 rounded-full"></div>
                   </div>
-                ) : (
-                  <Button asChild className="hidden md:block relative">
-                    <Link href="/login">Login</Link>
-                  </Button>
+                  <ChevronDown className={`w-4 h-4 text-slate-600 dark:text-slate-400 transition-transform duration-300 ${isProfileOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {/* Profile Dropdown Menu */}
+                {isProfileOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-xl shadow-xl dark:shadow-2xl border border-slate-200 dark:border-slate-700 py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
+                      <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                        John Doe
+                      </p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        Student ID: PST2021001
+                      </p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                        john.doe@pstu.edu.bd
+                      </p>
+                    </div>
+                    <div className="py-2 space-y-1">
+                      <Link href="/profile" className="flex items-center gap-3 px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors duration-150 group">
+                        <User className="w-4 h-4 text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
+                        <span className="text-sm font-medium">My Profile</span>
+                      </Link>
+                      <Link href="/settings" className="flex items-center gap-3 px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors duration-150 group">
+                        <Settings className="w-4 h-4 text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
+                        <span className="text-sm font-medium">Settings</span>
+                      </Link>
+                    </div>
+                    <div className="border-t border-slate-200 dark:border-slate-700 pt-2">
+                      <button onClick={handleLogOut} className="w-full flex items-center gap-3 px-4 py-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-150 group">
+                        <LogOut className="w-4 h-4 group-hover:text-red-700 dark:group-hover:text-red-300 transition-colors" />
+                        <span className="text-sm font-medium">Sign Out</span>
+                      </button>
+                    </div>
+                  </div>
                 )}
-              </>
+              </div>
+            ) : (
+              <Button asChild className="hidden md:block relative">
+                <Link href="/login">Login</Link>
+              </Button>
             )}
 
             {/* Mobile Menu Button */}
@@ -200,24 +192,21 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
-            {isHydrated && (
+
+            {user?.user ? (
               <>
-                {user?.user ? (
-                  <>
-                    <div className="my-2 border-t border-slate-200 dark:border-slate-800"></div>
-                    <Link href="/profile" onClick={toggleMenu} className="block px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg font-medium text-sm transition-colors duration-150">
-                      My Profile
-                    </Link>
-                    <button onClick={handleLogOut} className="w-full text-left px-4 py-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg font-medium text-sm transition-colors duration-150">
-                      Sign Out
-                    </button>
-                  </>
-                ) : (
-                  <Button asChild className="w-full">
-                    <Link href="/login">Login</Link>
-                  </Button>
-                )}
+                <div className="my-2 border-t border-slate-200 dark:border-slate-800"></div>
+                <Link href="/profile" onClick={toggleMenu} className="block px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg font-medium text-sm transition-colors duration-150">
+                  My Profile
+                </Link>
+                <button onClick={handleLogOut} className="w-full text-left px-4 py-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg font-medium text-sm transition-colors duration-150">
+                  Sign Out
+                </button>
               </>
+            ) : (
+              <Button asChild className="w-full">
+                <Link href="/login">Login</Link>
+              </Button>
             )}
           </div>
         )}
