@@ -5,7 +5,8 @@ import {
   LayoutDashboard,
   ListChecks,
   NotebookText,
-  PlusSquare
+  PlusSquare,
+  UserPlus
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -87,6 +88,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       title: "Manage Courses",
       url: "/admin/manage-courses",
       icon: ListChecks
+    },
+    {
+      title: "Add Teacher",
+      url: "/admin/add-teacher",
+      icon: UserPlus
     }
   ]
   return (

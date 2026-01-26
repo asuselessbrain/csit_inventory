@@ -18,6 +18,8 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import ViewCourseDetails from './ViewCourseDetails'
 import { courseMoveToTrash, courseReActivate, getSingleCourse } from '@/services/courseService'
 import UpdateCourse from './UpdateCourse'
+import PaginationComponent from '@/components/shared/PaginationComponent'
+import CourseTableControls from './CourseTableControls'
 
 
 
@@ -71,10 +73,10 @@ export default function ManageCoursesTable({ courses }: ManageCoursesTableProps)
             toast.error(res?.errorMessage || "Failed to reactivate course", { id: courseDetails })
         }
     }
-
     return (
         <>
-            <div className="rounded-lg border bg-white shadow-sm">
+        <CourseTableControls />
+            <div className="rounded-lg border bg-white shadow-sm my-8">
                 <Table>
                     <TableHeader>
                         <TableRow className="border-b bg-gray-50 hover:bg-gray-50">
@@ -171,6 +173,10 @@ export default function ManageCoursesTable({ courses }: ManageCoursesTableProps)
                         )}
                     </TableBody>
                 </Table>
+            </div>
+
+            <div>
+                <PaginationComponent totalPage={courses?.meta?.totalPages} />
             </div>
         </>
     )

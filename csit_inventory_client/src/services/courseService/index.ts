@@ -20,9 +20,17 @@ export const createCourse = async (courseData: FieldValues) => {
     }
 }
 
-export const getCourses = async () => {
+export const getCourses = async (queryParams) => {
+
+    const params = new URLSearchParams()
+    Object.entries(queryParams).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+            params.append(key, String(value))
+        }
+    })
+
     try {
-        const res = await baseApi(`${process.env.NEXT_PUBLIC_BASE_API}/courses`, {
+        const res = await baseApi(`${process.env.NEXT_PUBLIC_BASE_API}/courses?${params.toString()}`, {
             next: {
                 tags: ['courses']
             }
