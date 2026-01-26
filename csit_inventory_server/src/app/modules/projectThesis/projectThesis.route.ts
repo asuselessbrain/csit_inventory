@@ -1,9 +1,11 @@
 import express from 'express';
 import { ProjectThesisController } from './projectThesis.controller';
+import auth from '../../middlewares/auth';
+import { UserRole } from '../../../../generated/prisma/enums';
 
 const router = express.Router();
 
-router.post('/', ProjectThesisController.createProjectThesisIntoDB)
+router.post('/', auth(UserRole.STUDENT), ProjectThesisController.createProjectThesisIntoDB)
 router.get('/', ProjectThesisController.getAllProjectThesesFromDB)
 router.get('/:id', ProjectThesisController.getSingleProjectThesisFromDB)
 router.get('/student/:studentId', ProjectThesisController.getSingleStudentProjectThesisFromDB)

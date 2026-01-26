@@ -2,6 +2,16 @@ import { Request, Response } from "express";
 import { catchAsync } from "../../../shared/catchAsync";
 import { sendResponse } from "../../../shared/responser";
 import { AuthService } from "./auth.service";
+import { config } from "../../../config";
+
+const cookieOptions = {
+    httpOnly: true,
+    secure: config.node_env === "production",
+    sameSite: "lax" as const,
+    path: "/",
+};
+
+const dayToMs = (days: number) => days * 24 * 60 * 60 * 1000;
 
 const login = catchAsync(async (req: Request, res: Response) => {
     const { email, password } = req.body;
@@ -14,17 +24,27 @@ const verifyOtp = catchAsync(async (req: Request, res: Response) => {
     const result = await AuthService.verifyOtp(email, otp);
     const { refreshToken, token } = result;
 
+    res.cookie("accessToken", token, {
+        ...cookieOptions,
+        maxAge: dayToMs(Number(config.jwt.token_expires_in?.split("s")[0])),
+    });
+
     res.cookie("refreshToken", refreshToken, {
-        secure: false,
-        httpOnly: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000,
+        ...cookieOptions,
+        maxAge: dayToMs(Number(config.jwt.refresh_token_expires_in?.split("d")[0])),
     })
-    sendResponse(res, 200, "OTP verified successfully", { token, refreshToken });
+    sendResponse(res, 200, "OTP verified successfully", null);
 });
 
 const generateNewToken = catchAsync(async (req: Request, res: Response) => {
     const { refreshToken } = req.body;
+    console.log(refreshToken)
     const result = await AuthService.generateNewToken(refreshToken);
+
+    res.cookie("accessToken", result, {
+        ...cookieOptions,
+        maxAge: dayToMs(Number(config.jwt.token_expires_in?.split("s")[0])),
+    });
 
     sendResponse(res, 200, "New token generated successfully", { data: result });
 });
@@ -35,9 +55,20 @@ const resendOtp = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, 200, "OTP resend Successfully", result)
 })
 
+const logout = catchAsync(async (req: Request, res: Response) => {
+
+    const result = await AuthService.logout();
+
+    res.clearCookie("refreshToken", cookieOptions);
+    res.clearCookie("accessToken", cookieOptions);
+
+    sendResponse(res, 200, "Logout successful", result);
+})
+
 export const AuthController = {
     login,
     verifyOtp,
     generateNewToken,
-    resendOtp
+    resendOtp,
+    logout
 };

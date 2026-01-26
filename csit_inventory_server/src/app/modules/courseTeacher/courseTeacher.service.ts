@@ -70,8 +70,19 @@ const updateCourseTeacherIntoDB = async (id: string, data: Partial<Prisma.Course
     return result;
 }
 
+const getSpecificCourseTeacher = async (courseId: string) => {
+    const courses = await prisma.courseTeacher.findMany({
+        where: {
+            courseId
+        },
+        include: { teacher: true }
+    })
+    return courses
+}
+
 export const CourseTeacherService = {
     createCourseTeacherIntoDB,
     getAllCourseTeachersFromDB,
-    updateCourseTeacherIntoDB
+    updateCourseTeacherIntoDB,
+    getSpecificCourseTeacher
 }

@@ -5,6 +5,7 @@ dotenv.config({path: path.join(process.cwd(), '.env')});
 
 
 export const config = {
+    node_env: process.env.NODE_ENV || 'development',
     port: process.env.PORT || 5000,
     salt_rounds: process.env.SALT_ROUNDS,
     email: process.env.EMAIL,

@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post('/create-student', UserController.createStudentIntoDB)
 router.post('/create-admin', auth(UserRole.ADMIN), UserController.createAdminIntoDB)
-router.post('/create-teacher', UserController.createTeacherIntoDB)
+router.post('/create-teacher',  UserController.createTeacherIntoDB)
 router.post('/verify-email', UserController.verifyEmail);
 
 export const UserRoutes = router;

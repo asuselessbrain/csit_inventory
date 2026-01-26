@@ -3,7 +3,7 @@ import { UserService } from "./user.service";
 import { catchAsync } from "../../../shared/catchAsync";
 import { sendResponse } from "../../../shared/responser";
 
-const createStudentIntoDB = catchAsync(async (req: Request, res: Response) => {
+const createStudentIntoDB = catchAsync(async (req: Request & { user?: any }, res: Response) => {
     const result = await UserService.createStudentIntoDB(req.body);
     sendResponse(res, 201, "Student created successfully", result)
 })
@@ -20,7 +20,7 @@ const createTeacherIntoDB = catchAsync(async (req: Request, res: Response) => {
 
 const verifyEmail = catchAsync(async (req: Request, res: Response) => {
     const { token, email } = req.body;
-    const result =await UserService.verifyEmailInDB(token as string, email as string);
+    const result = await UserService.verifyEmailInDB(token as string, email as string);
     sendResponse(res, 200, "Email verified successfully", result);
 })
 

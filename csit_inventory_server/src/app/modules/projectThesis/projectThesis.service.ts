@@ -1,11 +1,22 @@
 import { Prisma, ProjectThesisStatus, TaskStatus } from '../../../../generated/prisma/client';
 import { prisma } from '../../../lib/prisma';
+import AppError from '../../errors/appErrors';
 import { pagination } from './../../../shared/pagination';
 
-const createProjectThesisIntoDB = async (projectThesisInfo: any) => {
+const createProjectThesisIntoDB = async (email: string, projectThesisInfo: any) => {
+
+    const isStudentExist = await prisma.student.findUnique({
+        where: { email }
+    })
+
+    if (!isStudentExist) {
+        throw new AppError(404, "Student not found")
+    }
+
+
 
     const result = await prisma.projectThesis.create({
-        data: projectThesisInfo
+        data: { ...projectThesisInfo, studentId: isStudentExist.id }
     })
 
     return result
@@ -309,7 +320,7 @@ const getSingleSupervisorProjectThesisFromDB = async (supervisorId: string, quer
     })
 
     const total = await prisma.projectThesis.count({ where: { supervisorId, ...whereCondition } })
-    
+
     return {
         meta: {
             currentPage,

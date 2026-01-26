@@ -3,8 +3,9 @@ import { catchAsync } from "../../../shared/catchAsync";
 import { sendResponse } from "../../../shared/responser";
 import { ProjectThesisService } from "./projectThesis.service";
 
-const createProjectThesisIntoDB = catchAsync(async (req: Request, res: Response) => {
-    const result = await ProjectThesisService.createProjectThesisIntoDB(req.body);
+const createProjectThesisIntoDB = catchAsync(async (req: Request & { user?: any }, res: Response) => {
+    const user = req.user;
+    const result = await ProjectThesisService.createProjectThesisIntoDB(user.email, req.body);
     sendResponse(res, 201, "Project or Thesis created successfully", result)
 })
 
@@ -55,11 +56,11 @@ const getSingleStudentProjectThesisFromDB = catchAsync(async (req: Request, res:
     sendResponse(res, 200, "Student's Project or Thesis fetched successfully", result)
 })
 
-const getSingleSupervisorProjectThesisFromDB = catchAsync(async(req: Request, res: Response) => {
-    const {supervisorId} = req.params;
+const getSingleSupervisorProjectThesisFromDB = catchAsync(async (req: Request, res: Response) => {
+    const { supervisorId } = req.params;
     const result = await ProjectThesisService.getSingleSupervisorProjectThesisFromDB(supervisorId as string, req.query);
     sendResponse(res, 200, "Supervisor's Project or Thesis fetched successfully", result)
-})  
+})
 
 export const ProjectThesisController = {
     createProjectThesisIntoDB,

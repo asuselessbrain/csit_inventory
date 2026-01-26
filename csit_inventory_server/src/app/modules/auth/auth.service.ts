@@ -89,7 +89,10 @@ const verifyOtp = async (email: string, otp: string) => {
 }
 
 const generateNewToken = async (refreshToken: string) => {
+    console.log(refreshToken)
     const decoded = jwtVerifier({ token: refreshToken, secretKey: config.jwt.refresh_token_secret as Secret }) as JwtPayload;
+    
+    console.log(decoded)
 
     const user = await prisma.user.findUnique({ where: { email: decoded.email, userStatus: UserStatus.ACTIVE } });
 
@@ -127,18 +130,23 @@ const resendOtp = async (email: string) => {
     otpExpire.setMinutes(otpExpire.getMinutes() + 10);
 
     await prisma.user.update({
-        where: {id: user.id},
+        where: { id: user.id },
         data: {
             otp,
             otpExpiry: otpExpire
         }
     })
-    return {message: "OTP resent to your email"};
+    return { message: "OTP resent to your email" };
+}
+
+const logout = async () => {
+    return null
 }
 
 export const AuthService = {
     loginUser,
     verifyOtp,
     generateNewToken,
-    resendOtp
+    resendOtp,
+    logout
 }

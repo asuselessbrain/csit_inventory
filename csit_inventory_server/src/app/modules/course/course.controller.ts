@@ -4,7 +4,8 @@ import { CourseService } from "./course.service";
 import { sendResponse } from "../../../shared/responser";
 
 const createCourseIntoDB = catchAsync(async (req: Request, res: Response) => {
-    const result = await CourseService.createCourseIntoDB(req.body);
+    const { accessToken, ...courseData } = req.body
+    const result = await CourseService.createCourseIntoDB(courseData);
     sendResponse(res, 201, "Course created successfully", result);
 })
 

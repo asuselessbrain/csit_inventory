@@ -10,6 +10,8 @@ const auth = (...roles: string[]) => {
     return async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
         const token = req.headers.authorization;
 
+        console.log(token)
+
         if (!token) {
             throw new AppError(401, "invalid signature");
         }

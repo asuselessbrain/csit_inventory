@@ -10,7 +10,7 @@ const getAllTeacherFromDB = async (query: any) => {
     const searchFields = ['name', 'email'];
     let inputFilter: Prisma.TeacherWhereInput[] = []
 
-    if (searchTerm) {  
+    if (searchTerm) {
         searching(inputFilter, searchFields, searchTerm);
     }
 
@@ -35,6 +35,10 @@ const getAllTeacherFromDB = async (query: any) => {
     };
 }
 
+const getAllTeacherForAssignCourse = async () => {
+    const result = await prisma.teacher.findMany();
+    return result
+}
 const getSingleTeacherFromDB = async (id: string) => {
     const teacher = await prisma.teacher.findUniqueOrThrow({
         where: { id }
@@ -62,7 +66,7 @@ const deleteTeacherFromDB = async (id: string) => {
         where: { id }
     })
 
-    if(isTeacherExist.isDeleted){
+    if (isTeacherExist.isDeleted) {
         throw new Error('Teacher already deleted');
     }
 
@@ -70,12 +74,12 @@ const deleteTeacherFromDB = async (id: string) => {
         where: { email: isTeacherExist.email }
     })
 
-    if(isUserExist.userStatus === UserStatus.DELETED){
+    if (isUserExist.userStatus === UserStatus.DELETED) {
         throw new Error('User already deleted');
     }
 
     if (isTeacherExist) {
-       await prisma.$transaction(async (transactionClient) => {
+        await prisma.$transaction(async (transactionClient) => {
             await transactionClient.teacher.update({
                 where: { id: isTeacherExist.id },
                 data: { isDeleted: true }
@@ -92,5 +96,6 @@ export const TeacherService = {
     getAllTeacherFromDB,
     updateTeacherIntoDB,
     getSingleTeacherFromDB,
-    deleteTeacherFromDB
+    deleteTeacherFromDB,
+    getAllTeacherForAssignCourse
 }

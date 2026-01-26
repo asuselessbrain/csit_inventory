@@ -6,16 +6,25 @@ import { teacherRouter } from './app/modules/teacher/teacher.route';
 import { ProjectThesisRoutes } from './app/modules/projectThesis/projectThesis.route';
 import { AuthRoutes } from './app/modules/auth/auth.route';
 import { globalErrorHandler } from './app/errors/globalErrorHandler';
+import cors from "cors"
+import { CourseRoutes } from './app/modules/course/course.route';
+import { CourseTeacherRoutes } from './app/modules/courseTeacher/courseTeacher.route';
 
 const app: Application = express();
 
 
 app.use(express.json());
+app.use(cors({
+    origin: "http://localhost:3000",
+    credentials: true
+}))
 
 app.use('/api/v1/students', StudentRoutes);
 app.use('/api/v1/users', UserRoutes);
 app.use('/api/v1/admins', adminRouter);
 app.use('/api/v1/teachers', teacherRouter);
+app.use('/api/v1/courses', CourseRoutes);
+app.use('/api/v1/course-teachers', CourseTeacherRoutes)
 app.use('/api/v1/project-thesis', ProjectThesisRoutes);
 app.use('/api/v1/auth', AuthRoutes);
 

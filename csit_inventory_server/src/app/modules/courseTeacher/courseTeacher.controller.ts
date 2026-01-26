@@ -19,8 +19,15 @@ const updateCourseTeacherIntoDB = catchAsync(async (req: Request, res: Response)
     sendResponse(res, 200, "Course teacher updated successfully", result);
 })
 
+const getSpecificCourseTeacher = catchAsync(async (req: Request, res: Response) => {
+    const { courseId } = req.params
+    const result = await CourseTeacherService.getSpecificCourseTeacher(courseId as string);
+    sendResponse(res, 200, "Course teacher retrieved successfully", result);
+})
+
 export const CourseTeacherController = {
     createCourseTeacherIntoDB,
     getAllCourseTeachersFromDB,
-    updateCourseTeacherIntoDB
+    updateCourseTeacherIntoDB,
+    getSpecificCourseTeacher
 }
