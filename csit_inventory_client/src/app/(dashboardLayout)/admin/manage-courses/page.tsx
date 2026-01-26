@@ -30,7 +30,6 @@ export default async function ManageCoursePage({ searchParams }: {
   }
   const response = await getCourses(queryParams)
 
-  console.log(response)
   const courses = response?.data || []
   return (
     <div className="min-h-screen p-6">
