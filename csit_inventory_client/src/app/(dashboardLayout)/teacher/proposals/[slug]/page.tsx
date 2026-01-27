@@ -1,9 +1,6 @@
 import ProjectThesisAction from "@/components/modules/teacher/projectThesisAction/ProjectThesisAction";
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { approveProposal, getSingleProposal } from "@/services/proposalService"
-import { CheckCircle2, XCircle } from "lucide-react";
-import { toast } from "sonner";
+import { getSingleProposal } from "@/services/proposalService"
 
 const formatEnum = (value?: string) => {
     if (!value) return "";

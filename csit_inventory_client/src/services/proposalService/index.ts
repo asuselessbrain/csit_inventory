@@ -3,8 +3,6 @@
 import { revalidateTag } from "next/cache";
 import { baseApi } from "../baseApi/baseApi";
 import { FieldValues } from "react-hook-form";
-import { IProposal } from "@/types";
-
 const baseUrl = process.env.NEXT_PUBLIC_BASE_API;
 
 export const createProjectThesis = async (ProjectThesisData: FieldValues) => {

@@ -2,10 +2,9 @@ import { getSingleTeacherProposal } from "@/services/proposalService"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { CheckCircle2, XCircle, Eye } from "lucide-react"
+import { Eye } from "lucide-react"
 import { IProposal } from "@/types"
 import Link from "next/link"
-import ProjectThesisAcceptReject from "@/components/modules/teacher/projectThesisAction/ProjectThesisAcceptReject"
 import ProjectThesisAction from "@/components/modules/teacher/projectThesisAction/ProjectThesisAction"
 
 const getStatusColor = (status?: string) => {

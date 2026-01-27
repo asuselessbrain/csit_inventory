@@ -1,10 +1,12 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { approveProposal, completeProject, rejectProposal } from "@/services/proposalService";
 import { IProposal } from "@/types";
 import { CheckCheck, CheckCircle2, ClipboardList, Clock, XCircle } from "lucide-react";
 import { toast } from "sonner";
+import AssignTask from "../tasks/AssignTask";
 
 export default function ProjectThesisAction({ proposal }: { proposal: IProposal }) {
     const approve = async () => {
@@ -66,10 +68,16 @@ export default function ProjectThesisAction({ proposal }: { proposal: IProposal 
                     </div>
                 ) : proposal.status === "in_PROGRESS" ? (
                     <div className="flex items-center gap-3">
-                        <Button size="sm" className="gap-2">
-                            <ClipboardList className="h-4 w-4" />
-                            Assign Task
-                        </Button>
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button size="sm" className="gap-2">
+                                    <ClipboardList className="h-4 w-4" />
+                                    Assign Task
+                                </Button>
+                            </DialogTrigger>
+                            <AssignTask proposal={proposal} />
+                        </Dialog>
+
 
                         <Button onClick={markAsComplete} size="sm" variant="outline" className="gap-2">
                             <CheckCheck className="h-4 w-4" />
