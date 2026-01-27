@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { teacherSchema } from "./AddTeacherSchema";
 import { addTeacher } from "@/services/teacherService";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 function formatDate(date: Date | undefined) {
     if (!date) {
@@ -35,6 +36,8 @@ export default function AddTeacherForm() {
     })
 
     const { formState: { isSubmitting } } = form
+
+    const router = useRouter()
 
     const [open, setOpen] = useState(false)
     const [date, setDate] = useState<Date | undefined>(new Date("2026-06-01"))
@@ -61,6 +64,7 @@ export default function AddTeacherForm() {
         const res = await addTeacher(teacherData)
 
         if (res.success) {
+            router.push("/admin/manage-teachers")
             toast.success(res.message || "Teacher account created successfully")
         }
         if (!res.success) {

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Course } from "@/types";
+import { ICourse } from "@/types";
 import { courseSchema } from "../createCourse/CreateCourseSchema";
 import { toast } from "sonner";
 import { BookOpen, Code, Layers } from "lucide-react";
@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { updateCourse } from "@/services/courseService";
 import { useEffect } from "react";
 
-export default function UpdateCourse({ course }: { course: Course | null }) {
+export default function UpdateCourse({ course }: { course: ICourse | null }) {
 
     const form = useForm({
         resolver: zodResolver(courseSchema),

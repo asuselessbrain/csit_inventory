@@ -3,7 +3,7 @@ import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getCourses } from '@/services/courseService'
 import ManageCoursesTable from '@/components/modules/admin/manageCourses/ManageCoursesTable'
-import { Course } from '@/types'
+import { ICourse } from '@/types'
 
 export default async function ManageCoursePage({ searchParams }: {
   searchParams: Promise<{
@@ -61,13 +61,13 @@ export default async function ManageCoursePage({ searchParams }: {
           <div className="rounded-lg border bg-white p-4 shadow-sm">
             <p className="text-sm font-medium text-gray-600">Active Courses</p>
             <p className="mt-2 text-2xl font-bold text-emerald-600">
-              {courses?.data.filter((c: Course) => c.status === 'ACTIVE').length}
+              {courses?.data.filter((c: ICourse) => c.status === 'ACTIVE').length}
             </p>
           </div>
           <div className="rounded-lg border bg-white p-4 shadow-sm">
             <p className="text-sm font-medium text-gray-600">Total Credits</p>
             <p className="mt-2 text-2xl font-bold text-blue-600">
-              {courses?.data.reduce((sum: number, c: Course) => sum + (c.credits || 0), 0)}
+              {courses?.data.reduce((sum: number, c: ICourse) => sum + (c.credits || 0), 0)}
             </p>
           </div>
         </div>

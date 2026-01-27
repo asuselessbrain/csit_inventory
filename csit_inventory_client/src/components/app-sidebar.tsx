@@ -2,11 +2,13 @@
 
 import * as React from "react"
 import {
+  FileText,
   LayoutDashboard,
   ListChecks,
   NotebookText,
   PlusSquare,
-  UserPlus
+  UserPlus,
+  Users
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -93,6 +95,39 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       title: "Add Teacher",
       url: "/admin/add-teacher",
       icon: UserPlus
+    },
+    {
+      title: "Manage Teachers",
+      url: "/admin/manage-teachers",
+      icon: Users
+    }
+  ]
+
+  const navTeacher = [
+    {
+      title: "Overview",
+      url: "/teacher",
+      icon: LayoutDashboard
+    },
+    {
+      title: "Proposals",
+      url: "/teacher/proposals",
+      icon: FileText
+    },
+    {
+      title: "Manage Courses",
+      url: "/admin/manage-courses",
+      icon: ListChecks
+    },
+    {
+      title: "Add Teacher",
+      url: "/admin/add-teacher",
+      icon: UserPlus
+    },
+    {
+      title: "Manage Teachers",
+      url: "/admin/manage-teachers",
+      icon: Users
     }
   ]
   return (
@@ -101,7 +136,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={user?.user?.role === "ADMIN" ? navAdmin : navStudent} />
+        <NavMain items={user?.user?.role === "ADMIN" ? navAdmin : user?.user?.role === "TEACHER" ? navTeacher : navStudent} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

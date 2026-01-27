@@ -1,13 +1,20 @@
 "use client"
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { Controller, FieldValues, useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { Controller, FieldValues, useForm, useWatch } from "react-hook-form";
 import { proposalSchema } from "./SubmitProposalSchema";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import FileUploader from "@/components/shared/FileUploder";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getCourseForProjectThesis } from "@/services/courseService";
+import { ICourse } from "@/types";
+import { getAssignedCourseTeacher } from "@/services/courseTeacherService";
+import { createProjectThesis } from "@/services/proposalService";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function SubmitProposalForm() {
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
@@ -17,22 +24,70 @@ export default function SubmitProposalForm() {
         resolver: zodResolver(proposalSchema)
     });
 
-    const { formState: { isSubmitting } } = form
+    const { formState: { isSubmitting }, control } = form
+
+    const selectedCourse = useWatch({ control, name: "courseId" })
+
+    const [courses, setCourses] = useState([])
+    const [supervisors, setSupervisors] = useState([])
+    const router = useRouter()
+
+    useEffect(() => {
+        const fetchCourses = async () => {
+            const res = await getCourseForProjectThesis()
+
+            setCourses(res?.data)
+        }
+        fetchCourses()
+    }, [])
+
+    useEffect(() => {
+        const fetchTeachers = async () => {
+            if (selectedCourse) {
+                const res = await getAssignedCourseTeacher(selectedCourse)
+                setSupervisors(res?.data)
+            }
+        }
+        fetchTeachers()
+    }, [selectedCourse])
 
     const onSubmit = async (data: FieldValues) => {
-        console.log(data)
-        // try {
-        //     // Simulate API call
-        //     await new Promise((resolve) => setTimeout(resolve, 2000));
-        //     console.log('Form submitted:', data, 'Files:', uploadedFiles);
-        //     reset();
-        //     setUploadedFiles([]);
-        // } catch (error) {
-        //     console.error('Submission failed:', error);
-        // }
-    };
 
-    
+        const attachments: string[] = [];
+
+        if (uploadedFiles.length) {
+            for (const file of uploadedFiles) {
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("upload_preset", "my_preset");
+                formData.append("resource_type", "auto");
+
+                const res = await fetch(
+                    'https://api.cloudinary.com/v1_1/dwduymu1l/auto/upload',
+                    { method: "POST", body: formData }
+                );
+
+                const data = await res.json();
+                attachments.push(data.secure_url);
+            }
+        }
+
+        data.attachments = attachments
+
+        data.technologiesTools = data.technologiesTools.split(",")
+        const toastId = "projectThesis";
+
+        const res = await createProjectThesis(data)
+
+        if (res.success) {
+            toast.success(res.message, { id: toastId });
+            router.push(`/student/my-proposals`)
+        }
+
+        if (!res.success) {
+            toast.error(res.errorMessage || "Login Failed Due to Unknown Error", { id: toastId })
+        }
+    };
     return (
         <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 sm:p-8 space-y-6">
             {/* Project Title */}
@@ -164,28 +219,111 @@ export default function SubmitProposalForm() {
                     </Field>
                 )}
             />
-            {/* Estimated Timeline */}
-            <Controller
-                name="estimatedTimeline"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel htmlFor={field.name}>
-                            Estimated Timeline <span className="text-red-500">*</span></FieldLabel>
-                        <Input
-                            type="text"
-                            {...field}
-                            id={field.name}
-                            aria-invalid={fieldState.invalid}
-                            placeholder="e.g., 6 months, 1 semester, etc."
-                            value={field.value || ""}
-                            autoComplete="off"
-                        />
-                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                    </Field>
-                )}
-            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Estimated Timeline */}
+                <Controller
+                    name="estimatedTimeline"
+                    control={form.control}
+                    render={({ field, fieldState }) => (
+                        <Field data-invalid={fieldState.invalid}>
+                            <FieldLabel htmlFor={field.name}>
+                                Estimated Timeline <span className="text-red-500">*</span></FieldLabel>
+                            <Input
+                                type="text"
+                                {...field}
+                                id={field.name}
+                                aria-invalid={fieldState.invalid}
+                                placeholder="e.g., 6 months, 1 semester, etc."
+                                value={field.value || ""}
+                                autoComplete="off"
+                            />
+                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                        </Field>
+                    )}
+                />
+                {/* types */}
+                <Controller
+                    name="type"
+                    control={form.control}
+                    render={({ field, fieldState }) => (
+                        <Field data-invalid={fieldState.invalid}>
+                            <FieldLabel htmlFor={field.name}>Type <span className="text-red-500">*</span></FieldLabel>
+                            <Select onValueChange={field.onChange} value={field.value || ""}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {["PROJECT", "THESIS"].map((p: string) => (
+                                        <SelectItem key={p} value={p}>
+                                            {`${p}`}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                        </Field>
+                    )}
+                />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Course */}
+                <Controller
+                    name="courseId"
+                    control={form.control}
+                    render={({ field, fieldState }) => (
+                        <Field data-invalid={fieldState.invalid}>
+                            <FieldLabel htmlFor={field.name}>Course <span className="text-red-500">*</span></FieldLabel>
+                            <Select onValueChange={field.onChange} value={field.value || ""}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Course" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {courses.map((course: ICourse) => (
+                                        <SelectItem key={course.id} value={course.id}>
+                                            {`${course.courseCode} - ${course.courseName}`}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                        </Field>
+                    )}
+                />
+                {/* supervisor */}
+                <Controller
+                    name="supervisorId"
+                    control={form.control}
+                    render={({ field, fieldState }) => (
+                        <Field data-invalid={fieldState.invalid}>
+                            <FieldLabel htmlFor={field.name}>Supervisor <span className="text-red-500">*</span></FieldLabel>
+                            <Select
+                                onValueChange={field.onChange}
+                                value={field.value || ""}
+                                disabled={!selectedCourse || supervisors.length === 0} // disable if no course or no supervisor
+                            >
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select Supervisor" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {supervisors.length > 0 ? (
+                                        supervisors.map((supervisor: { teacherId: string; teacher: { name: string } }) => (
+                                            <SelectItem key={supervisor.teacherId} value={supervisor.teacherId}>
+                                                {supervisor.teacher.name}
+                                            </SelectItem>
+                                        ))
+                                    ) : (
+                                        <SelectItem value="none" disabled>
+                                            No Supervisor Found
+                                        </SelectItem>
+                                    )}
+                                </SelectContent>
+                            </Select>
+                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                        </Field>
+                    )}
+                />
 
+            </div>
             {/* Attachments */}
             <FileUploader uploadedFiles={uploadedFiles} setUploadedFiles={setUploadedFiles} uploadError={uploadError} setUploadError={setUploadError} />
             {/* Form Actions */}
@@ -193,7 +331,7 @@ export default function SubmitProposalForm() {
                 <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-1 bg-linear-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700"
+                    className="flex-1 cursor-pointer disabled:cursor-no-drop"
                 >
                     {isSubmitting ? (
                         <>
@@ -208,6 +346,6 @@ export default function SubmitProposalForm() {
                     )}
                 </Button>
             </div>
-        </form>
+        </form >
     )
 }

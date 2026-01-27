@@ -1,12 +1,12 @@
 'use client'
 
 import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Course } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Code, Layers, Calendar } from "lucide-react";
 import { format } from 'date-fns';
+import { ICourse } from "@/types";
 
-export default function ViewCourseDetails({ course }: { course: Course | null }) {
+export default function ViewCourseDetails({ course }: { course: ICourse | null }) {
     if (!course) return null;
 
     const getStatusColor = (status: string) => {

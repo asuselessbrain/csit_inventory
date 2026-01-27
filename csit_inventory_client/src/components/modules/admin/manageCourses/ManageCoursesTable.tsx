@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Trash2, Eye, Edit, Undo } from 'lucide-react'
+import { Trash2, Eye, Edit, Undo, UserPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
     Table,
@@ -13,25 +13,26 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
-import { Course, Meta } from '@/types'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import ViewCourseDetails from './ViewCourseDetails'
 import { courseMoveToTrash, courseReActivate, getSingleCourse } from '@/services/courseService'
 import UpdateCourse from './UpdateCourse'
 import PaginationComponent from '@/components/shared/PaginationComponent'
 import CourseTableControls from './CourseTableControls'
+import AssignCourseTeacher from './AssignCourseTeacher'
+import { ICourse, Meta } from '@/types'
 
 
 
 interface ManageCoursesTableProps {
     courses: {
         meta: Meta,
-        data: Course[]
+        data: ICourse[]
     }
 }
 
 export default function ManageCoursesTable({ courses }: ManageCoursesTableProps) {
-    const [singleCourse, setSingleCourse] = useState<Course | null>(null)
+    const [singleCourse, setSingleCourse] = useState<ICourse | null>(null)
 
     const courseDetails = "courseDetails"
 
@@ -75,7 +76,7 @@ export default function ManageCoursesTable({ courses }: ManageCoursesTableProps)
     }
     return (
         <>
-        <CourseTableControls />
+            <CourseTableControls />
             <div className="rounded-lg border bg-white shadow-sm my-8">
                 <Table>
                     <TableHeader>
@@ -157,6 +158,20 @@ export default function ManageCoursesTable({ courses }: ManageCoursesTableProps)
                                                     <Undo className="h-4 w-4" />
                                                 </Button>
                                             }
+                                            <Dialog>
+                                                <DialogTrigger asChild>
+                                                    <Button
+                                                        onClick={() => viewCourseDetails(course.id)}
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-green-600 hover:bg-green-50 hover:text-green-700"
+                                                        title="Assign Course Teacher"
+                                                    >
+                                                        <UserPlus className="h-4 w-4" />
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <AssignCourseTeacher course={singleCourse} />
+                                            </Dialog>
                                         </div>
                                     </TableCell>
                                 </TableRow>

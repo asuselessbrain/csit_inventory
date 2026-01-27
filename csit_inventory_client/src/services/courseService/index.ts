@@ -113,3 +113,17 @@ export const courseReActivate = async (courseId: string) => {
     }
 
 }
+
+export const getCourseForProjectThesis = async () => {
+    try {
+        const res = await baseApi(`${process.env.NEXT_PUBLIC_BASE_API}/courses/active-courses`, {
+            next: {
+                tags: ['courses']
+            }
+
+        })
+        return res
+    } catch (error) {
+        throw error
+    }
+}

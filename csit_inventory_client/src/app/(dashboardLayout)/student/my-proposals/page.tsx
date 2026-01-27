@@ -1,5 +1,91 @@
-export default function MyProposalsPage() {
+import { getSingleStudentProposal } from "@/services/proposalService"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { AlertCircle } from "lucide-react"
+import Link from "next/link"
+import { IProposal } from "@/types"
+
+
+export default async function MyProposalsPage() {
+
+  const response = await getSingleStudentProposal()
+  const proposals = response?.data?.data || []
+
+  console.log(proposals)
+
+  if (!proposals || proposals.length === 0) {
+    return (
+      <div className="min-h-screen bg-muted/40">
+        <div className="max-w-4xl mx-auto px-6 py-8">
+          <div className="space-y-4">
+            <h1 className="text-2xl font-semibold">My Proposals</h1>
+            <Alert variant="default">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                No proposals found. <Link href="/student/submit-proposal"><Button variant="link" className="px-0">Submit your first proposal</Button></Link>
+              </AlertDescription>
+            </Alert>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div>MyProposalsPage</div>
+    <div className="min-h-screen">
+      <div className="max-w-360 mx-auto px-6 py-8 space-y-4">
+
+        {/* Header */}
+        <h1 className="text-2xl font-semibold">My Proposals</h1>
+
+        {/* Proposals List */}
+        <div className="space-y-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {proposals.map((proposal: IProposal) => (
+            <Card key={proposal.id} className="border">
+
+              <CardContent className="pt-6">
+                <div className="space-y-3">
+
+                  {/* Title with Badge */}
+                  <div className="flex items-start justify-between gap-3">
+                    <h2 className="text-base font-semibold leading-tight flex-1">{proposal.projectTitle}</h2>
+                    <Badge variant="secondary" className="whitespace-nowrap">
+                      {proposal.type || "PROJECT"}
+                    </Badge>
+                  </div>
+
+                  {/* Info Lines */}
+                  <div className="space-y-1 text-sm text-muted-foreground">
+                    {proposal.courseId && (
+                      <>
+                        <p><span className="font-medium text-foreground">Course Code:</span> {proposal.course.courseCode}</p>
+                        <p><span className="font-medium text-foreground">Course Title:</span> {proposal.course.courseName}</p>
+                      </>
+                    )}
+                    {proposal.supervisorId && (
+                      <p><span className="font-medium text-foreground">Supervisor:</span> {proposal.supervisor.name}</p>
+                    )}
+                    {proposal.createdAt && (
+                      <p><span className="font-medium text-foreground">Submitted:</span> {new Date(proposal.createdAt).toLocaleDateString()}</p>
+                    )}
+                    {proposal.updatedAt && (
+                      <p><span className="font-medium text-foreground">Updated:</span> {new Date(proposal.updatedAt).toLocaleDateString()}</p>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+
+              {/* Action Buttons */}
+              <CardFooter className="flex gap-2">
+                <Link href={`/student/my-proposals/${proposal?.id}`}><Button size="sm">View Full Details</Button></Link>
+                <Button size="sm" variant="outline">Download Proposal</Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
   )
 }
