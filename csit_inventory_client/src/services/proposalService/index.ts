@@ -134,3 +134,18 @@ export const updateProposal = async (id: string, data: FieldValues) => {
         throw error
     }
 }
+
+export const completeProject = async (id: string) => {
+    try {
+        const res = await baseApi(`${baseUrl}/project-thesis/complete-project-thesis/${id}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+        revalidateTag("project", "max");
+        return res
+    } catch (error) {
+        throw error
+    }
+}

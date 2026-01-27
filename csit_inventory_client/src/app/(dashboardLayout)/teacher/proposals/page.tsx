@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { CheckCircle2, XCircle, Eye } from "lucide-react"
 import { IProposal } from "@/types"
 import Link from "next/link"
+import ProjectThesisAcceptReject from "@/components/modules/teacher/projectThesisAction/ProjectThesisAcceptReject"
+import ProjectThesisAction from "@/components/modules/teacher/projectThesisAction/ProjectThesisAction"
 
 const getStatusColor = (status?: string) => {
     switch (status) {
@@ -118,21 +120,7 @@ export default async function ProposalsPage() {
 
                                         {/* Action Buttons */}
                                         <div className="flex gap-2 flex-wrap">
-                                            <Button
-                                                size="sm"
-                                                className="gap-2"
-                                            >
-                                                <CheckCircle2 className="h-4 w-4" />
-                                                Approve & Assign Tasks
-                                            </Button>
-                                            <Button
-                                                size="sm"
-                                                variant="destructive"
-                                                className="gap-2"
-                                            >
-                                                <XCircle className="h-4 w-4" />
-                                                Reject
-                                            </Button>
+                                            <ProjectThesisAction proposal={proposal} />
                                             <Link href={`/teacher/proposals/${proposal?.id}`}>
                                                 <Button
                                                     size="sm"

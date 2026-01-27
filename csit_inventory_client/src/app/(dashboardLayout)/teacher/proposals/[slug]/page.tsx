@@ -155,7 +155,10 @@ export default async function ViewDetailsPage({ params }: { params: Promise<{ sl
                 </section>
 
                 {/* Actions */}
-                <ProjectThesisAction proposal={proposal} />
+                <section className="border rounded-md p-4 space-y-2">
+                    <h2 className="text-lg font-medium">Actions</h2>
+                    <ProjectThesisAction proposal={proposal} />
+                </section>
             </div>
         </div>
 
