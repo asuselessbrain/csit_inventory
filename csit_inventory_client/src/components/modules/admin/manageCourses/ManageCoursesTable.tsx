@@ -18,9 +18,9 @@ import ViewCourseDetails from './ViewCourseDetails'
 import { courseMoveToTrash, courseReActivate, getSingleCourse } from '@/services/courseService'
 import UpdateCourse from './UpdateCourse'
 import PaginationComponent from '@/components/shared/PaginationComponent'
-import CourseTableControls from './CourseTableControls'
 import AssignCourseTeacher from './AssignCourseTeacher'
 import { ICourse, Meta } from '@/types'
+import ReusableSearch from '@/components/shared/ReusableSearch'
 
 
 
@@ -76,7 +76,9 @@ export default function ManageCoursesTable({ courses }: ManageCoursesTableProps)
     }
     return (
         <>
-            <CourseTableControls />
+            <div>
+                <ReusableSearch placeholder="Search courses..." />
+            </div>
             <div className="rounded-lg border bg-white shadow-sm my-8">
                 <Table>
                     <TableHeader>
