@@ -126,3 +126,33 @@ export const getAllTaskForStudent = async (queryParams: QueryParams) => {
     throw error;
   }
 };
+
+export const getAllTaskForTeacherReview = async (queryParams: QueryParams) => {
+  const params = new URLSearchParams();
+
+  if (queryParams) {
+    Object.entries(queryParams).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        params.append(key, String(value));
+      }
+    });
+  }
+
+  try {
+    const res = await baseApi(
+      `${baseUrl}/tasks/teacher-review-tasks?${params.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        next: {
+          tags: ["project"],
+        },
+      },
+    );
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};

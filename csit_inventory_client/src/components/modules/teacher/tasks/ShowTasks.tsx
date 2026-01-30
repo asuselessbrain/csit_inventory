@@ -115,7 +115,6 @@ export default function ShowTasks({ proposal }: { proposal: IProposal }) {
                             </CardHeader>
 
                             <CardContent className="space-y-4">
-                                {/* Due Date */}
                                 <div className="flex items-center gap-2 text-sm">
                                     <Calendar className="w-4 h-4 text-muted-foreground" />
                                     <span className="text-muted-foreground">Due:</span>
@@ -127,7 +126,6 @@ export default function ShowTasks({ proposal }: { proposal: IProposal }) {
                                     )}
                                 </div>
 
-                                {/* Requirements */}
                                 {task.requirements && task.requirements.length > 0 && (
                                     <div className="space-y-2">
                                         <div className="flex items-center gap-2 text-sm font-medium">
@@ -145,7 +143,6 @@ export default function ShowTasks({ proposal }: { proposal: IProposal }) {
                                     </div>
                                 )}
 
-                                {/* Reference Materials */}
                                 {task.referenceMaterials && task.referenceMaterials.length > 0 && (
                                     <div className="space-y-2">
                                         <div className="flex items-center gap-2 text-sm font-medium">
@@ -171,19 +168,16 @@ export default function ShowTasks({ proposal }: { proposal: IProposal }) {
                                     </div>
                                 )}
 
-                                {/* Update Logs */}
                                 {task.projectThesisUpdateLogs && task.projectThesisUpdateLogs.length > 0 && (
                                     <TaskUpdateLogs logs={task.projectThesisUpdateLogs} taskId={task.id} />
                                 )}
 
-                                {/* Review Actions */}
                                 {task.status === "REVIEW" && (
                                     <div className="pt-4 border-t border-slate-200 dark:border-slate-700 space-y-3">
                                         <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
                                             Review submission from student
                                         </p>
                                         <div className="flex gap-2">
-                                            {/* Approve the task */}
                                             <Button
                                                 onClick={() => completeTask(task.id)}
                                                 className="flex-1"
@@ -192,7 +186,6 @@ export default function ShowTasks({ proposal }: { proposal: IProposal }) {
                                                 Mark as Done
                                             </Button>
 
-                                            {/* Reject the task */}
                                             <Button
                                                 onClick={() => rejectTask(task.id)}
                                                 variant="outline"

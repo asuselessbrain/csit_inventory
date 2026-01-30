@@ -232,6 +232,14 @@ const getTaskForTeacherReview = async (email: string, query: any) => {
     skip: skipValue,
     take: takeValue,
     orderBy: { [sortByField]: sortOrderValue },
+    include: {
+        projectThesis: {
+            include: {
+                course: true,
+                student: true
+            }
+        }
+    }
   });
 
   const total = await prisma.task.count({ where: whereCondition });

@@ -2,8 +2,8 @@ import { ITask } from "@/types/task.type";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Clock, Eye, Loader2, XCircle } from "lucide-react";
-import { format } from "date-fns";
 import Link from "next/link";
+import { formatDate } from "@/components/shared/ReusableFunction";
 
 interface TaskCardProps {
   task: ITask;
@@ -65,13 +65,7 @@ const getStatusText = (status: string) => {
   }
 };
 
-const formatDate = (dateString: string) => {
-  try {
-    return format(new Date(dateString), "yyyy-MM-dd");
-  } catch {
-    return dateString;
-  }
-};
+
 
 export default function TaskCard({ task }: TaskCardProps) {
   console.log(task);
