@@ -11,6 +11,7 @@ class CustomError extends Error {
 }
 
 export const globalErrorHandler = (error: CustomError, req: Request, res: Response, next: NextFunction) => {
+    console.log(error)
     res.status(error.statusCode || 500).json({
         success: false,
         statusCode: error.statusCode || 500,

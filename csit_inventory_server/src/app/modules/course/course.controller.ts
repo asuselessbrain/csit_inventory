@@ -46,6 +46,15 @@ const getSingleCourseFromDB = catchAsync(async (req: Request, res: Response) => 
     );
 })
 
+const getAllCourseForProjectThesis = catchAsync(async (req: Request, res: Response) => {
+    const result = await CourseService.getAllCourseForProjectThesis();
+    sendResponse(res,
+        200,
+        "Course retrieved successfully",
+        result
+    );
+})
+
 
 export const CourseController = {
     createCourseIntoDB,
@@ -53,5 +62,6 @@ export const CourseController = {
     updateCoursesIntoDB,
     courseSetInTrashInDB,
     reActivateCourseInDB,
-    getSingleCourseFromDB
+    getSingleCourseFromDB,
+    getAllCourseForProjectThesis
 }

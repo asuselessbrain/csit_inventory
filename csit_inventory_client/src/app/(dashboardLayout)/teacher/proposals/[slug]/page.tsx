@@ -1,4 +1,5 @@
 import ProjectThesisAction from "@/components/modules/teacher/projectThesisAction/ProjectThesisAction";
+import ShowTasks from "@/components/modules/teacher/tasks/ShowTasks";
 import { Badge } from "@/components/ui/badge"
 import { getSingleProposal } from "@/services/proposalService"
 
@@ -15,6 +16,7 @@ export default async function ViewDetailsPage({ params }: { params: Promise<{ sl
     const { slug } = await params
 
     const { data: proposal } = await getSingleProposal(slug)
+    console.log(proposal)
     const formattedAbstract = proposal.abstract
         .replace(/\[bold\]/g, "<strong>")
         .replace(/\[\/bold\]/g, "</strong>")
@@ -22,10 +24,11 @@ export default async function ViewDetailsPage({ params }: { params: Promise<{ sl
         .replace(/\n/g, "<br/>");
 
     return (
-        <div className="w-full max-w-screen-2xl mx-auto min-h-screen grid grid-cols-1 lg:grid-cols-3">
+        <div className="w-full max-w-screen-2xl mx-auto min-h-screen space-y-6">
 
             {/* MAIN CONTENT */}
-            <div className="space-y-6 p-8 lg:col-span-2">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="space-y-6 p-8 lg:col-span-2">
 
                 {/* Header */}
                 <div className="border rounded-md p-4 space-y-2">
@@ -120,10 +123,10 @@ export default async function ViewDetailsPage({ params }: { params: Promise<{ sl
                         ))}
                     </div>
                 </section>
-            </div>
+                </div>
 
-            {/* SIDEBAR */}
-            <div className="space-y-6 p-8">
+                {/* SIDEBAR */}
+                <div className="space-y-6 p-8">
 
                 {/* People */}
                 <section className="border rounded-md p-4 space-y-4">
@@ -156,6 +159,12 @@ export default async function ViewDetailsPage({ params }: { params: Promise<{ sl
                     <h2 className="text-lg font-medium">Actions</h2>
                     <ProjectThesisAction proposal={proposal} />
                 </section>
+                </div>
+            </div>
+
+            {/* FULL WIDTH TASKS SECTION */}
+            <div className="p-8">
+                <ShowTasks proposal={proposal} />
             </div>
         </div>
 

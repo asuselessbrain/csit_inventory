@@ -7,6 +7,7 @@ const router = express.Router()
 
 router.post("/", auth(UserRole.ADMIN), CourseController.createCourseIntoDB);
 router.get("/", CourseController.getAllCoursesFromDB);
+router.get("/active-courses", CourseController.getAllCourseForProjectThesis)
 router.get("/:id", CourseController.getSingleCourseFromDB);
 router.patch("/:id", auth(UserRole.ADMIN), CourseController.updateCoursesIntoDB);
 router.patch("/trash/:id", auth(UserRole.ADMIN), CourseController.courseSetInTrashInDB);

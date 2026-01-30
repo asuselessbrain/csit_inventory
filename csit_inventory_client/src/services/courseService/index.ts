@@ -3,6 +3,7 @@
 import { FieldValues } from "react-hook-form"
 import { baseApi } from "../baseApi/baseApi"
 import { revalidateTag } from "next/cache"
+import { QueryParams } from "@/types"
 
 export const createCourse = async (courseData: FieldValues) => {
     try {
@@ -18,15 +19,6 @@ export const createCourse = async (courseData: FieldValues) => {
     } catch (error) {
         throw error
     }
-}
-
-interface QueryParams {
-    skip: number;
-    searchTerm: string | undefined;
-    status: string | undefined;
-    sortBy: string | undefined;
-    sortOrder: "asc" | "desc" | undefined;
-    take: number;
 }
 
 export const getCourses = async (queryParams?: QueryParams) => {

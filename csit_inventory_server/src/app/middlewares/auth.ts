@@ -10,8 +10,6 @@ const auth = (...roles: string[]) => {
     return async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
         const token = req.headers.authorization;
 
-        console.log(token)
-
         if (!token) {
             throw new AppError(401, "invalid signature");
         }
@@ -23,9 +21,16 @@ const auth = (...roles: string[]) => {
         try {
             decoded = jwtVerifier({ token: bearerToken as string, secretKey: config.jwt.token_secret as Secret }) as JwtPayload;
         }
-        catch (err) {
-            next(err);
-            return;
+        catch (err: any) {
+            if (err.name === "TokenExpiredError") {
+                throw new AppError(401, "Access token expired");
+            }
+
+            if (err.name === "JsonWebTokenError") {
+                throw new AppError(401, "Invalid token");
+            }
+
+            throw new AppError(401, "Unauthorized");
         }
 
         const user = await prisma.user.findUnique({

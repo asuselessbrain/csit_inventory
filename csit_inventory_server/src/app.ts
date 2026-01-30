@@ -9,6 +9,7 @@ import { globalErrorHandler } from './app/errors/globalErrorHandler';
 import cors from "cors"
 import { CourseRoutes } from './app/modules/course/course.route';
 import { CourseTeacherRoutes } from './app/modules/courseTeacher/courseTeacher.route';
+import { TaskRoutes } from './app/modules/task/task.route';
 
 const app: Application = express();
 
@@ -26,6 +27,7 @@ app.use('/api/v1/teachers', teacherRouter);
 app.use('/api/v1/courses', CourseRoutes);
 app.use('/api/v1/course-teachers', CourseTeacherRoutes)
 app.use('/api/v1/project-thesis', ProjectThesisRoutes);
+app.use('/api/v1/tasks', TaskRoutes);
 app.use('/api/v1/auth', AuthRoutes);
 
 app.get("/", (req: Request, res: Response) => {

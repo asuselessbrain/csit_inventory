@@ -1,4 +1,5 @@
 import { ICourse } from "./course.type"
+import { ITask } from "./task.type"
 import { ITeacher } from "./teacher.type"
 
 export interface IProposal {
@@ -21,6 +22,7 @@ export interface IProposal {
     name: string
     studentId: string
   }
+  tasks: ITask[]
   createdAt?: string
   updatedAt?: string
 }

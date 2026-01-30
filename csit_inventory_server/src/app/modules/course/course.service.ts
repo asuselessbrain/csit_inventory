@@ -1,4 +1,4 @@
-import { Prisma } from "../../../../generated/prisma/client"
+import { CourseStatus, Prisma } from "../../../../generated/prisma/client"
 import { prisma } from "../../../lib/prisma"
 import { filtering } from "../../../shared/filtering"
 import { pagination } from "../../../shared/pagination"
@@ -92,11 +92,21 @@ const getSingleCourseFromDB = async (id: string) => {
     return result
 }
 
+const getAllCourseForProjectThesis = async () => {
+    const result = await prisma.courses.findMany({
+        where: {
+            status: CourseStatus.ACTIVE
+        }
+    })
+    return result
+}
+
 export const CourseService = {
     createCourseIntoDB,
     getAllCoursesFromDB,
     updateCoursesIntoDB,
     courseSetInTrashInDB,
     reActivateCourseInDB,
-    getSingleCourseFromDB
+    getSingleCourseFromDB,
+    getAllCourseForProjectThesis
 }

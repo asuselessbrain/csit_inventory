@@ -9,10 +9,10 @@ const createProjectThesisIntoDB = catchAsync(async (req: Request & { user?: any 
     sendResponse(res, 201, "Project or Thesis created successfully", result)
 })
 
-const getAllProjectThesesFromDB = catchAsync(async (req: Request, res: Response) => {
-    const result = await ProjectThesisService.getAllProjectThesesFromDB(req.query);
-    sendResponse(res, 200, "Project and Thesis fetched successfully", result)
-})
+// const getAllProjectThesesFromDB = catchAsync(async (req: Request, res: Response) => {
+//     const result = await ProjectThesisService.getAllProjectThesesFromDB(req.query);
+//     sendResponse(res, 200, "Project and Thesis fetched successfully", result)
+// })
 
 const getSingleProjectThesisFromDB = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -41,7 +41,7 @@ const rejectProjectThesis = catchAsync(async (req: Request, res: Response) => {
 const startProjectThesisInDB = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
     const result = await ProjectThesisService.startProjectThesisInDB(id as string);
-    sendResponse(res, 200, "Project or Thesis started successfully", result)
+    sendResponse(res, 200, "Your request to assign the task has been sent successfully.", result)
 })
 
 const completeProjectThesisInDB = catchAsync(async (req: Request, res: Response) => {
@@ -50,21 +50,21 @@ const completeProjectThesisInDB = catchAsync(async (req: Request, res: Response)
     sendResponse(res, 200, "Project or Thesis completed successfully", result)
 })
 
-const getSingleStudentProjectThesisFromDB = catchAsync(async (req: Request, res: Response) => {
-    const { studentId } = req.params;
-    const result = await ProjectThesisService.getSingleStudentProjectThesisFromDB(studentId as string, req.query);
+const getSingleStudentProjectThesisFromDB = catchAsync(async (req: Request & { user?: any }, res: Response) => {
+    const user = req.user;
+    const result = await ProjectThesisService.getSingleStudentProjectThesisFromDB(user.email as string, req.query);
     sendResponse(res, 200, "Student's Project or Thesis fetched successfully", result)
 })
 
-const getSingleSupervisorProjectThesisFromDB = catchAsync(async (req: Request, res: Response) => {
-    const { supervisorId } = req.params;
-    const result = await ProjectThesisService.getSingleSupervisorProjectThesisFromDB(supervisorId as string, req.query);
+const getSingleSupervisorProjectThesisFromDB = catchAsync(async (req: Request & { user?: any }, res: Response) => {
+    const user = req.user
+    const result = await ProjectThesisService.getSingleSupervisorProjectThesisFromDB(user.email as string, req.query);
     sendResponse(res, 200, "Supervisor's Project or Thesis fetched successfully", result)
 })
 
 export const ProjectThesisController = {
     createProjectThesisIntoDB,
-    getAllProjectThesesFromDB,
+    // getAllProjectThesesFromDB,
     getSingleProjectThesisFromDB,
     getSingleStudentProjectThesisFromDB,
     getSingleSupervisorProjectThesisFromDB,

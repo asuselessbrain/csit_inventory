@@ -89,7 +89,7 @@ const verifyOtp = async (email: string, otp: string) => {
 }
 
 const generateNewToken = async (refreshToken: string) => {
-    console.log(refreshToken)
+    console.log("refresh token",refreshToken)
     const decoded = jwtVerifier({ token: refreshToken, secretKey: config.jwt.refresh_token_secret as Secret }) as JwtPayload;
     
     console.log(decoded)

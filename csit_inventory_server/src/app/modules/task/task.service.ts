@@ -44,7 +44,7 @@ const updateStatusToInProgressInDB = async (id: string) => {
     return result
 }
 
-const updateStatusToReviewInDB = async (id: string) => {
+const updateStatusToReviewInDB = async (id: string, updateData: any) => {
     const isTaskExist = await prisma.task.findUniqueOrThrow({ where: { id } })
     if (!isTaskExist) {
         throw new Error("Task not found")
@@ -52,10 +52,23 @@ const updateStatusToReviewInDB = async (id: string) => {
     if (isTaskExist.status !== TaskStatus.IN_PROGRESS) {
         throw new Error("Only in-progress task can be set to review")
     }
-    const result = await prisma.task.update({
-        where: { id: isTaskExist.id },
-        data: { status: TaskStatus.REVIEW }
+
+    const result = await prisma.$transaction(async (transactionClient) => {
+        await transactionClient.task.update({
+            where: { id: isTaskExist.id },
+            data: { status: TaskStatus.REVIEW }
+        })
+        const logData = await transactionClient.projectThesisUpdateLog.create({
+            data: {
+                projectThesisId: isTaskExist.projectThesisId,
+                taskId: isTaskExist.id,
+                liveLink: updateData.liveLink,
+                fileUrl: updateData.fileUrl
+            }
+        })
+        return logData
     })
+
     return result
 }
 
@@ -102,11 +115,36 @@ const updateStatusToRejectedInDB = async (id: string, rejectionNote: any) => {
     return result
 }
 
+const rejectTask = async (id: string, rejectionNote: any) => {
+    const isTaskExist = await prisma.task.findUniqueOrThrow({ where: { id } })
+
+    if (!isTaskExist) {
+        throw new Error("Task not found")
+    }
+
+    if (isTaskExist.status !== TaskStatus.REVIEW) {
+        throw new Error("Only review task can be rejected")
+    }
+
+    const data = {
+        ...rejectionNote,
+        status: TaskStatus.FAILED
+    }
+
+    const result = await prisma.task.update({
+        where: { id: isTaskExist.id },
+        data: data
+    })
+
+    return result
+}
+
 export const TaskService = {
     createTaskIntoDB,
     updateTaskInDB,
     updateStatusToInProgressInDB,
     updateStatusToReviewInDB,
     updateStatusToDoneInDB,
-    updateStatusToRejectedInDB
+    updateStatusToRejectedInDB,
+    rejectTask
 }

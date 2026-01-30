@@ -26,7 +26,7 @@ const verifyOtp = catchAsync(async (req: Request, res: Response) => {
 
     res.cookie("accessToken", token, {
         ...cookieOptions,
-        maxAge: dayToMs(Number(config.jwt.token_expires_in?.split("s")[0])),
+        maxAge: dayToMs(Number(config.jwt.token_expires_in?.split("m")[0])),
     });
 
     res.cookie("refreshToken", refreshToken, {
@@ -38,12 +38,10 @@ const verifyOtp = catchAsync(async (req: Request, res: Response) => {
 
 const generateNewToken = catchAsync(async (req: Request, res: Response) => {
     const { refreshToken } = req.body;
-    console.log(refreshToken)
     const result = await AuthService.generateNewToken(refreshToken);
-
     res.cookie("accessToken", result, {
         ...cookieOptions,
-        maxAge: dayToMs(Number(config.jwt.token_expires_in?.split("s")[0])),
+        maxAge: dayToMs(Number(config.jwt.token_expires_in?.split("m")[0])),
     });
 
     sendResponse(res, 200, "New token generated successfully", { data: result });

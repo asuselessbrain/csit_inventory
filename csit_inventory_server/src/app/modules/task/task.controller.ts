@@ -19,18 +19,23 @@ const updateStatusToInProgressInDB = catchAsync(async (req: Request, res: Respon
 })
 
 const updateStatusToReviewInDB = catchAsync(async (req: Request, res: Response) => {
-    const result = await TaskService.updateStatusToReviewInDB(req.params.id as string);
+    const result = await TaskService.updateStatusToReviewInDB(req.params.id as string, req.body);
     sendResponse(res, 200, "Task status updated to review successfully", result)
 })
 
 const updateStatusToDoneInDB = catchAsync(async (req: Request, res: Response) => {
     const result = await TaskService.updateStatusToDoneInDB(req.params.id as string);
-    sendResponse(res, 200, "Task status updated to done successfully", result)
+    sendResponse(res, 200, "Task marked as done", result)
 })
 
 const updateStatusToRejectedInDB = catchAsync(async (req: Request, res: Response) => {
     const result = await TaskService.updateStatusToRejectedInDB(req.params.id as string, req.body);
-    sendResponse(res, 200, "Task status updated to rejected successfully", result)
+    sendResponse(res, 200, "Student is now allowed to resubmit this task.", result)
+})
+
+const rejectTask = catchAsync(async (req: Request, res: Response) => {
+    const result = await TaskService.rejectTask(req.params.id as string, req.body);
+    sendResponse(res, 200, "Task rejected successfully", result)
 })
 
 export const TaskController = {
@@ -39,5 +44,6 @@ export const TaskController = {
     updateStatusToInProgressInDB,
     updateStatusToReviewInDB,
     updateStatusToDoneInDB,
-    updateStatusToRejectedInDB
+    updateStatusToRejectedInDB,
+    rejectTask
 }
