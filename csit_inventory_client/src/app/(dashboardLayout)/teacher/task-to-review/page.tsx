@@ -1,4 +1,6 @@
 import TaskReviewCard from "@/components/modules/teacher/tasks/TaskReviewCard";
+import PaginationComponent from "@/components/shared/PaginationComponent";
+import ReusableSearch from "@/components/shared/ReusableSearch";
 import { getAllTaskForTeacherReview } from "@/services/taskService";
 import { ITask } from "@/types";
 
@@ -32,7 +34,7 @@ export default async function TaskToReviewPage({
 
   return (
     <div className="min-h-screen p-6">
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-360">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight text-gray-900">
@@ -43,12 +45,18 @@ export default async function TaskToReviewPage({
           </p>
         </div>
 
+        <div className="mb-6">
+          <ReusableSearch placeholder="Search tasks to review..." />
+        </div>
+
         {/* Tasks List */}
         <div className="space-y-4">
           {tasks.length > 0 ? (
-            tasks.map((task: ITask) => (
-              <TaskReviewCard key={task.id} task={task} />
-            ))
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {tasks.map((task: ITask) => (
+                <TaskReviewCard key={task.id} task={task} />
+              ))}
+            </div>
           ) : (
             <div className="rounded-lg border bg-white p-12 text-center shadow-sm">
               <p className="text-lg font-medium text-gray-900">
@@ -59,6 +67,10 @@ export default async function TaskToReviewPage({
               </p>
             </div>
           )}
+        </div>
+
+        <div className="mt-12">
+          <PaginationComponent totalPage={res.data.totalPage} />
         </div>
       </div>
     </div>

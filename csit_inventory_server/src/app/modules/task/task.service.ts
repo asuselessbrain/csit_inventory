@@ -4,6 +4,7 @@ import { prisma } from "../../../lib/prisma";
 import { filtering } from "../../../shared/filtering";
 import { pagination } from "../../../shared/pagination";
 import { searching } from "../../../shared/searching";
+import AppError from "../../errors/appErrors";
 
 const createTaskIntoDB = async (taskInfo: any) => {
   const result = await prisma.task.create({
@@ -233,13 +234,13 @@ const getTaskForTeacherReview = async (email: string, query: any) => {
     take: takeValue,
     orderBy: { [sortByField]: sortOrderValue },
     include: {
-        projectThesis: {
-            include: {
-                course: true,
-                student: true
-            }
-        }
-    }
+      projectThesis: {
+        include: {
+          course: true,
+          student: true,
+        },
+      },
+    },
   });
 
   const total = await prisma.task.count({ where: whereCondition });
@@ -257,6 +258,27 @@ const getTaskForTeacherReview = async (email: string, query: any) => {
   };
 };
 
+const getSingleTaskById = async (id: string) => {
+  const task = await prisma.task.findUnique({
+    where: { id },
+    include: {
+      projectThesis: {
+        include: {
+          course: true,
+          supervisor: true,
+          student: true,
+        },
+      },
+      projectThesisUpdateLogs: true,
+    },
+  });
+
+  if (!task) {
+    throw new AppError(404, "Task not found");
+  }
+  return task;
+};
+
 export const TaskService = {
   createTaskIntoDB,
   updateTaskInDB,
@@ -266,5 +288,6 @@ export const TaskService = {
   updateStatusToRejectedInDB,
   rejectTask,
   getAllTasksForStudent,
-  getTaskForTeacherReview
+  getTaskForTeacherReview,
+  getSingleTaskById,
 };

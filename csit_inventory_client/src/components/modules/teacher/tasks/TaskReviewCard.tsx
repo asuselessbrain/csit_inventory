@@ -1,7 +1,5 @@
 import { formatDate } from "@/components/shared/ReusableFunction";
-import { Button } from "@/components/ui/button";
 import { ITask } from "@/types";
-import { Check, CircleSlash, Eye } from "lucide-react";
 import TaskAction from "./TaskAction";
 
 export default function TaskReviewCard({ task }: { task: ITask }) {

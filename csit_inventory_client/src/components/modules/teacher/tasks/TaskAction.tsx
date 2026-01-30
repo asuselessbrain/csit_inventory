@@ -1,16 +1,22 @@
+"use client"
 import { Button } from "@/components/ui/button";
 import { Check, CircleSlash, Eye } from "lucide-react";
 import Link from "next/link";
+import { completeTask, rejectTask } from "./TaskAcceptRejectResubmit";
 
 export default function TaskAction({ taskId }: { taskId: string }) {
   return (
     <div className="flex flex-wrap gap-3">
-      <Button className="flex items-center gap-2 cursor-pointer disabled:cursor-no-drop">
+      <Button
+        onClick={() => completeTask(taskId)}
+        className="flex items-center gap-2 cursor-pointer disabled:cursor-no-drop"
+      >
         <Check className="h-4 w-4" />
         Mark as Done
       </Button>
 
       <Button
+        onClick={() => rejectTask(taskId)}
         variant="destructive"
         className="flex items-center gap-2 cursor-pointer disabled:cursor-no-drop"
       >

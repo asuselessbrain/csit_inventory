@@ -89,15 +89,22 @@ const getAllTasksForStudent = catchAsync(
   },
 );
 
-const getTaskForTeacherReview = catchAsync(async(req: Request & { user?: any }, res: Response) => {
-  const user = req.user;
-  const query = req.query;
-  const result = await TaskService.getTaskForTeacherReview(
-    user.email as string,
-    query,
-  );
-  sendResponse(res, 200, "Tasks for review retrieved successfully", result);
-})
+const getTaskForTeacherReview = catchAsync(
+  async (req: Request & { user?: any }, res: Response) => {
+    const user = req.user;
+    const query = req.query;
+    const result = await TaskService.getTaskForTeacherReview(
+      user.email as string,
+      query,
+    );
+    sendResponse(res, 200, "Tasks for review retrieved successfully", result);
+  },
+);
+
+const getSingleTaskById = catchAsync(async (req: Request, res: Response) => {
+  const result = await TaskService.getSingleTaskById(req.params.id as string);
+  sendResponse(res, 200, "Task retrieved successfully", result);
+});
 
 export const TaskController = {
   createTaskIntoDB,
@@ -108,5 +115,6 @@ export const TaskController = {
   updateStatusToRejectedInDB,
   rejectTask,
   getAllTasksForStudent,
-  getTaskForTeacherReview
+  getTaskForTeacherReview,
+  getSingleTaskById,
 };

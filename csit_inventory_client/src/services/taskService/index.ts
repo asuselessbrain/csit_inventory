@@ -156,3 +156,20 @@ export const getAllTaskForTeacherReview = async (queryParams: QueryParams) => {
     throw error;
   }
 };
+
+export const getSingleTask = async (id: string) => {
+  try {
+    const res = await baseApi(`${baseUrl}/tasks/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      next: {
+        tags: ["project"],
+      },
+    });
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
