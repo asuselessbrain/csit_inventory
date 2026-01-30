@@ -115,8 +115,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       icon: FileText
     },
     {
-      title: "Manage Courses",
-      url: "/admin/manage-courses",
+      title: "Task To Review",
+      url: "/teacher/task-to-review",
       icon: ListChecks
     },
     {

@@ -145,7 +145,13 @@ const rejectTask = async (id: string, rejectionNote: any) => {
 const getAllTasksForStudent = async (email: string, query: any) => {
   const { searchTerm, skip, take, sortBy, sortOrder, ...filterData } = query;
 
-  const searchFields = ["title", "description", "projectThesis.projectTitle", "projectThesis.course.courseCode", "projectThesis.course.courseName"];
+  const searchFields = [
+    "title",
+    "projectThesis.projectTitle",
+    "projectThesis.course.courseCode",
+    "projectThesis.course.courseName",
+    "projectThesis.supervisor.name",
+  ];
 
   let inputFilter: Prisma.TaskWhereInput[] = [];
 
@@ -168,12 +174,13 @@ const getAllTasksForStudent = async (email: string, query: any) => {
     take: takeValue,
     orderBy: { [sortByField]: sortOrderValue },
     include: {
-        projectThesis: {
-            include: {
-                course: true,
-            }
-        }
-    }
+      projectThesis: {
+        include: {
+          course: true,
+          supervisor: true,
+        },
+      },
+    },
   });
 
   const total = await prisma.task.count({ where: whereCondition });
@@ -185,7 +192,58 @@ const getAllTasksForStudent = async (email: string, query: any) => {
       currentPage,
       limit: takeValue,
       total,
-      totalPages
+      totalPages,
+    },
+    data: tasks,
+  };
+};
+
+const getTaskForTeacherReview = async (email: string, query: any) => {
+  const { searchTerm, skip, take, sortBy, sortOrder, ...filterData } = query;
+
+  const searchFields = [
+    "title",
+    "projectThesis.projectTitle",
+    "projectThesis.course.courseCode",
+    "projectThesis.course.courseName",
+    "projectThesis.student.name",
+  ];
+
+  let inputFilter: Prisma.TaskWhereInput[] = [];
+
+  if (searchTerm) {
+    searching(inputFilter, searchFields, searchTerm);
+  }
+
+  if (Object.keys(filterData).length > 0) {
+    filtering(inputFilter, filterData);
+  }
+
+  const { currentPage, skipValue, takeValue, sortByField, sortOrderValue } =
+    pagination(Number(skip), Number(take), sortBy, sortOrder);
+
+  const whereCondition: Prisma.TaskWhereInput = {
+    status: TaskStatus.REVIEW,
+    AND: inputFilter,
+  };
+
+  const tasks = await prisma.task.findMany({
+    where: whereCondition,
+    skip: skipValue,
+    take: takeValue,
+    orderBy: { [sortByField]: sortOrderValue },
+  });
+
+  const total = await prisma.task.count({ where: whereCondition });
+
+  const totalPages = Math.ceil(total / takeValue);
+
+  return {
+    meta: {
+      currentPage,
+      limit: takeValue,
+      total,
+      totalPages,
     },
     data: tasks,
   };
@@ -200,4 +258,5 @@ export const TaskService = {
   updateStatusToRejectedInDB,
   rejectTask,
   getAllTasksForStudent,
+  getTaskForTeacherReview
 };

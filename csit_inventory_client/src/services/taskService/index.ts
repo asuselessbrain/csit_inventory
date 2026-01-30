@@ -3,6 +3,7 @@
 import { FieldValues } from "react-hook-form";
 import { baseApi } from "../baseApi/baseApi";
 import { revalidateTag } from "next/cache";
+import { QueryParams } from "@/types";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_API;
 
@@ -98,17 +99,28 @@ export const allowStudentResubmit = async (id: string) => {
   }
 };
 
-export const getAllTaskForStudent = async () => {
-  try {
-    const res = await baseApi(`${baseUrl}/tasks/student-tasks`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      next: {
-        tags: ["project"],
-      },
+export const getAllTaskForStudent = async (queryParams: QueryParams) => {
+  const params = new URLSearchParams();
+  if (queryParams) {
+    Object.entries(queryParams).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        params.append(key, String(value));
+      }
     });
+  }
+  try {
+    const res = await baseApi(
+      `${baseUrl}/tasks/student-tasks?${params.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        next: {
+          tags: ["project"],
+        },
+      },
+    );
     return res;
   } catch (error) {
     throw error;

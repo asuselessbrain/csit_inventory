@@ -1,3 +1,5 @@
+import { IProposal } from "./projectThesis.type";
+
 export interface IProjectThesisUpdateLog {
   id: string;
   projectThesisId: string;
@@ -16,6 +18,7 @@ export interface ITask {
   requirements: string[];
   referenceMaterials: string[];
   projectThesisId: string;
+  projectThesis?: IProposal;
   createdAt: string;
   updatedAt: string;
   projectThesisUpdateLogs?: IProjectThesisUpdateLog[];
