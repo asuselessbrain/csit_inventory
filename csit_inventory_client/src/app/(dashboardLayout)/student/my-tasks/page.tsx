@@ -1,5 +1,7 @@
-export default function MyTasksPage() {
-  return (
-    <div>MyTasks</div>
-  )
+import { getAllTaskForStudent } from "@/services/taskService";
+
+export default async function MyTasksPage() {
+  const res = await getAllTaskForStudent();
+  console.log(res)
+  return <div>MyTasks</div>;
 }

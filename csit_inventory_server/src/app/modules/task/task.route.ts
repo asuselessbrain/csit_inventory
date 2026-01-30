@@ -1,8 +1,11 @@
 import express from 'express';
 import { TaskController } from './task.controller';
+import auth from '../../middlewares/auth';
+import { UserRole } from '../../../../generated/prisma/enums';
 
 const router = express.Router();
 
+router.get('/student-tasks', auth(UserRole.STUDENT), TaskController.getAllTasksForStudent)
 router.post('/', TaskController.createTaskIntoDB)
 router.patch('/in-progress/:id', TaskController.updateStatusToInProgressInDB)
 router.patch('/submit-task/:id', TaskController.updateStatusToReviewInDB)

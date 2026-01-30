@@ -25,11 +25,14 @@ const getAllTeacherFromDB = async (query: any) => {
     const teachers = await prisma.teacher.findMany({ where: whereCondition, skip: skipValue, take: takeValue, orderBy: { [sortByField]: sortOrderValue } });
 
     const total = await prisma.teacher.count({ where: whereCondition });
+    
+    const totalPages = Math.ceil(total / takeValue)
     return {
         meta: {
             currentPage,
             limit: takeValue,
-            total
+            total,
+            totalPages
         },
         data: teachers
     };
