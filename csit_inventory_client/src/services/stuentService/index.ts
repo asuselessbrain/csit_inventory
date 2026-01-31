@@ -81,3 +81,20 @@ export const reactivateStudent = async (studentId: string) => {
     throw error;
   }
 };
+
+export const getSingleStudent = async (studentId: string) => {
+  try {
+    const res = await baseApi(
+      `${process.env.NEXT_PUBLIC_BASE_API}/students/${studentId}`,
+      {
+        method: "GET",
+        next: {
+          tags: ["students"],
+        },
+      },
+    );
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
