@@ -10,6 +10,7 @@ export interface IStudent {
   schoolName: string;
   collageName: string;
   session: string;
+  semester: string;
   status: string;
   isApproved: boolean;
   isDeleted: boolean;

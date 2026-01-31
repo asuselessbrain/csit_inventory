@@ -14,11 +14,7 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  MoreHorizontal,
-  CheckCircle,
-  XCircle,
-} from "lucide-react";
+import { MoreHorizontal, CheckCircle, XCircle } from "lucide-react";
 import {
   CardContent,
   CardDescription,
@@ -26,26 +22,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import StudentAction from "@/components/modules/admin/manageStudent/StudentAction";
-
-interface Student {
-  id: string;
-  name: string;
-  email: string;
-  studentId: string;
-  registrationNumber: string;
-  phoneNumber: string;
-  dateOfBirth: string;
-  address: string;
-  schoolName: string;
-  collageName: string;
-  session: string;
-  status: string;
-  isApproved: boolean;
-  isDeleted: boolean;
-  profilePhoto: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { IStudent } from "@/types";
 
 export default async function ManageUsersPage({
   searchParams,
@@ -74,7 +51,7 @@ export default async function ManageUsersPage({
 
   const res = await getStudents(queryParams);
 
-  const students: Student[] = res?.data?.data || [];
+  const students: IStudent[] = res?.data?.data || [];
   const meta = res?.data?.meta;
 
   return (
@@ -186,7 +163,9 @@ export default async function ManageUsersPage({
                     </TableCell>
                     <TableCell>
                       {student.isDeleted ? (
-                        <Badge variant="destructive" className="text-white">Deleted</Badge>
+                        <Badge variant="destructive" className="text-white">
+                          Deleted
+                        </Badge>
                       ) : (
                         <Badge variant="default">Active</Badge>
                       )}
@@ -199,11 +178,7 @@ export default async function ManageUsersPage({
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <StudentAction
-                          isApproved={student.isApproved}
-                          studentId={student.id}
-                          isDeleted={student.isDeleted}
-                        />
+                        <StudentAction student={student} />
                       </DropdownMenu>
                     </TableCell>
                   </TableRow>

@@ -2,6 +2,7 @@
 import { QueryParams } from "@/types";
 import { baseApi } from "../baseApi/baseApi";
 import { revalidateTag } from "next/cache";
+import { FieldValues } from "react-hook-form";
 
 export const getStudents = async (queryParams?: QueryParams) => {
   const params = new URLSearchParams();
@@ -98,3 +99,25 @@ export const getSingleStudent = async (studentId: string) => {
     throw error;
   }
 };
+
+export const updateStudentDetails = async(studentId: string, data: FieldValues) => {
+    try{
+        const res = await baseApi(
+            `${process.env.NEXT_PUBLIC_BASE_API}/students/${studentId}`,
+            {
+                method: "PATCH",
+                body: JSON.stringify(data),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                next: {
+                    tags: ["students"],
+                },
+            },
+        );
+        revalidateTag("students", "max");
+        return res;
+    } catch (error) {
+        throw error;
+    }
+} 

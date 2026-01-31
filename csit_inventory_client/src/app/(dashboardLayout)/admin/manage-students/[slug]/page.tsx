@@ -24,11 +24,13 @@ import {
   User,
   CreditCard,
   Clock,
+  Layers,
 } from "lucide-react";
 import Link from "next/link";
 import DetailsAction from "@/components/modules/admin/manageStudent/studentDetails/DetailsAction";
 import { IStudent } from "@/types";
-
+import { formatDate } from "@/components/shared/ReusableFunction";
+import { getSemesterFormate } from "@/components/shared/SemesterFormate";
 
 export default async function StudentDetailsPage({
   params,
@@ -52,29 +54,14 @@ export default async function StudentDetailsPage({
     );
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
   return (
     <div className="max-w-360 mx-auto w-full py-6 space-y-6">
       {/* Header with Back Button */}
-      <div className="flex items-center gap-4">
-        <Link href="/admin/manage-students">
-          <Button variant="outline" size="icon">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-        </Link>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Student Details</h1>
-          <p className="text-muted-foreground">
-            Complete information about the student
-          </p>
-        </div>
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Student Details</h1>
+        <p className="text-muted-foreground">
+          Complete information about the student
+        </p>
       </div>
 
       {/* Profile Overview Card */}
@@ -123,7 +110,10 @@ export default async function StudentDetailsPage({
                     </Badge>
                   )}
                   {student.isDeleted && (
-                    <Badge variant="destructive" className="justify-center text-white">
+                    <Badge
+                      variant="destructive"
+                      className="justify-center text-white"
+                    >
                       Account Deleted
                     </Badge>
                   )}
@@ -187,6 +177,13 @@ export default async function StudentDetailsPage({
                   <div>
                     <p className="text-sm text-muted-foreground">Session</p>
                     <p className="font-medium">{student.session}</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Layers className="h-5 w-5 text-muted-foreground mt-0.5" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Semester</p>
+                    <p className="font-medium">{getSemesterFormate(student.semester)}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">

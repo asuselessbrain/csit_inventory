@@ -1,4 +1,5 @@
 "use client";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
   DropdownMenuContent,
   DropdownMenuItem,
@@ -13,6 +14,8 @@ import {
 import { CheckCircle, Edit, RotateCcw, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import UpdateStudent from "./UpdateStudent";
+import { IStudent } from "@/types";
 
 export const handleApproveStudent = async (studentId: string) => {
   const res = await approveStudent(studentId);
@@ -44,35 +47,32 @@ export const handleReactivateStudent = async (studentId: string) => {
   }
 };
 
-export default function StudentAction({
-  isApproved,
-  studentId,
-  isDeleted,
-}: {
-  isApproved: boolean;
-  studentId: string;
-  isDeleted: boolean;
-}) {
+export default function StudentAction({ student }: { student: IStudent }) {
   return (
     <DropdownMenuContent align="end">
       <DropdownMenuLabel>Actions</DropdownMenuLabel>
-      <Link href={`/admin/manage-students/${studentId}`}>
+      <Link href={`/admin/manage-students/${student.id}`}>
         <DropdownMenuItem>View details</DropdownMenuItem>
       </Link>
-      <DropdownMenuItem>
-        <Edit className="mr-2 h-4 w-4" />
-        Edit student
-      </DropdownMenuItem>
-      {!isApproved && (
-        <DropdownMenuItem onClick={() => handleApproveStudent(studentId)}>
+      <Dialog>
+        <DialogTrigger asChild>
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+            <Edit className="mr-2 h-4 w-4" />
+            Edit student
+          </DropdownMenuItem>
+        </DialogTrigger>
+        <UpdateStudent student={student} />
+      </Dialog>
+      {!student.isApproved && (
+        <DropdownMenuItem onClick={() => handleApproveStudent(student.id)}>
           <CheckCircle className="mr-2 h-4 w-4" />
           Approve student
         </DropdownMenuItem>
       )}
       <DropdownMenuSeparator />
-      {isDeleted ? (
+      {student.isDeleted ? (
         <DropdownMenuItem
-          onClick={() => handleReactivateStudent(studentId)}
+          onClick={() => handleReactivateStudent(student.id)}
           className="text-green-600"
         >
           <RotateCcw className="mr-2 h-4 w-4" />
@@ -80,7 +80,7 @@ export default function StudentAction({
         </DropdownMenuItem>
       ) : (
         <DropdownMenuItem
-          onClick={() => handleDeleteStudent(studentId)}
+          onClick={() => handleDeleteStudent(student.id)}
           className="text-destructive"
         >
           <Trash2 className="mr-2 h-4 w-4" />
