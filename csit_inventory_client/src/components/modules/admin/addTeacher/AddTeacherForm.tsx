@@ -70,7 +70,6 @@ export default function AddTeacherForm() {
         name: data.name,
         phoneNumber: data.phoneNumber,
         address: data.address,
-        // photoUrl: "https://example.com/photos/rahim.png",
         faculty: data.faculty,
         department: data.department,
         designation: data.designation,

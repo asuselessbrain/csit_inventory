@@ -1,7 +1,4 @@
-"use client";
-
-import { useState } from "react";
-import { Trash2, Eye, Edit, Undo } from "lucide-react";
+import { Trash2, Edit, Undo } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -13,21 +10,12 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import PaginationComponent from "@/components/shared/PaginationComponent";
-import { Meta } from "@/types";
+import { IAdmin, Meta } from "@/types";
 import ReusableSearch from "@/components/shared/ReusableSearch";
 import Image from "next/image";
 import { formatDate } from "@/components/shared/ReusableFunction";
-
-interface IAdmin {
-  id: string;
-  name: string;
-  email: string;
-  phoneNumber: string;
-  photoUrl?: string;
-  isDeleted: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import AdminModal from "./CreateUpdateAdmin";
 
 interface ManageAdminsTableProps {
   admins: {
@@ -36,10 +24,7 @@ interface ManageAdminsTableProps {
   };
 }
 
-export default function ManageAdminsTable({
-  admins,
-}: ManageAdminsTableProps) {
-
+export default function ManageAdminsTable({ admins }: ManageAdminsTableProps) {
   const getStatusColor = (isDeleted: boolean) => {
     return isDeleted
       ? "bg-red-100 text-red-800 hover:bg-red-100"
@@ -106,9 +91,7 @@ export default function ManageAdminsTable({
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="text-gray-700">
-                    {admin.email}
-                  </TableCell>
+                  <TableCell className="text-gray-700">{admin.email}</TableCell>
                   <TableCell className="text-gray-700">
                     {admin.phoneNumber}
                   </TableCell>
@@ -124,14 +107,19 @@ export default function ManageAdminsTable({
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        title="Edit admin"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            title="Edit admin"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </DialogTrigger>
+                        <AdminModal admin={admin} />
+                      </Dialog>
 
                       {!admin.isDeleted ? (
                         <Button
