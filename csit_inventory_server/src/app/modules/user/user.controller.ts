@@ -5,17 +5,17 @@ import { sendResponse } from "../../../shared/responser";
 
 const createStudentIntoDB = catchAsync(async (req: Request & { user?: any }, res: Response) => {
     const result = await UserService.createStudentIntoDB(req.body);
-    sendResponse(res, 201, "Student created successfully", result)
+    sendResponse(res, 201, "Account created successfully. Please check your email for email verification.", result)
 })
 
 const createAdminIntoDB = catchAsync(async (req: Request, res: Response) => {
     const result = await UserService.createAdminIntoDB(req.body);
-    sendResponse(res, 201, "Admin created successfully", result)
+    sendResponse(res, 201, "Admin created successfully. Please check your email for email verification.", result)
 })
 
 const createTeacherIntoDB = catchAsync(async (req: Request, res: Response) => {
     const result = await UserService.createTeacherIntoDB(req.body);
-    sendResponse(res, 201, "Teacher created successfully", result)
+    sendResponse(res, 201, "Teacher created successfully. Please check your email for email verification.", result)
 })
 
 const verifyEmail = catchAsync(async (req: Request, res: Response) => {

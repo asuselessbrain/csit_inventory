@@ -15,7 +15,7 @@ const verifyEmail = async (info: { email: string; role: UserRole }) => {
     expiresIn: config.jwt.email_verification_token_expires_in as StringValue,
   });
 
-  const verifyUrl = `http://localhost:5000/api/v1/auth/verify-email?token=${generateEmailVerificationToken}&email=${info.email}`;
+  const verifyUrl = `http://localhost:3000/verify-email?token=${generateEmailVerificationToken}&email=${info.email}`;
 
   await sendEmail({
     to: info.email,
