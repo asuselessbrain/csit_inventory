@@ -49,10 +49,9 @@ export default async function TaskToReviewPage({
           <ReusableSearch placeholder="Search tasks to review..." />
         </div>
 
-        {/* Tasks List */}
         <div className="space-y-4">
           {tasks.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {tasks.map((task: ITask) => (
                 <TaskReviewCard key={task.id} task={task} />
               ))}
@@ -70,7 +69,7 @@ export default async function TaskToReviewPage({
         </div>
 
         <div className="mt-12">
-          <PaginationComponent totalPage={res.data.totalPage} />
+          <PaginationComponent totalPage={res.data.meta.totalPages} />
         </div>
       </div>
     </div>

@@ -101,6 +101,7 @@ export default function AssignTask({ proposal, onSuccess }: { proposal: IProposa
 
                     const uploadedData = await res.json();
                     materialUrls.push(uploadedData.secure_url);
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 } catch (error) {
                     toast.error(`Failed to upload ${file.name}`);
                     return;

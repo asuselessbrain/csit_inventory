@@ -88,6 +88,7 @@ const deleteStudentFromDB = async (id: string) => {
     } return null;
 
 }
+
 export const StudentService = {
     getAllStudentFromDB,
     updateStudentIntoDB,

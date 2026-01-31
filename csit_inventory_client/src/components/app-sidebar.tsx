@@ -2,6 +2,8 @@
 
 import * as React from "react"
 import {
+  Book,
+  BookOpen,
   FileText,
   LayoutDashboard,
   ListChecks,
@@ -120,14 +122,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       icon: ListChecks
     },
     {
-      title: "Add Teacher",
-      url: "/admin/add-teacher",
-      icon: UserPlus
-    },
-    {
-      title: "Manage Teachers",
-      url: "/admin/manage-teachers",
-      icon: Users
+      title: "My Assign Course",
+      url: "/teacher/my-assign-course",
+      icon: BookOpen
     }
   ]
   return (
