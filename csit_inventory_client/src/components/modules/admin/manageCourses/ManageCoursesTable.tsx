@@ -170,7 +170,7 @@ export default function ManageCoursesTable({
                             <Edit className="h-4 w-4" />
                           </Button>
                         </DialogTrigger>
-                        <UpdateCourse course={singleCourse} />
+                        <UpdateCourse course={course} />
                       </Dialog>
 
                       {course.status === "ACTIVE" ? (

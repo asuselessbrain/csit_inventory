@@ -42,11 +42,13 @@ const getAllStudentFromDB = async (query: any) => {
   });
 
   const total = await prisma.student.count({ where: whereCondition });
+  const totalPages = Math.ceil(total / takeValue);
   return {
     meta: {
       currentPage,
       limit: takeValue,
       total,
+      totalPages,
     },
     data: students,
   };

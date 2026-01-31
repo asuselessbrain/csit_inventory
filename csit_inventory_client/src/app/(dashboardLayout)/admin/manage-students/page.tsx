@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/card";
 import StudentAction from "@/components/modules/admin/manageStudent/StudentAction";
 import { IStudent } from "@/types";
+import PaginationComponent from "@/components/shared/PaginationComponent";
+import ReusableSearch from "@/components/shared/ReusableSearch";
 
 export default async function ManageUsersPage({
   searchParams,
@@ -51,8 +53,7 @@ export default async function ManageUsersPage({
 
   const res = await getStudents(queryParams);
 
-  const students: IStudent[] = res?.data?.data || [];
-  const meta = res?.data?.meta;
+  const students: IStudent[] = res?.data?.data || []
 
   return (
     <div className="max-w-360 w-full mx-auto py-6 space-y-6">
@@ -63,6 +64,9 @@ export default async function ManageUsersPage({
         </CardDescription>
       </CardHeader>
       <CardContent>
+        <div className="mb-6">
+          <ReusableSearch placeholder="Search students..." />
+        </div>
         <div className="rounded-md border">
           <Table>
             <TableHeader>
@@ -188,15 +192,9 @@ export default async function ManageUsersPage({
           </Table>
         </div>
 
-        {meta && meta.total > limit && (
-          <div className="mt-4 flex items-center justify-between">
-            <div className="text-sm text-muted-foreground">
-              Showing {(page - 1) * limit + 1} to{" "}
-              {Math.min(page * limit, meta.total)} of {meta.total} students
-            </div>
-            {/* Add pagination component here */}
-          </div>
-        )}
+        <div className="mt-12">
+          <PaginationComponent totalPage={res?.data?.meta?.totalPages} />
+        </div>
       </CardContent>
     </div>
   );
