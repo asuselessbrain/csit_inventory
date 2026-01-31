@@ -31,4 +31,10 @@ router.patch(
   auth(UserRole.ADMIN),
   StudentController.approveStudentInDB,
 );
+
+router.patch(
+  "/re-activate-student/:id",
+  auth(UserRole.ADMIN),
+  StudentController.reActivateStudentInDB,
+);
 export const StudentRoutes = router;

@@ -5,24 +5,50 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { approveStudent } from "@/services/stuentService";
-import { CheckCircle, Edit, Trash2 } from "lucide-react";
+import {
+  approveStudent,
+  deleteStudent,
+  reactivateStudent,
+} from "@/services/stuentService";
+import { CheckCircle, Edit, RotateCcw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function StudentAction({
   isApproved,
   studentId,
+  isDeleted,
 }: {
   isApproved: boolean;
   studentId: string;
+  isDeleted: boolean;
 }) {
   const handleApproveStudent = async (studentId: string) => {
     const res = await approveStudent(studentId);
 
     if (res.success) {
-      toast.success(res.message || "");
+      toast.success(res.message || "Student approved successfully");
     } else {
       toast.error(res.errorMessage || "Failed to approve student");
+    }
+  };
+
+  const handleDeleteStudent = async (studentId: string) => {
+    const res = await deleteStudent(studentId);
+
+    if (res.success) {
+      toast.success(res.message || "Student deleted successfully");
+    } else {
+      toast.error(res.errorMessage || "Failed to delete student");
+    }
+  };
+
+  const handleReactivateStudent = async (studentId: string) => {
+    const res = await reactivateStudent(studentId);
+
+    if (res.success) {
+      toast.success(res.message || "Account reactivation successful");
+    } else {
+      toast.error(res.errorMessage || "Account reactivation fail");
     }
   };
   return (
@@ -40,10 +66,23 @@ export default function StudentAction({
         </DropdownMenuItem>
       )}
       <DropdownMenuSeparator />
-      <DropdownMenuItem className="text-destructive">
-        <Trash2 className="mr-2 h-4 w-4" />
-        Delete student
-      </DropdownMenuItem>
+      {isDeleted ? (
+        <DropdownMenuItem
+          onClick={() => handleReactivateStudent(studentId)}
+          className="text-green-600"
+        >
+          <RotateCcw className="mr-2 h-4 w-4" />
+          Reactivate Account
+        </DropdownMenuItem>
+      ) : (
+        <DropdownMenuItem
+          onClick={() => handleDeleteStudent(studentId)}
+          className="text-destructive"
+        >
+          <Trash2 className="mr-2 h-4 w-4" />
+          Delete Student
+        </DropdownMenuItem>
+      )}
     </DropdownMenuContent>
   );
 }

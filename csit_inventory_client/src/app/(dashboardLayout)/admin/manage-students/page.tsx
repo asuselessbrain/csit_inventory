@@ -12,21 +12,14 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
   MoreHorizontal,
   CheckCircle,
   XCircle,
-  Edit,
-  Trash2,
 } from "lucide-react";
 import {
-  Card,
   CardContent,
   CardDescription,
   CardHeader,
@@ -104,6 +97,7 @@ export default async function ManageUsersPage({
                 <TableHead>Session</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Approval</TableHead>
+                <TableHead>Account Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -111,7 +105,7 @@ export default async function ManageUsersPage({
               {students.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={9}
+                    colSpan={10}
                     className="text-center py-8 text-muted-foreground"
                   >
                     No students found
@@ -190,6 +184,13 @@ export default async function ManageUsersPage({
                         </Badge>
                       )}
                     </TableCell>
+                    <TableCell>
+                      {student.isDeleted ? (
+                        <Badge variant="destructive" className="text-white">Deleted</Badge>
+                      ) : (
+                        <Badge variant="default">Active</Badge>
+                      )}
+                    </TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -201,6 +202,7 @@ export default async function ManageUsersPage({
                         <StudentAction
                           isApproved={student.isApproved}
                           studentId={student.id}
+                          isDeleted={student.isDeleted}
                         />
                       </DropdownMenu>
                     </TableCell>

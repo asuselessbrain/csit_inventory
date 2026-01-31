@@ -130,10 +130,55 @@ const approveStudentInDB = async (id: string) => {
   return approvedStudent;
 };
 
+const reActivateStudentInDB = async (id: string) => {
+  const isStudentExist = await prisma.student.findUnique({
+    where: { id },
+  });
+
+  if (!isStudentExist) {
+    throw new AppError(404, "Student not found");
+  }
+
+  if (!isStudentExist.isDeleted) {
+    throw new AppError(400, "Account is already active");
+  }
+
+  const isUserExist = await prisma.user.findUnique({
+    where: { email: isStudentExist.email },
+  });
+
+  if (!isUserExist) {
+    throw new AppError(404, "User not found");
+  }
+
+  if (isUserExist.userStatus !== UserStatus.DELETED) {
+    throw new AppError(400, "User account is already active");
+  }
+
+  const reActivatedStudent = await prisma.$transaction(
+    async (transactionClient) => {
+      const student = await transactionClient.student.update({
+        where: { id: isStudentExist.id },
+        data: { isDeleted: false },
+      });
+
+      const user = await transactionClient.user.updateMany({
+        where: { email: isStudentExist.email },
+        data: { userStatus: UserStatus.ACTIVE },
+      });
+
+      return { student, user };
+    },
+  );
+
+  return reActivatedStudent;
+};
+
 export const StudentService = {
   getAllStudentFromDB,
   updateStudentIntoDB,
   getSingleStudentFromDB,
   deleteStudentFromDB,
-  approveStudentInDB
+  approveStudentInDB,
+  reActivateStudentInDB,
 };
