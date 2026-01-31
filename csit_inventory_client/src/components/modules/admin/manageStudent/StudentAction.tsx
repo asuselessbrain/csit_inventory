@@ -11,7 +11,7 @@ import {
   deleteStudent,
   reactivateStudent,
 } from "@/services/stuentService";
-import { CheckCircle, Edit, RotateCcw, Trash2 } from "lucide-react";
+import { CheckCircle, Edit, Eye, RotateCcw, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import UpdateStudent from "./UpdateStudent";
@@ -52,7 +52,7 @@ export default function StudentAction({ student }: { student: IStudent }) {
     <DropdownMenuContent align="end">
       <DropdownMenuLabel>Actions</DropdownMenuLabel>
       <Link href={`/admin/manage-students/${student.id}`}>
-        <DropdownMenuItem>View details</DropdownMenuItem>
+        <DropdownMenuItem><Eye className="mr-2 h-4 w-4" /> View details</DropdownMenuItem>
       </Link>
       <Dialog>
         <DialogTrigger asChild>

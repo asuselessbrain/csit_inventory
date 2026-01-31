@@ -25,7 +25,7 @@ import PaginationComponent from "@/components/shared/PaginationComponent";
 import AssignCourseTeacher from "./AssignCourseTeacher";
 import { ICourse, Meta } from "@/types";
 import ReusableSearch from "@/components/shared/ReusableSearch";
-import { getSemesterFormate } from "@/components/shared/SemesterFormate";
+import { getSemesterFormate } from "@/components/shared/formatter";
 
 interface ManageCoursesTableProps {
   courses: {

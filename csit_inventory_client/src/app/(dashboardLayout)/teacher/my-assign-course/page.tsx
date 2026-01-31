@@ -5,7 +5,7 @@ import { getMyAssignCourses } from "@/services/courseService";
 import { ICourse } from "@/types";
 import PaginationComponent from "@/components/shared/PaginationComponent";
 import ReusableSearch from "@/components/shared/ReusableSearch";
-import { getSemesterFormate } from "@/components/shared/SemesterFormate";
+import { getSemesterFormate } from "@/components/shared/formatter";
 
 export default async function MyAssignCoursePage({
   searchParams,

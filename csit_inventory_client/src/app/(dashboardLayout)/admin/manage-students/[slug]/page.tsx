@@ -30,7 +30,7 @@ import Link from "next/link";
 import DetailsAction from "@/components/modules/admin/manageStudent/studentDetails/DetailsAction";
 import { IStudent } from "@/types";
 import { formatDate } from "@/components/shared/ReusableFunction";
-import { getSemesterFormate } from "@/components/shared/SemesterFormate";
+import { getSemesterFormate } from "@/components/shared/formatter";
 
 export default async function StudentDetailsPage({
   params,

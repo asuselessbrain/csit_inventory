@@ -1,12 +1,14 @@
 import express from 'express'
 import { TeacherController } from './teacher.controller'
+import auth from '../../middlewares/auth'
+import { UserRole } from '../../../../generated/prisma/enums'
 
 const router = express.Router()
 
-router.get('/', TeacherController.getAllTeacherFromDB)
-router.get('/teacher-list', TeacherController.getAllTeacherForCourseAssign)
-router.get('/:id', TeacherController.getSingleTeacherFromDB)
-router.patch('/:id', TeacherController.updateTeacherIntoDB)
-router.patch('/delete-teacher/:id', TeacherController.deleteTeacherFromDB)
+router.get('/', auth(UserRole.ADMIN), TeacherController.getAllTeacherFromDB)
+router.get('/teacher-list', auth(UserRole.ADMIN), TeacherController.getAllTeacherForCourseAssign)
+router.get('/:id', auth(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT), TeacherController.getSingleTeacherFromDB)
+router.patch('/:id', auth(UserRole.ADMIN, UserRole.TEACHER), TeacherController.updateTeacherIntoDB)
+router.patch('/delete-teacher/:id', auth(UserRole.ADMIN), TeacherController.deleteTeacherFromDB)
 
 export const teacherRouter = router;
