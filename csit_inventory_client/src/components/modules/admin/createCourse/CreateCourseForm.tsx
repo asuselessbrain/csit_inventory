@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toastId } from "@/components/shared/toastId";
 
 export default function CreateCourseForm() {
   const form = useForm({
@@ -28,19 +29,17 @@ export default function CreateCourseForm() {
   } = form;
   const router = useRouter();
 
-  const courseId = "create-course-toast";
-
   const onSubmit = async (data: FieldValues) => {
     const res = await createCourse(data);
     if (res.success) {
       toast.success(res.data.message || "Course Created Successfully!", {
-        id: courseId,
+        id: toastId,
       });
       router.push("/admin/manage-courses");
     }
     if (!res.success) {
       toast.error(res.errorMessage || "Course Creation Failed!", {
-        id: courseId,
+        id: toastId,
       });
     }
   };

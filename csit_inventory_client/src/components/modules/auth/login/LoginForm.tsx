@@ -1,5 +1,6 @@
 "use client"
 
+import { toastId } from "@/components/shared/toastId";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -13,8 +14,6 @@ export default function LoginForm() {
     const router = useRouter()
 
     const { formState: { isSubmitting } } = form;
-
-    const toastId = "login-toast";
 
     const handleLogin = async (data: FieldValues) => {
         const res = await loginUser(data);

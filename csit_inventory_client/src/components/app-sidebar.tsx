@@ -10,6 +10,7 @@ import {
   ListChecks,
   NotebookText,
   PlusSquare,
+  UserCog,
   UserPlus,
   Users,
 } from "lucide-react";
@@ -107,6 +108,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "/admin/manage-students",
       icon: GraduationCap,
     },
+    {
+      title: "Manage Admins",
+      url: "/admin/manage-admins",
+      icon: UserCog
+    }
   ];
 
   const navTeacher = [

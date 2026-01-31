@@ -1,66 +1,67 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Menu, X, ChevronDown, LogOut, Settings, User } from 'lucide-react';
-import { ModeToggle } from './ModeToggle';
-import { useUser } from '@/context/UserContext';
-import { Button } from '../ui/button';
-import { usePathname } from 'next/navigation';
-import { logoutUser } from '@/services/authService/auth.client';
-import { toast } from 'sonner';
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Menu, X, ChevronDown, LogOut, Settings, User } from "lucide-react";
+import { ModeToggle } from "./ModeToggle";
+import { useUser } from "@/context/UserContext";
+import { Button } from "../ui/button";
+import { usePathname } from "next/navigation";
+import { logoutUser } from "@/services/authService/auth.client";
+import { toast } from "sonner";
+import { toastId } from "./toastId";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const user = useUser()
-  const pathname = usePathname()
-
+  const user = useUser();
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const toggleProfile = () => setIsProfileOpen(!isProfileOpen);
 
-  const toastId = "logout-toast";
-
   const handleLogOut = async () => {
     const res = await logoutUser();
     toggleMenu();
-    toggleProfile()
+    toggleProfile();
 
     if (res.success) {
-      localStorage.removeItem("accessToken")
-      user?.setUser(null)
-      toast.success(res.message || "Logged out successfully!", { id: toastId })
+      localStorage.removeItem("accessToken");
+      user?.setUser(null);
+      toast.success(res.message || "Logged out successfully!", { id: toastId });
     }
     if (!res.success) {
-      toast.error(res.errorMessage || "Logout failed!", { id: toastId })
+      toast.error(res.errorMessage || "Logout failed!", { id: toastId });
     }
-  }
+  };
 
   const navLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/inventory', label: 'Inventory' },
-    { href: '/reports', label: 'Reports' },
-    { href: '/settings', label: 'Settings' },
+    { href: "/", label: "Home" },
+    { href: "/inventory", label: "Inventory" },
+    { href: "/reports", label: "Reports" },
+    { href: "/settings", label: "Settings" },
   ];
 
   return (
-    <nav className={`sticky top-0 z-50 transition-all duration-300 ${scrolled
-      ? 'bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-lg dark:shadow-xl border-b border-slate-200/50 dark:border-slate-800/50'
-      : 'bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800'
-      }`}>
+    <nav
+      className={`sticky top-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-lg dark:shadow-xl border-b border-slate-200/50 dark:border-slate-800/50"
+          : "bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800"
+      }`}
+    >
       <div className="max-w-360 mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo Section */}
@@ -91,7 +92,11 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={pathname === link.href ? 'relative px-4 py-2.5 text-sm font-medium text-indigo-600 dark:text-indigo-400' : 'relative px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-150 group'}
+                className={
+                  pathname === link.href
+                    ? "relative px-4 py-2.5 text-sm font-medium text-indigo-600 dark:text-indigo-400"
+                    : "relative px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-150 group"
+                }
               >
                 <span className="relative z-10">{link.label}</span>
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-linear-to-r from-indigo-500 to-blue-500 group-hover:w-full transition-all duration-300"></span>
@@ -123,7 +128,9 @@ export default function Navbar() {
                     />
                     <div className="absolute bottom-0 right-0 h-2.5 w-2.5 bg-green-500 border-2 border-white dark:border-slate-800 rounded-full"></div>
                   </div>
-                  <ChevronDown className={`w-4 h-4 text-slate-600 dark:text-slate-400 transition-transform duration-300 ${isProfileOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown
+                    className={`w-4 h-4 text-slate-600 dark:text-slate-400 transition-transform duration-300 ${isProfileOpen ? "rotate-180" : ""}`}
+                  />
                 </button>
 
                 {/* Profile Dropdown Menu */}
@@ -141,17 +148,26 @@ export default function Navbar() {
                       </p>
                     </div>
                     <div className="py-2 space-y-1">
-                      <Link href="/profile" className="flex items-center gap-3 px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors duration-150 group">
+                      <Link
+                        href="/profile"
+                        className="flex items-center gap-3 px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors duration-150 group"
+                      >
                         <User className="w-4 h-4 text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
                         <span className="text-sm font-medium">My Profile</span>
                       </Link>
-                      <Link href="/settings" className="flex items-center gap-3 px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors duration-150 group">
+                      <Link
+                        href="/settings"
+                        className="flex items-center gap-3 px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors duration-150 group"
+                      >
                         <Settings className="w-4 h-4 text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
                         <span className="text-sm font-medium">Settings</span>
                       </Link>
                     </div>
                     <div className="border-t border-slate-200 dark:border-slate-700 pt-2">
-                      <button onClick={handleLogOut} className="w-full flex items-center gap-3 px-4 py-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-150 group">
+                      <button
+                        onClick={handleLogOut}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-150 group"
+                      >
                         <LogOut className="w-4 h-4 group-hover:text-red-700 dark:group-hover:text-red-300 transition-colors" />
                         <span className="text-sm font-medium">Sign Out</span>
                       </button>
@@ -187,7 +203,11 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={toggleMenu}
-                className={pathname === link.href ? "block px-4 py-2.5 text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg font-medium text-sm transition-colors duration-150" : "block px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg font-medium text-sm transition-colors duration-150"}
+                className={
+                  pathname === link.href
+                    ? "block px-4 py-2.5 text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg font-medium text-sm transition-colors duration-150"
+                    : "block px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg font-medium text-sm transition-colors duration-150"
+                }
               >
                 {link.label}
               </Link>
@@ -196,10 +216,17 @@ export default function Navbar() {
             {user?.user ? (
               <>
                 <div className="my-2 border-t border-slate-200 dark:border-slate-800"></div>
-                <Link href="/profile" onClick={toggleMenu} className="block px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg font-medium text-sm transition-colors duration-150">
+                <Link
+                  href="/profile"
+                  onClick={toggleMenu}
+                  className="block px-4 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg font-medium text-sm transition-colors duration-150"
+                >
                   My Profile
                 </Link>
-                <button onClick={handleLogOut} className="w-full text-left px-4 py-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg font-medium text-sm transition-colors duration-150">
+                <button
+                  onClick={handleLogOut}
+                  className="w-full text-left px-4 py-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg font-medium text-sm transition-colors duration-150"
+                >
                   Sign Out
                 </button>
               </>

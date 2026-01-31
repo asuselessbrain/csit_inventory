@@ -16,14 +16,19 @@ import Link from "next/link";
 import { toast } from "sonner";
 import UpdateStudent from "./UpdateStudent";
 import { IStudent } from "@/types";
+import { toastId } from "@/components/shared/toastId";
 
 export const handleApproveStudent = async (studentId: string) => {
   const res = await approveStudent(studentId);
 
   if (res.success) {
-    toast.success(res.message || "Student approved successfully");
+    toast.success(res.message || "Student approved successfully", {
+      id: toastId,
+    });
   } else {
-    toast.error(res.errorMessage || "Failed to approve student");
+    toast.error(res.errorMessage || "Failed to approve student", {
+      id: toastId,
+    });
   }
 };
 
@@ -31,9 +36,13 @@ export const handleDeleteStudent = async (studentId: string) => {
   const res = await deleteStudent(studentId);
 
   if (res.success) {
-    toast.success(res.message || "Student deleted successfully");
+    toast.success(res.message || "Student deleted successfully", {
+      id: toastId,
+    });
   } else {
-    toast.error(res.errorMessage || "Failed to delete student");
+    toast.error(res.errorMessage || "Failed to delete student", {
+      id: toastId,
+    });
   }
 };
 
@@ -41,9 +50,13 @@ export const handleReactivateStudent = async (studentId: string) => {
   const res = await reactivateStudent(studentId);
 
   if (res.success) {
-    toast.success(res.message || "Account reactivation successful");
+    toast.success(res.message || "Account reactivation successful", {
+      id: toastId,
+    });
   } else {
-    toast.error(res.errorMessage || "Account reactivation fail");
+    toast.error(res.errorMessage || "Account reactivation fail", {
+      id: toastId,
+    });
   }
 };
 
@@ -52,7 +65,9 @@ export default function StudentAction({ student }: { student: IStudent }) {
     <DropdownMenuContent align="end">
       <DropdownMenuLabel>Actions</DropdownMenuLabel>
       <Link href={`/admin/manage-students/${student.id}`}>
-        <DropdownMenuItem><Eye className="mr-2 h-4 w-4" /> View details</DropdownMenuItem>
+        <DropdownMenuItem>
+          <Eye className="mr-2 h-4 w-4" /> View details
+        </DropdownMenuItem>
       </Link>
       <Dialog>
         <DialogTrigger asChild>

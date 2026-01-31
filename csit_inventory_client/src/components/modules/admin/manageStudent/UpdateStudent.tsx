@@ -1,5 +1,6 @@
 "use client";
 
+import { toastId } from "@/components/shared/toastId";
 import { Button } from "@/components/ui/button";
 import {
   DialogClose,
@@ -11,7 +12,15 @@ import {
 } from "@/components/ui/dialog";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { updateStudentDetails } from "@/services/stuentService";
 import { IStudent } from "@/types";
@@ -39,8 +48,6 @@ export default function UpdateStudent({ student }: { student: IStudent }) {
   const {
     formState: { isSubmitting },
   } = form;
-
-  const toastId = "update-student-details";
 
   const handleUpdate = async (data: FieldValues) => {
     const payload = {
@@ -93,15 +100,12 @@ export default function UpdateStudent({ student }: { student: IStudent }) {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <div className="flex items-center gap-2">
-                    <User className="h-4 w-4 text-blue-600" />
-                    <FieldLabel
-                      htmlFor={field.name}
-                      className="font-semibold text-gray-700"
-                    >
-                      Full Name
-                    </FieldLabel>
-                  </div>
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="font-semibold text-gray-700"
+                  >
+                    Full Name
+                  </FieldLabel>
                   <Input
                     {...field}
                     id={field.name}
@@ -125,15 +129,12 @@ export default function UpdateStudent({ student }: { student: IStudent }) {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-green-600" />
-                    <FieldLabel
-                      htmlFor={field.name}
-                      className="font-semibold text-gray-700"
-                    >
-                      Email
-                    </FieldLabel>
-                  </div>
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="font-semibold text-gray-700"
+                  >
+                    Email
+                  </FieldLabel>
                   <Input
                     {...field}
                     id={field.name}
@@ -159,15 +160,12 @@ export default function UpdateStudent({ student }: { student: IStudent }) {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <div className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 text-purple-600" />
-                    <FieldLabel
-                      htmlFor={field.name}
-                      className="font-semibold text-gray-700"
-                    >
-                      Phone
-                    </FieldLabel>
-                  </div>
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="font-semibold text-gray-700"
+                  >
+                    Phone
+                  </FieldLabel>
                   <Input
                     {...field}
                     id={field.name}
@@ -410,15 +408,12 @@ export default function UpdateStudent({ student }: { student: IStudent }) {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-orange-600" />
-                  <FieldLabel
-                    htmlFor={field.name}
-                    className="font-semibold text-gray-700"
-                  >
-                    Address
-                  </FieldLabel>
-                </div>
+                <FieldLabel
+                  htmlFor={field.name}
+                  className="font-semibold text-gray-700"
+                >
+                  Address
+                </FieldLabel>
                 <Textarea
                   {...field}
                   id={field.name}

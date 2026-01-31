@@ -15,6 +15,7 @@ import { getAssignedCourseTeacher } from "@/services/courseTeacherService";
 import { createProjectThesis } from "@/services/proposalService";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { toastId } from "@/components/shared/toastId";
 
 export default function SubmitProposalForm() {
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
@@ -75,7 +76,6 @@ export default function SubmitProposalForm() {
         data.attachments = attachments
 
         data.technologiesTools = data.technologiesTools.split(",")
-        const toastId = "projectThesis";
 
         const res = await createProjectThesis(data)
 

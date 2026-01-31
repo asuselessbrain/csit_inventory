@@ -23,16 +23,10 @@ import {
 } from "@/components/ui/select";
 import { updateTeacher } from "@/services/teacherService";
 import { ITeacher } from "@/types";
-import {
-  Mail,
-  Phone,
-  MapPin,
-  Building2,
-  Briefcase,
-  User,
-} from "lucide-react";
+import { Mail, Phone, MapPin, Building2, Briefcase, User } from "lucide-react";
 import { Controller, FieldValues, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { toastId } from "@/components/shared/toastId";
 
 export default function UpdateTeacher({ teacher }: { teacher: ITeacher }) {
   const form = useForm({
@@ -50,8 +44,6 @@ export default function UpdateTeacher({ teacher }: { teacher: ITeacher }) {
   const {
     formState: { isSubmitting },
   } = form;
-
-  const toastId = "update-teacher";
 
   const handleUpdateTeacher = async (data: FieldValues) => {
     const res = await updateTeacher(teacher.id, data);
@@ -93,12 +85,9 @@ export default function UpdateTeacher({ teacher }: { teacher: ITeacher }) {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-blue-600" />
-                  <FieldLabel className="font-semibold text-gray-700">
-                    Full Name
-                  </FieldLabel>
-                </div>
+                <FieldLabel className="font-semibold text-gray-700">
+                  Full Name
+                </FieldLabel>
                 <Input {...field} value={field.value || ""} />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -113,12 +102,9 @@ export default function UpdateTeacher({ teacher }: { teacher: ITeacher }) {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <div className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 text-green-600" />
-                  <FieldLabel className="font-semibold text-gray-700">
-                    Email
-                  </FieldLabel>
-                </div>
+                <FieldLabel className="font-semibold text-gray-700">
+                  Email
+                </FieldLabel>
                 <Input {...field} disabled value={field.value || ""} />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -133,12 +119,9 @@ export default function UpdateTeacher({ teacher }: { teacher: ITeacher }) {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-purple-600" />
-                  <FieldLabel className="font-semibold text-gray-700">
-                    Phone
-                  </FieldLabel>
-                </div>
+                <FieldLabel className="font-semibold text-gray-700">
+                  Phone
+                </FieldLabel>
                 <Input {...field} value={field.value || ""} />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -153,12 +136,9 @@ export default function UpdateTeacher({ teacher }: { teacher: ITeacher }) {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <div className="flex items-center gap-2">
-                  <Building2 className="h-4 w-4 text-indigo-600" />
-                  <FieldLabel className="font-semibold text-gray-700">
-                    Faculty
-                  </FieldLabel>
-                </div>
+                <FieldLabel className="font-semibold text-gray-700">
+                  Faculty
+                </FieldLabel>
                 <Input {...field} value={field.value || ""} />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -173,12 +153,9 @@ export default function UpdateTeacher({ teacher }: { teacher: ITeacher }) {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <div className="flex items-center gap-2">
-                  <Briefcase className="h-4 w-4 text-pink-600" />
-                  <FieldLabel className="font-semibold text-gray-700">
-                    Designation
-                  </FieldLabel>
-                </div>
+                <FieldLabel className="font-semibold text-gray-700">
+                  Designation
+                </FieldLabel>
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select designation" />
@@ -210,12 +187,9 @@ export default function UpdateTeacher({ teacher }: { teacher: ITeacher }) {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <div className="flex items-center gap-2">
-                  <Building2 className="h-4 w-4 text-orange-600" />
-                  <FieldLabel className="font-semibold text-gray-700">
-                    Department
-                  </FieldLabel>
-                </div>
+                <FieldLabel className="font-semibold text-gray-700">
+                  Department
+                </FieldLabel>
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select department" />
@@ -235,9 +209,7 @@ export default function UpdateTeacher({ teacher }: { teacher: ITeacher }) {
                       <SelectItem value="Physics_And_Mechanical_Engineering">
                         Physics and Mechanical Engineering
                       </SelectItem>
-                      <SelectItem value="Mathematics">
-                        Mathematics
-                      </SelectItem>
+                      <SelectItem value="Mathematics">Mathematics</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -255,16 +227,11 @@ export default function UpdateTeacher({ teacher }: { teacher: ITeacher }) {
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-red-600" />
-                <FieldLabel className="font-semibold text-gray-700">
-                  Address
-                </FieldLabel>
-              </div>
+              <FieldLabel className="font-semibold text-gray-700">
+                Address
+              </FieldLabel>
               <Textarea {...field} rows={3} value={field.value || ""} />
-              {fieldState.invalid && (
-                <FieldError errors={[fieldState.error]} />
-              )}
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />

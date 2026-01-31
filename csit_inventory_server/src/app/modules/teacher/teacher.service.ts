@@ -3,6 +3,7 @@ import { filtering } from "../../../shared/filtering";
 import { pagination } from "../../../shared/pagination";
 import { Prisma, UserStatus } from "../../../../generated/prisma/client";
 import { prisma } from "../../../lib/prisma";
+import AppError from "../../errors/appErrors";
 
 const getAllTeacherFromDB = async (query: any) => {
   const { searchTerm, skip, take, sortBy, sortOrder, ...filterData } = query;
@@ -78,7 +79,7 @@ const deleteTeacherFromDB = async (id: string) => {
   });
 
   if (isTeacherExist.isDeleted) {
-    throw new Error("Teacher already deleted");
+    throw new AppError(410, "Teacher already deleted");
   }
 
   const isUserExist = await prisma.user.findUniqueOrThrow({
@@ -86,7 +87,7 @@ const deleteTeacherFromDB = async (id: string) => {
   });
 
   if (isUserExist.userStatus === UserStatus.DELETED) {
-    throw new Error("User already deleted");
+    throw new AppError(410, "User already deleted");
   }
 
   if (isTeacherExist) {
@@ -103,10 +104,45 @@ const deleteTeacherFromDB = async (id: string) => {
   }
   return null;
 };
+
+const reActivateTeacherInDB = async (id: string) => {
+  const isTeacherExist = await prisma.teacher.findUnique({
+    where: { id },
+  });
+
+  if (!isTeacherExist) {
+    throw new AppError(404, "Teacher not found");
+  }
+
+  const isUserExist = await prisma.user.findUnique({
+    where: { email: isTeacherExist.email },
+  });
+
+  if (!isUserExist) {
+    throw new AppError(404, "User not found");
+  }
+
+  if (isUserExist.userStatus !== UserStatus.DELETED) {
+    throw new AppError(400, "User account is already active");
+  }
+
+  await prisma.$transaction(async (transactionClient) => {
+    await transactionClient.teacher.update({
+      where: { id: isTeacherExist.id },
+      data: { isDeleted: false },
+    });
+    await transactionClient.user.updateMany({
+      where: { email: isTeacherExist.email },
+      data: { userStatus: UserStatus.ACTIVE },
+    });
+  });
+  return null;
+};
 export const TeacherService = {
   getAllTeacherFromDB,
   updateTeacherIntoDB,
   getSingleTeacherFromDB,
   deleteTeacherFromDB,
   getAllTeacherForAssignCourse,
+  reActivateTeacherInDB
 };

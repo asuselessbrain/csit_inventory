@@ -84,18 +84,57 @@ export const getSingleTeacher = async (teacherId: string) => {
   }
 };
 
-export const updateTeacher = async (teacherId: string, teacherData: FieldValues) => {
-    try {
-        const res = await baseApi(`${baseUrl}/teachers/${teacherId}`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(teacherData),
-        });
-        revalidateTag("teachers", "max");
-        return res;
-    } catch (error) {
-        throw error;
-    }
-}
+export const updateTeacher = async (
+  teacherId: string,
+  teacherData: FieldValues,
+) => {
+  try {
+    const res = await baseApi(`${baseUrl}/teachers/${teacherId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(teacherData),
+    });
+    revalidateTag("teachers", "max");
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteTeacher = async (teacherId: string) => {
+  try {
+    const res = await baseApi(
+      `${baseUrl}/teachers/delete-teacher/${teacherId}`,
+      {
+        method: "PATCH",
+        next: {
+          tags: ["teachers"],
+        },
+      },
+    );
+    revalidateTag("teachers", "max");
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const reactivateTeacher = async (teacherId: string) => {
+  try {
+    const res = await baseApi(
+      `${baseUrl}/teachers/re-activate-teacher/${teacherId}`,
+      {
+        method: "PATCH",
+        next: {
+          tags: ["teachers"],
+        },
+      },
+    );
+    revalidateTag("teachers", "max");
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};

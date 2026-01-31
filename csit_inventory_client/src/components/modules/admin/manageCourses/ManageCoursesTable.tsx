@@ -26,6 +26,7 @@ import AssignCourseTeacher from "./AssignCourseTeacher";
 import { ICourse, Meta } from "@/types";
 import ReusableSearch from "@/components/shared/ReusableSearch";
 import { getSemesterFormate } from "@/components/shared/formatter";
+import { toastId } from "@/components/shared/toastId";
 
 interface ManageCoursesTableProps {
   courses: {
@@ -38,8 +39,6 @@ export default function ManageCoursesTable({
   courses,
 }: ManageCoursesTableProps) {
   const [singleCourse, setSingleCourse] = useState<ICourse | null>(null);
-
-  const courseDetails = "courseDetails";
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -64,11 +63,11 @@ export default function ManageCoursesTable({
 
     if (course?.success) {
       toast.success(course?.message || "Course moved to trash successfully", {
-        id: courseDetails,
+        id: toastId,
       });
     } else {
       toast.error(course?.errorMessage || "Failed to move course to trash", {
-        id: courseDetails,
+        id: toastId,
       });
     }
   };
@@ -79,11 +78,11 @@ export default function ManageCoursesTable({
     console.log(res);
     if (res?.success) {
       toast.success(res?.message || "Course reactivated successfully", {
-        id: courseDetails,
+        id: toastId,
       });
     } else {
       toast.error(res?.errorMessage || "Failed to reactivate course", {
-        id: courseDetails,
+        id: toastId,
       });
     }
   };

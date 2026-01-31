@@ -28,6 +28,7 @@ import { Controller, useForm, FieldValues } from "react-hook-form";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { courseSchema } from "../createCourse/CreateCourseSchema";
+import { toastId } from "@/components/shared/toastId";
 
 interface UpdateCourseProps {
   course: ICourse;
@@ -48,7 +49,6 @@ export default function UpdateCourse({ course }: UpdateCourseProps) {
   const {
     formState: { isSubmitting },
   } = form;
-  const toastId = "update-course";
 
   const handleUpdate = async (data: FieldValues) => {
     const payload = {
