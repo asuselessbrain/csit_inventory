@@ -16,7 +16,7 @@ import { Controller, FieldValues, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { useMemo } from "react";
 import Image from "next/image";
-import { updateAdmin } from "@/services/adminService";
+import { createAdmin, updateAdmin } from "@/services/adminService";
 import { toastId } from "@/components/shared/toastId";
 
 interface AdminModalProps {
@@ -40,6 +40,7 @@ export default function AdminModal({ admin }: AdminModalProps) {
   const {
     handleSubmit,
     control,
+    reset,
     formState: { isSubmitting },
   } = form;
 
@@ -90,7 +91,37 @@ export default function AdminModal({ admin }: AdminModalProps) {
         });
       }
     }
+
+    const adminInfo = {
+      email: data.email,
+      password: data.password,
+      admin: {
+        name: data.name,
+        phoneNumber: data.phoneNumber,
+        photoUrl: data.photoUrl,
+        email: data.email,
+      },
+    };
+
+    const res = await createAdmin(adminInfo);
+
+    if (res.success) {
+      toast.success(res.message || "Admin created successfully", {
+        id: toastId,
+      });
+    } else {
+      toast.error(res.errorMessage || "Failed to create admin", {
+        id: toastId,
+      });
+    }
+    reset();
   };
+
+  if (isSubmitting) {
+    toast.loading(isUpdate ? "Updating admin..." : "Creating admin...", {
+      id: toastId,
+    });
+  }
 
   return (
     <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -211,7 +242,7 @@ export default function AdminModal({ admin }: AdminModalProps) {
         <Controller
           name="photoUrl"
           control={control}
-          render={({ field: { onChange, value, ...field }, fieldState }) => (
+          render={({ field: { onChange, ...field }, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="photoUrl">
                 Upload Photo (optional)
@@ -252,17 +283,19 @@ export default function AdminModal({ admin }: AdminModalProps) {
               Cancel
             </Button>
           </DialogClose>
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="disabled:cursor-no-drop"
-          >
-            {isSubmitting
-              ? "Saving..."
-              : isUpdate
-                ? "Save Changes"
-                : "Create Admin"}
-          </Button>
+          <DialogClose asChild>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="disabled:cursor-no-drop"
+            >
+              {isSubmitting
+                ? "Saving..."
+                : isUpdate
+                  ? "Save Changes"
+                  : "Create Admin"}
+            </Button>
+          </DialogClose>
         </DialogFooter>
       </form>
     </DialogContent>

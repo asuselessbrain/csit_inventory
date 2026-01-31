@@ -2,6 +2,8 @@ import { getAllAdmin } from "@/services/adminService";
 import ManageAdminsTable from "@/components/modules/admin/manageAdmins/ManageAdminsTable";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import AdminModal from "@/components/modules/admin/manageAdmins/CreateUpdateAdmin";
 
 export default async function MangeAdminPage({
   searchParams,
@@ -41,10 +43,15 @@ export default async function MangeAdminPage({
             View and manage all registered administrators
           </p>
         </div>
-        <Button className="gap-2 cursor-pointer">
-          <Plus className="h-4 w-4 text-white" />
-          Create Admin
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="gap-2 cursor-pointer">
+              <Plus className="h-4 w-4 text-white" />
+              Create Admin
+            </Button>
+          </DialogTrigger>
+          <AdminModal />
+        </Dialog>
       </div>
       <ManageAdminsTable admins={res.data} />
     </div>

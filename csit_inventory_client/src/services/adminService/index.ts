@@ -1,4 +1,4 @@
-"use server"
+"use server";
 import { QueryParams } from "@/types";
 import { baseApi } from "../baseApi/baseApi";
 import { FieldValues } from "react-hook-form";
@@ -46,6 +46,22 @@ export const updateAdmin = async (adminId: string, data: FieldValues) => {
         body: JSON.stringify(data),
       },
     );
+    revalidateTag("admins", "max");
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createAdmin = async (data: FieldValues) => {
+  try {
+    const res = await baseApi(`${process.env.NEXT_PUBLIC_BASE_API}/users/create-admin`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
     revalidateTag("admins", "max");
     return res;
   } catch (error) {
