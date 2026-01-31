@@ -25,11 +25,13 @@ const getAllAdminFromDB = async (query: any) => {
     const admins = await prisma.admin.findMany({ where: whereCondition, skip: skipValue, take: takeValue, orderBy: { [sortByField]: sortOrderValue } });
 
     const total = await prisma.admin.count({ where: whereCondition });
+    const totalPages = Math.ceil(total / takeValue);
     return {
         meta: {
             currentPage,
             limit: takeValue,
-            total
+            total,
+            totalPages,
         },
         data: admins
     };

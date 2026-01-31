@@ -1,4 +1,5 @@
 import { getAllAdmin } from "@/services/adminService";
+import ManageAdminsTable from "@/components/modules/admin/manageAdmins/ManageAdminsTable";
 
 export default async function MangeAdminPage({
   searchParams,
@@ -26,5 +27,16 @@ export default async function MangeAdminPage({
   };
 
   const res = await getAllAdmin(queryParams);
-  return <div>MangeAdminPage</div>;
+
+  return (
+    <div className="container mx-auto py-6">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-900">Manage Admins</h1>
+        <p className="text-gray-600 mt-2">
+          View and manage all registered administrators
+        </p>
+      </div>
+      <ManageAdminsTable admins={res.data} />
+    </div>
+  );
 }
