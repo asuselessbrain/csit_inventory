@@ -28,9 +28,16 @@ const deleteStudentFromDB = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, 200, "Student deleted successfully", result);
 })
 
+const approveStudentInDB = catchAsync(async (req: Request, res: Response) => {
+    const studentId = req.params.id;
+    const result = await StudentService.approveStudentInDB(studentId as string);
+    sendResponse(res, 200, "Student approved successfully", result);
+})
+
 export const StudentController = {
     getAllStudentFromDB,
     updateStudentIntoDB,
     getSingleStudentFromDB,
-    deleteStudentFromDB
+    deleteStudentFromDB,
+    approveStudentInDB
 }

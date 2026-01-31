@@ -6,7 +6,7 @@ import { config } from "../../../config";
 import { JwtPayload, Secret } from "jsonwebtoken";
 import { otpTemplate } from "../../../utils/emailTemplates/otpTemplate";
 import { prisma } from "../../../lib/prisma";
-import { UserStatus } from "../../../../generated/prisma/enums";
+import { UserRole, UserStatus } from "../../../../generated/prisma/enums";
 import { StringValue } from "ms";
 import AppError from "../../errors/appErrors";
 
@@ -23,6 +23,10 @@ const loginUser = async (payload: { email: string, password: string }) => {
 
     if (!user.isEmailVerified) {
         throw new AppError(400, "Email is not verified");
+    }
+
+    if(user.role === UserRole.STUDENT){
+        const 
     }
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
@@ -91,8 +95,6 @@ const verifyOtp = async (email: string, otp: string) => {
 const generateNewToken = async (refreshToken: string) => {
     console.log("refresh token",refreshToken)
     const decoded = jwtVerifier({ token: refreshToken, secretKey: config.jwt.refresh_token_secret as Secret }) as JwtPayload;
-    
-    console.log(decoded)
 
     const user = await prisma.user.findUnique({ where: { email: decoded.email, userStatus: UserStatus.ACTIVE } });
 

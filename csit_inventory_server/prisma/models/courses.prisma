@@ -4,6 +4,7 @@ model Courses {
   courseName  String
   description String?
   credits     Float
+  semester    SemesterType
   status      CourseStatus @default(ACTIVE)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt

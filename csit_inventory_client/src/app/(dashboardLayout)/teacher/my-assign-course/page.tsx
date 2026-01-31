@@ -5,6 +5,7 @@ import { getMyAssignCourses } from "@/services/courseService";
 import { ICourse } from "@/types";
 import PaginationComponent from "@/components/shared/PaginationComponent";
 import ReusableSearch from "@/components/shared/ReusableSearch";
+import { getSemesterFormate } from "@/components/shared/SemesterFormate";
 
 export default async function MyAssignCoursePage({
   searchParams,
@@ -34,6 +35,8 @@ export default async function MyAssignCoursePage({
   const res = await getMyAssignCourses(queryParams);
 
   const courses = res?.data?.data || [];
+
+  console.log(courses);
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
@@ -115,7 +118,9 @@ export default async function MyAssignCoursePage({
                         <p className="text-xs text-muted-foreground">
                           Semester
                         </p>
-                        <p className="font-medium text-sm">{course.semester}</p>
+                        <p className="font-medium text-sm">
+                          {getSemesterFormate(course.semester)}
+                        </p>
                       </div>
                     </div>
 
