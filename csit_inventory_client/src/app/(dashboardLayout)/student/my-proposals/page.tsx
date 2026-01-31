@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import Link from "next/link";
-import { IProposal } from "@/types";
+import { IProposal, SortOption } from "@/types";
 import PaginationComponent from "@/components/shared/PaginationComponent";
 import ReusableSearch from "@/components/shared/ReusableSearch";
+import ReusableSorting from "@/components/shared/ReusableSorting";
 
 export default async function MyProposalsPage({
   searchParams,
@@ -60,6 +61,13 @@ export default async function MyProposalsPage({
     );
   }
 
+  const sortOptions: SortOption[] = [
+    { label: "Name (A → Z)", value: "projectTitle-asc" },
+    { label: "Name (Z → A)", value: "projectTitle-desc" },
+    { label: "Oldest first", value: "createdAt-asc" },
+    { label: "Newest first", value: "createdAt-desc" },
+  ];
+
   return (
     <div className="min-h-screen">
       <div className="max-w-360 mx-auto px-6 py-8 space-y-4">
@@ -67,7 +75,11 @@ export default async function MyProposalsPage({
         <h1 className="text-2xl font-semibold">My Proposals</h1>
 
         <>
-        <ReusableSearch placeholder="Search proposals..." />
+          <div className="flex flex-col md:flex-row items-center justify-between">
+            <ReusableSearch placeholder="Search proposals..." />
+
+            <ReusableSorting options={sortOptions} />
+          </div>
           {/* Proposals List */}
           <div className="space-y-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {proposals.map((proposal: IProposal) => (

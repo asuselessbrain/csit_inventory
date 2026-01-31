@@ -10,12 +10,13 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import PaginationComponent from "@/components/shared/PaginationComponent";
-import { IAdmin, Meta } from "@/types";
+import { IAdmin, Meta, SortOption } from "@/types";
 import ReusableSearch from "@/components/shared/ReusableSearch";
 import Image from "next/image";
 import { formatDate } from "@/components/shared/ReusableFunction";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import AdminModal from "./CreateUpdateAdmin";
+import ReusableSorting from "@/components/shared/ReusableSorting";
 
 interface ManageAdminsTableProps {
   admins: {
@@ -30,11 +31,18 @@ export default function ManageAdminsTable({ admins }: ManageAdminsTableProps) {
       ? "bg-red-100 text-red-800 hover:bg-red-100"
       : "bg-emerald-100 text-emerald-800 hover:bg-emerald-100";
   };
+  const sortOptions: SortOption[] = [
+    { label: "Name (A → Z)", value: "name-asc" },
+    { label: "Name (Z → A)", value: "name-desc" },
+    { label: "Oldest first", value: "createdAt-asc" },
+    { label: "Newest first", value: "createdAt-desc" },
+  ];
 
   return (
     <>
-      <div>
+      <div className="mb-6 flex items-center justify-between">
         <ReusableSearch placeholder="Search admins..." />
+        <ReusableSorting options={sortOptions} />
       </div>
       <div className="rounded-lg border bg-white shadow-sm my-8">
         <Table>

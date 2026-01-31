@@ -1,8 +1,9 @@
 import { getAllTaskForStudent } from "@/services/taskService";
 import TaskCard from "@/components/modules/student/task/TaskCard";
-import { ITask } from "@/types";
+import { ITask, SortOption } from "@/types";
 import PaginationComponent from "@/components/shared/PaginationComponent";
 import ReusableSearch from "@/components/shared/ReusableSearch";
+import ReusableSorting from "@/components/shared/ReusableSorting";
 
 export default async function MyTasksPage({
   searchParams,
@@ -31,6 +32,15 @@ export default async function MyTasksPage({
   const res = await getAllTaskForStudent(queryParams);
   const tasks = res?.data?.data || [];
 
+  const sortOptions: SortOption[] = [
+    { label: "Name (A → Z)", value: "title-asc" },
+    { label: "Name (Z → A)", value: "title-desc" },
+    { label: "Oldest first", value: "createdAt-asc" },
+    { label: "Newest first", value: "createdAt-desc" },
+    { label: "Due Soon", value: "dueDate-asc" },
+    { label: "Due Later", value: "dueDate-desc" },
+  ];
+
   return (
     <div className="min-h-screen p-6">
       <div className="mx-auto max-w-7xl">
@@ -44,8 +54,9 @@ export default async function MyTasksPage({
           </p>
         </div>
 
-        <div className="mb-6">
+        <div className="mb-6 flex items-center justify-between gap-6">
           <ReusableSearch placeholder="Search tasks..." />
+          <ReusableSorting options={sortOptions} />
         </div>
         {/* Tasks List */}
         <div className="space-y-4">

@@ -23,10 +23,11 @@ import {
 import UpdateCourse from "./UpdateCourse";
 import PaginationComponent from "@/components/shared/PaginationComponent";
 import AssignCourseTeacher from "./AssignCourseTeacher";
-import { ICourse, Meta } from "@/types";
+import { ICourse, Meta, SortOption } from "@/types";
 import ReusableSearch from "@/components/shared/ReusableSearch";
 import { getSemesterFormate } from "@/components/shared/formatter";
 import { toastId } from "@/components/shared/toastId";
+import ReusableSorting from "@/components/shared/ReusableSorting";
 
 interface ManageCoursesTableProps {
   courses: {
@@ -74,8 +75,6 @@ export default function ManageCoursesTable({
 
   const reActivate = async (courseId: string) => {
     const res = await courseReActivate(courseId);
-
-    console.log(res);
     if (res?.success) {
       toast.success(res?.message || "Course reactivated successfully", {
         id: toastId,
@@ -86,10 +85,21 @@ export default function ManageCoursesTable({
       });
     }
   };
+
+  const sortOptions: SortOption[] = [
+    { label: "Name (A → Z)", value: "courseName-asc" },
+    { label: "Name (Z → A)", value: "courseName-desc" },
+    { label: "Oldest first", value: "createdAt-asc" },
+    { label: "Newest first", value: "createdAt-desc" },
+    { label: "Credits (Low → High)", value: "credits-asc" },
+    { label: "Credits (High → Low)", value: "credits-desc" },
+  ];
+
   return (
     <>
-      <div>
+      <div className="flex items-center justify-between gap-6">
         <ReusableSearch placeholder="Search courses..." />
+        <ReusableSorting options={sortOptions} />
       </div>
       <div className="rounded-lg border bg-white shadow-sm my-8">
         <Table>

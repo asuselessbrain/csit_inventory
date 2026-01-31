@@ -2,10 +2,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Calendar, Award } from "lucide-react";
 import { getMyAssignCourses } from "@/services/courseService";
-import { ICourse } from "@/types";
+import { ICourse, SortOption } from "@/types";
 import PaginationComponent from "@/components/shared/PaginationComponent";
 import ReusableSearch from "@/components/shared/ReusableSearch";
 import { getSemesterFormate } from "@/components/shared/formatter";
+import ReusableSorting from "@/components/shared/ReusableSorting";
 
 export default async function MyAssignCoursePage({
   searchParams,
@@ -36,8 +37,6 @@ export default async function MyAssignCoursePage({
 
   const courses = res?.data?.data || [];
 
-  console.log(courses);
-
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       ACTIVE: {
@@ -56,6 +55,15 @@ export default async function MyAssignCoursePage({
     );
   };
 
+  const sortOptions: SortOption[] = [
+    { label: "Name (A → Z)", value: "courseName-asc" },
+    { label: "Name (Z → A)", value: "courseName-desc" },
+    { label: "Oldest first", value: "createdAt-asc" },
+    { label: "Newest first", value: "createdAt-desc" },
+    { label: "Credits (Low → High)", value: "credits-asc" },
+    { label: "Credits (High → Low)", value: "credits-desc" },
+  ];
+
   return (
     <div className="container mx-auto py-6 space-y-6 max-w-360">
       {/* Header */}
@@ -70,8 +78,9 @@ export default async function MyAssignCoursePage({
         </div>
       </div>
 
-      <div>
+      <div className="mb-6 flex items-center justify-between gap-6">
         <ReusableSearch placeholder="Search assigned courses courseCode or title..." />
+        <ReusableSorting options={sortOptions} />
       </div>
 
       {/* Courses List */}

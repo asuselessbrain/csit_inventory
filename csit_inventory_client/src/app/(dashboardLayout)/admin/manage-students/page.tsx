@@ -22,9 +22,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import StudentAction from "@/components/modules/admin/manageStudent/StudentAction";
-import { IStudent } from "@/types";
+import { IStudent, SortOption } from "@/types";
 import PaginationComponent from "@/components/shared/PaginationComponent";
 import ReusableSearch from "@/components/shared/ReusableSearch";
+import ReusableSorting from "@/components/shared/ReusableSorting";
 
 export default async function ManageUsersPage({
   searchParams,
@@ -53,7 +54,14 @@ export default async function ManageUsersPage({
 
   const res = await getStudents(queryParams);
 
-  const students: IStudent[] = res?.data?.data || []
+  const students: IStudent[] = res?.data?.data || [];
+
+  const sortOptions: SortOption[] = [
+    { label: "Name (A → Z)", value: "name-asc" },
+    { label: "Name (Z → A)", value: "name-desc" },
+    { label: "Oldest first", value: "createdAt-asc" },
+    { label: "Newest first", value: "createdAt-desc" },
+  ];
 
   return (
     <div className="max-w-360 w-full mx-auto py-6 space-y-6">
@@ -64,8 +72,9 @@ export default async function ManageUsersPage({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="mb-6">
+        <div className="mb-6 flex items-center justify-between">
           <ReusableSearch placeholder="Search students..." />
+          <ReusableSorting  options={sortOptions} />
         </div>
         <div className="rounded-md border">
           <Table>

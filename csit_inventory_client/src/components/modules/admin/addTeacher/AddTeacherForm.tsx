@@ -62,6 +62,22 @@ export default function AddTeacherForm() {
   const [month, setMonth] = useState<Date | undefined>(date);
 
   const handleCreateAccount = async (data: FieldValues) => {
+    if (data.profilePhoto) {
+      const formData = new FormData();
+      formData.append("file", data.profilePhoto);
+      formData.append("upload_preset", "my_preset");
+      formData.append("resource_type", "auto");
+
+      const res = await fetch(
+        "https://api.cloudinary.com/v1_1/dwduymu1l/auto/upload",
+        { method: "POST", body: formData },
+      );
+
+      const imageData = await res.json();
+
+      data.profilePhoto = imageData.secure_url;
+    }
+
     const teacherData = {
       email: data.email,
       password: data.password,
@@ -74,6 +90,7 @@ export default function AddTeacherForm() {
         department: data.department,
         designation: data.designation,
         joinedAt: new Date(data.joinedAt).toISOString(),
+        photoUrl: data.profilePhoto,
       },
     };
 
@@ -386,13 +403,13 @@ export default function AddTeacherForm() {
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor={field.name}>Profile Photo</FieldLabel>
               <Input
-                {...field}
                 id={field.name}
-                aria-invalid={fieldState.invalid}
-                placeholder="Enter your"
-                autoComplete="off"
                 type="file"
-                value={field.value || ""}
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  field.onChange(file);
+                }}
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>

@@ -8,10 +8,14 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import PaginationComponent from "@/components/shared/PaginationComponent";
-import { ITeacher, Meta } from "@/types";
+import { ITeacher, Meta, SortOption } from "@/types";
 import ReusableSearch from "@/components/shared/ReusableSearch";
-import { getDepartmentFormat, getDesignationFormat } from "@/components/shared/formatter";
+import {
+  getDepartmentFormat,
+  getDesignationFormat,
+} from "@/components/shared/formatter";
 import ManageTeacherAction from "./ManageTeacherAction";
+import ReusableSorting from "@/components/shared/ReusableSorting";
 
 interface ManageTeachersTableProps {
   teachers: {
@@ -36,10 +40,18 @@ export default function ManageTeachersTable({
     }
   };
 
+  const sortOptions: SortOption[] = [
+    { label: "Name (A → Z)", value: "name-asc" },
+    { label: "Name (Z → A)", value: "name-desc" },
+    { label: "Oldest first", value: "createdAt-asc" },
+    { label: "Newest first", value: "createdAt-desc" },
+  ];
+
   return (
     <>
-      <div>
+      <div className="flex items-center justify-between gap-6">
         <ReusableSearch placeholder="Search teachers..." />
+        <ReusableSorting options={sortOptions} />
       </div>
       <div className="rounded-lg border bg-white shadow-sm my-8">
         <Table>

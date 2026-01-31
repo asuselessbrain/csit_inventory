@@ -32,15 +32,18 @@ export const getSingleStudentProposal = async (queryParams?: QueryParams) => {
     });
   }
   try {
-    const res = await baseApi(`${baseUrl}/project-thesis/student?${params.toString()}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
+    const res = await baseApi(
+      `${baseUrl}/project-thesis/student?${params.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        next: {
+          tags: ["project"],
+        },
       },
-      next: {
-        tags: ["project"],
-      },
-    });
+    );
     return res;
   } catch (error) {
     throw error;
@@ -64,17 +67,28 @@ export const getSingleProposal = async (id: string) => {
   }
 };
 
-export const getSingleTeacherProposal = async () => {
-  try {
-    const res = await baseApi(`${baseUrl}/project-thesis/supervisor`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      next: {
-        tags: ["project"],
-      },
+export const getSingleTeacherProposal = async (queryParams?: QueryParams) => {
+  const params = new URLSearchParams();
+  if (queryParams) {
+    Object.entries(queryParams).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        params.append(key, String(value));
+      }
     });
+  }
+  try {
+    const res = await baseApi(
+      `${baseUrl}/project-thesis/supervisor?${params.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        next: {
+          tags: ["project"],
+        },
+      },
+    );
     return res;
   } catch (error) {
     throw error;

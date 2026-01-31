@@ -1,8 +1,9 @@
 import TaskReviewCard from "@/components/modules/teacher/tasks/TaskReviewCard";
 import PaginationComponent from "@/components/shared/PaginationComponent";
 import ReusableSearch from "@/components/shared/ReusableSearch";
+import ReusableSorting from "@/components/shared/ReusableSorting";
 import { getAllTaskForTeacherReview } from "@/services/taskService";
-import { ITask } from "@/types";
+import { ITask, SortOption } from "@/types";
 
 export default async function TaskToReviewPage({
   searchParams,
@@ -32,6 +33,13 @@ export default async function TaskToReviewPage({
   const res = await getAllTaskForTeacherReview(queryParams);
   const tasks = res?.data?.data || [];
 
+  const sortOptions: SortOption[] = [
+    { label: "Name (A → Z)", value: "title-asc" },
+    { label: "Name (Z → A)", value: "title-desc" },
+    { label: "Oldest first", value: "updatedAt-asc" },
+    { label: "Newest first", value: "updatedAt-desc" },
+  ];
+
   return (
     <div className="min-h-screen p-6">
       <div className="mx-auto max-w-360">
@@ -45,8 +53,9 @@ export default async function TaskToReviewPage({
           </p>
         </div>
 
-        <div className="mb-6">
+        <div className="mb-6 flex items-center justify-between gap-6">
           <ReusableSearch placeholder="Search tasks to review..." />
+          <ReusableSorting options={sortOptions} />
         </div>
 
         <div className="space-y-4">
