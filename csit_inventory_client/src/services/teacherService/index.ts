@@ -3,6 +3,7 @@
 import { FieldValues } from "react-hook-form";
 import { baseApi } from "../baseApi/baseApi";
 import { QueryParams } from "@/types";
+import { revalidateTag } from "next/cache";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_API;
 
@@ -15,6 +16,7 @@ export const addTeacher = async (teacherData: FieldValues) => {
       },
       body: JSON.stringify(teacherData),
     });
+    revalidateTag("teachers", "max");
     return res;
   } catch (error) {
     throw error;
@@ -27,6 +29,9 @@ export const getAllTeacherForCourseAssign = async () => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+      },
+      next: {
+        tags: ["teachers"],
       },
     });
     return res;
@@ -61,3 +66,36 @@ export const allTeachers = async (queryParams?: QueryParams) => {
     throw error;
   }
 };
+
+export const getSingleTeacher = async (teacherId: string) => {
+  try {
+    const res = await baseApi(`${baseUrl}/teachers/${teacherId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      next: {
+        tags: ["teachers"],
+      },
+    });
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateTeacher = async (teacherId: string, teacherData: FieldValues) => {
+    try {
+        const res = await baseApi(`${baseUrl}/teachers/${teacherId}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(teacherData),
+        });
+        revalidateTag("teachers", "max");
+        return res;
+    } catch (error) {
+        throw error;
+    }
+}

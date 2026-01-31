@@ -1,5 +1,3 @@
-import { Trash2, Eye, Edit, Undo } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -10,20 +8,10 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import PaginationComponent from "@/components/shared/PaginationComponent";
-import { Meta } from "@/types";
+import { ITeacher, Meta } from "@/types";
 import ReusableSearch from "@/components/shared/ReusableSearch";
 import { getDepartmentFormat, getDesignationFormat } from "@/components/shared/formatter";
-
-interface ITeacher {
-  id: string;
-  name: string;
-  email: string;
-  phoneNumber?: string;
-  designation?: string;
-  department?: string;
-  status: string;
-  isDeleted: boolean;
-}
+import ManageTeacherAction from "./ManageTeacherAction";
 
 interface ManageTeachersTableProps {
   teachers: {
@@ -111,44 +99,7 @@ export default function ManageTeachersTable({
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-green-600 hover:bg-green-50 hover:text-green-700"
-                        title="View teacher details"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        title="Edit teacher"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-
-                      {!teacher.isDeleted ? (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
-                          title="Delete teacher"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
-                          title="Reactivate teacher"
-                        >
-                          <Undo className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
+                    <ManageTeacherAction teacher={teacher} />
                   </TableCell>
                 </TableRow>
               ))

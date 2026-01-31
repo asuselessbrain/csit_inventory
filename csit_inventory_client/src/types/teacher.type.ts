@@ -1,3 +1,5 @@
+import { IProposal } from "./projectThesis.type";
+
 type TeacherStatus = "ACTIVE" | "STUDY_LEAVE" | "RETIRED"
 type TeacherDesignation = "LECTURER" | "ASSISTANT_PROFESSOR" | "ASSOCIATE_PROFESSOR" | "PROFESSOR"
 type Department = "Computer_Science_And_Information_Technology" | "Computer_science_And_Communication_Engineering" | "Electrical_And_Electronic_Engineering" | "Physics_And_Mechanical_Engineering" | "Mathematics"
@@ -19,6 +21,6 @@ export interface ITeacher {
     updatedAt: string;
 
     // user?: User;
-    // projectTheses?: ProjectThesis[];
+    projectTheses?: IProposal[];
     // courseTeachers?: CourseTeacher[];
 }
