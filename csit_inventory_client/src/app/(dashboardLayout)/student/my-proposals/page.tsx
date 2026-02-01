@@ -11,6 +11,7 @@ import ReusableSearch from "@/components/shared/ReusableSearch";
 import ReusableSorting from "@/components/shared/ReusableSorting";
 import ReusableFilter from "@/components/shared/ReusableFilter";
 import { getCourseForProjectThesis } from "@/services/courseService";
+import DownloadReportButton from "@/components/shared/DownloadButton";
 
 export default async function MyProposalsPage({
   searchParams,
@@ -56,7 +57,10 @@ export default async function MyProposalsPage({
     <div className="min-h-screen">
       <div className="max-w-360 mx-auto px-6 py-8 space-y-4">
         {/* Header */}
-        <h1 className="text-2xl font-semibold">My Proposals</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-semibold">My Proposals</h1>
+        <DownloadReportButton queryParams={queryParams} />
+        </div>
 
         <>
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">

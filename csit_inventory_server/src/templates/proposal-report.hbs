@@ -1,0 +1,106 @@
+<html>
+  <head>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        margin-top: 0px;
+        padding-top: 0px;
+        color: #333;
+      }
+      h1 {
+        text-align: center;
+        margin-top: 0px;
+        color: #000;
+        border-bottom: 2px solid #333;
+        padding-bottom: 10px;
+      }
+      .meta {
+        text-align: right;
+        font-size: 12px;
+        margin-bottom: 20px;
+        color: #666;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        font-size: 12px;
+      }
+      th {
+        background-color: #f2f2f2;
+        padding: 10px;
+        text-align: left;
+        border-bottom: 2px solid #ddd;
+      }
+      td {
+        border-bottom: 1px solid #eee;
+        padding: 10px;
+        vertical-align: top;
+      }
+
+      /* Progress Bar Styles */
+      .progress-track {
+        background: #e0e0e0;
+        height: 8px;
+        width: 100px;
+        border-radius: 4px;
+        display: inline-block;
+      }
+      .progress-fill {
+        background: #28a745;
+        height: 100%;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <h1>Project Proposal Report</h1>
+    <div class="meta">
+      <p>Generated Date: {{generatedDate}}</p>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 35%">Project Info</th>
+          <th style="width: 20%">Course</th>
+          <th style="width: 20%">Supervisor</th>
+          <th style="width: 25%">Progress</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each proposals}}
+          <tr>
+            <td>
+              <strong>{{this.projectTitle}}</strong><br />
+              <span
+                style="color: #666; font-size: 10px;"
+              >{{this.description}}</span>
+            </td>
+            <td>
+              {{this.course.courseName}}<br />
+              <small>{{this.course.courseCode}}</small>
+            </td>
+            <td>
+              {{this.supervisor.name}}
+            </td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="progress-track">
+                  <div
+                    class="progress-fill"
+                    style="width: {{this.overallProgress}}%;"
+                  ></div>
+                </div>
+                <strong>{{this.overallProgress}}%</strong>
+              </div>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+
+  </body>
+</html>

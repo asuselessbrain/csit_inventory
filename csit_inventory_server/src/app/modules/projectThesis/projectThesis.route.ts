@@ -9,6 +9,7 @@ router.post('/', auth(UserRole.STUDENT), ProjectThesisController.createProjectTh
 // router.get('/', ProjectThesisController.getAllProjectThesesFromDB)
 router.get('/student', auth(UserRole.STUDENT), ProjectThesisController.getSingleStudentProjectThesisFromDB)
 router.get('/supervisor', auth(UserRole.TEACHER), ProjectThesisController.getSingleSupervisorProjectThesisFromDB)
+router.get('/proposal-report', ProjectThesisController.generateStudentProposalReport)
 router.get('/:id', auth(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT), ProjectThesisController.getSingleProjectThesisFromDB)
 router.patch('/approve-project-thesis/:id', auth(UserRole.TEACHER), ProjectThesisController.approveProjectThesis)
 router.patch('/reject-project-thesis/:id', auth(UserRole.TEACHER), ProjectThesisController.rejectProjectThesis)
