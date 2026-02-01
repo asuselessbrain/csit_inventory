@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Teacher Proposal Report</title>
+    <style>
+        /* General Layout */
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            color: #333;
+            line-height: 1.5;
+            font-size: 12px;
+            margin: 0; /* Margin 0 কারণ Puppeteer সার্ভিসে margin সেট করা আছে */
+            padding: 0;
+        }
+
+        /* Report Title Section */
+        .report-title-section {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-top: 10px; /* হেডারের ঠিক নিচে একটু গ্যাপ */
+        }
+
+        .report-title-section h1 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 20px; /* ফন্ট সাইজ একটু এডজাস্ট করা হলো */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .report-meta {
+            font-size: 10px;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        /* Summary Info Box */
+        .summary-box {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f1f5f9;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .summary-item {
+            font-weight: bold;
+            font-size: 11px;
+            color: #475569;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #e2e8f0; /* হালকা বর্ডার */
+            text-align: left;
+            vertical-align: top;
+            word-wrap: break-word;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: #334155;
+            font-weight: 700;
+            font-size: 10px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #cbd5e1;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fcfcfc;
+        }
+
+        /* Avoid page break inside rows */
+        tr {
+            page-break-inside: avoid;
+        }
+
+        /* Specific Column Widths */
+        .col-title { width: 30%; }
+        .col-student { width: 22%; }
+        .col-course { width: 13%; }
+        .col-progress { width: 20%; }
+        .col-status { width: 15%; }
+
+        /* Progress Bar */
+        .progress-wrapper {
+            width: 100%;
+        }
+        .progress-text {
+            font-size: 9px;
+            display: block;
+            margin-bottom: 4px;
+            font-weight: bold;
+            color: #555;
+        }
+        .progress-bg {
+            background-color: #e2e8f0;
+            border-radius: 10px;
+            height: 6px;
+            width: 100%;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #22c55e; /* Green */
+            border-radius: 10px;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Dynamic Status Colors (Optional helper classes) */
+        .status-pending { background-color: #fff7ed; color: #c2410c; }
+        .status-approved { background-color: #f0fdf4; color: #15803d; }
+        /* Default styling fallback handled inline or generally */
+        .badge-default { background-color: #f1f5f9; color: #475569; }
+
+    </style>
+</head>
+<body>
+
+    <div class="report-title-section">
+        <h1>Project & Thesis Proposal Report</h1>
+        <div class="report-meta">Generated Date: {{generatedDate}}</div>
+    </div>
+
+    <div class="summary-box">
+        <span class="summary-item">Total Projects: {{meta.total}}</span>
+        <span class="summary-item">Total Pages: {{meta.totalPages}}</span>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th class="col-title">Project Title</th>
+                <th class="col-student">Student Details</th>
+                <th class="col-course">Course</th>
+                <th class="col-progress">Overall Progress</th>
+                <th class="col-status">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each proposals}}
+            <tr>
+                <td>
+                    <strong style="font-size: 11px; color: #1e293b;">{{this.projectTitle}}</strong>
+                </td>
+                
+                <td>
+                    {{#if this.student}}
+                        <strong style="font-size: 11px;">{{this.student.name}}</strong><br>
+                        <span style="color: #64748b; font-size: 10px;">ID: {{this.student.studentId}}</span><br>
+                        <span style="color: #64748b; font-size: 10px;">{{this.student.email}}</span>
+                    {{else}}
+                        <span style="color: #ef4444; font-size: 10px;">Not Assigned</span>
+                    {{/if}}
+                </td>
+
+                <td>
+                    {{#if this.course}}
+                        <strong style="color: #334155;">{{this.course.courseCode}}</strong>
+                    {{else}}
+                        -
+                    {{/if}}
+                </td>
+
+                <td>
+                    <div class="progress-wrapper">
+                        <span class="progress-text">{{this.overallProgress}}% Completed</span>
+                        <div class="progress-bg">
+                            <div class="progress-fill" style="width: {{this.overallProgress}}%;"></div>
+                        </div>
+                    </div>
+                </td>
+
+                <td>
+                    <span class="status-badge badge-default">{{this.status}}</span>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+    {{#unless proposals.length}}
+    <div style="text-align: center; padding: 40px; border: 1px dashed #cbd5e1; border-radius: 6px; color: #64748b;">
+        <p>No project proposals found matching your criteria.</p>
+    </div>
+    {{/unless}}
+
+</body>
+</html>

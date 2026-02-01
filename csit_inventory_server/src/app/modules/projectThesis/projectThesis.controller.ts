@@ -120,8 +120,8 @@ const getSingleSupervisorProjectThesisFromDB = catchAsync(
 
 const generateStudentProposalReport = catchAsync(
   async (req: Request & { user?: any }, res: Response) => {
-    // const user = req.user;
-    const email = "anomious31@gmail.com"
+    const user = req.user;
+    const email = user.email;
     const result = await ProjectThesisService.generateStudentProposalReport(
       email,
       req.query,
@@ -129,7 +129,7 @@ const generateStudentProposalReport = catchAsync(
     const pdfContext = {
       generatedDate: new Date().toLocaleDateString(),
       proposals: result.data,
-      meta: result.meta, // যদি টেমপ্লেটে মোট সংখ্যা বা পেজ নাম্বার দেখাতে চান
+      meta: result.meta,
     };
 
     const pdfBuffer = await generatePdf("proposal-report.hbs", pdfContext);
@@ -141,7 +141,34 @@ const generateStudentProposalReport = catchAsync(
       "Cache-Control": "no-cache",
     });
 
-    // ৫. বাফার সেন্ড করা (sendResponse ফাংশন এখানে ব্যবহার করবেন না)
+    res.end(pdfBuffer);
+  },
+);
+
+const generateTeacherProposalReport = catchAsync(
+  async (req: Request & { user?: any }, res: Response) => {
+    const user = req.user;
+    const email = user.email;
+    const result = await ProjectThesisService.generateTeacherProposalReport(
+      email,
+      req.query,
+    );
+    const pdfContext = {
+      generatedDate: new Date().toLocaleDateString(),
+      proposals: result.data,
+      meta: result.meta,
+    };
+    const pdfBuffer = await generatePdf(
+      "proposal-report-teacher.hbs",
+      pdfContext,
+    );
+
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename="teacher-report-${email}.pdf"`,
+      "Content-Length": pdfBuffer.length,
+      "Cache-Control": "no-cache",
+    });
     res.end(pdfBuffer);
   },
 );
@@ -157,5 +184,6 @@ export const ProjectThesisController = {
   rejectProjectThesis,
   startProjectThesisInDB,
   completeProjectThesisInDB,
-  generateStudentProposalReport
+  generateStudentProposalReport,
+  generateTeacherProposalReport,
 };

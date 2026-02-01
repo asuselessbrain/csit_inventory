@@ -12,6 +12,7 @@ import ReusableSorting from "@/components/shared/ReusableSorting";
 import { Progress } from "@/components/ui/progress";
 import ReusableFilter from "@/components/shared/ReusableFilter";
 import { getCourseForProjectThesis } from "@/services/courseService";
+import DownloadReportButton from "@/components/shared/DownloadButton";
 
 const getStatusBadge = (status?: string) => {
   switch (status) {
@@ -70,14 +71,17 @@ export default async function ProposalsPage({
   return (
     <div className="min-h-screen py-8">
       <div className="max-w-360 mx-auto px-6 space-y-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-            Submitted Proposals
-          </h1>
-          <p className="mt-1 text-gray-600">
-            View, review, and manage proposals submitted by students under your
-            supervision
-          </p>
+        <div className="flex items-center justify-between">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+              Submitted Proposals
+            </h1>
+            <p className="mt-1 text-gray-600">
+              View, review, and manage proposals submitted by students under
+              your supervision
+            </p>
+          </div>
+          <DownloadReportButton forWho="teacher" queryParams={queryParams} />
         </div>
 
         <div className="flex items-center justify-between gap-6">

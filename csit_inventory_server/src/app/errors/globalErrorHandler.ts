@@ -1,9 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { Prisma } from "../../../generated/prisma/client";
+// 👇 Import Fix: পুরো লাইব্রেরি ইম্পোর্ট করে destructure করুন
+import jwt from "jsonwebtoken";
+const { JsonWebTokenError, TokenExpiredError } = jwt; 
 
 class CustomError extends Error {
   statusCode: number;
-
   constructor(message: string, statusCode: number) {
     super(message);
     this.statusCode = statusCode;
@@ -11,8 +13,14 @@ class CustomError extends Error {
   }
 }
 
+// আপনার AppError ক্লাসটি যদি আলাদা ফাইলে থাকে, তবে সেটি ইম্পোর্ট করে নিন।
+// অথবা এখানে ইন্টারফেস ব্যবহার করতে পারেন।
+interface IAppError extends Error {
+    statusCode?: number;
+}
+
 export const globalErrorHandler = (
-  error: CustomError,
+  error: IAppError, // এখানে টাইপটি জেনেরিক বা কাস্টম ইন্টারফেস দিন
   req: Request,
   res: Response,
   next: NextFunction,
@@ -21,56 +29,49 @@ export const globalErrorHandler = (
   let message = "Something went wrong!";
   let errorMessage = error.message;
 
+  // ১. Prisma Error
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     if (error.code === "P2002") {
       statusCode = 409;
       message = "Duplicate Entry";
-      let fieldName = "Unknown field";
-
-      if (error.meta?.target) {
-        if (Array.isArray(error.meta.target)) {
-          fieldName = error.meta.target[0];
-        } else {
-          fieldName = String(error.meta.target);
-        }
-      } else {
-        const match = error.message.match(/fields:\s*\(`?([^`)]+)`?\)/);
-        if (match && match[1]) {
-          fieldName = match[1];
-        }
-      }
-      errorMessage = `${fieldName} already exists. Please use a different one.`;
+      // ... (আপনার ফিল্ড এক্সট্রাকশন লজিক)
+      errorMessage = `Duplicate entry found.`;
     } else if (error.code === "P2025") {
       statusCode = 404;
       message = "Record not found";
-      errorMessage =
-        "The record you are trying to update or delete does not exist.";
     }
-  }
+  } 
+  // ২. Prisma Validation Error
   else if (error instanceof Prisma.PrismaClientValidationError) {
     statusCode = 400;
     message = "Validation Error";
-    errorMessage = "Invalid data format or missing required fields.";
-
-    const missingFieldMatch = error.message.match(
-      /Argument `(\w+)` is missing/,
-    );
-
-    if (missingFieldMatch) {
-      errorMessage = `Missing required field: ${missingFieldMatch[1]}`;
-    }
-  }
-  else if (error instanceof CustomError) {
+  } 
+  // ৩. JWT Errors (Import fix এর পর এটি কাজ করবে)
+  else if (error instanceof TokenExpiredError) {
+    statusCode = 401;
+    message = "Unauthorized";
+    errorMessage = "Access token expired. Please log in again.";
+  } 
+  else if (error instanceof JsonWebTokenError) {
+    statusCode = 401;
+    message = "Unauthorized";
+    errorMessage = "Invalid token provided.";
+  } 
+  // ৪. Custom AppError handling
+  else if (error.statusCode) {
     statusCode = error.statusCode;
     message = error.message;
     errorMessage = error.message;
   }
-  console.log(error);
+
+  // Console log for debugging
+  console.log("🚨 Error Handler Caught:", error.statusCode, error.message);
+
   res.status(statusCode).json({
     success: false,
-    statusCode: statusCode,
-    message: message,
-    errorMessage: errorMessage,
-    error: error,
+    statusCode,
+    message,
+    errorMessage,
+    // error, // প্রোডাকশনে এটি অফ রাখাই ভালো
   });
 };

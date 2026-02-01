@@ -7,52 +7,57 @@ import { JwtPayload, Secret } from "jsonwebtoken";
 import AppError from "../errors/appErrors";
 
 const auth = (...roles: string[]) => {
-    return async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
-        const token = req.headers.authorization;
+  return async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
+    // 👇 পুরো কোডটি try ব্লকের শুরুতে শুরু হবে
+    try {
+      const token = req.headers.authorization;
 
-        if (!token) {
-            throw new AppError(401, "invalid signature");
+      if (!token) {
+        throw new AppError(401, "Invalid signature");
+      }
+
+      const bearerToken = token.split(" ")[1];
+      let decoded;
+
+      try {
+        decoded = jwtVerifier({
+          token: bearerToken as string,
+          secretKey: config.jwt.token_secret as Secret,
+        }) as JwtPayload;
+      } catch (err: any) {
+        // এখানে throw করলে সেটা বাইরের catch ব্লকে যাবে -> তারপর next(error) এ যাবে
+        if (err.name === "TokenExpiredError") {
+          throw new AppError(401, "Access token expired");
         }
-
-        const bearerToken = token.split(" ")[1]
-
-        let decoded
-
-        try {
-            decoded = jwtVerifier({ token: bearerToken as string, secretKey: config.jwt.token_secret as Secret }) as JwtPayload;
+        if (err.name === "JsonWebTokenError") {
+          throw new AppError(401, "Invalid token");
         }
-        catch (err: any) {
-            if (err.name === "TokenExpiredError") {
-                throw new AppError(401, "Access token expired");
-            }
+        throw new AppError(401, "Unauthorized");
+      }
 
-            if (err.name === "JsonWebTokenError") {
-                throw new AppError(401, "Invalid token");
-            }
+      const user = await prisma.user.findUnique({
+        where: {
+          email: decoded.email,
+          userStatus: UserStatus.ACTIVE,
+        },
+      });
 
-            throw new AppError(401, "Unauthorized");
-        }
+      if (!user) {
+        throw new AppError(404, "User not found");
+      }
 
-        const user = await prisma.user.findUnique({
-            where: {
-                email: decoded.email,
-                userStatus: UserStatus.ACTIVE
-            }
-        })
+      if (roles.length && !roles.includes(user.role)) {
+        throw new AppError(403, "You are not authorized to access this route");
+      }
 
-        if (!user) {
-            throw new AppError(404, "User not found");
-        }
+      req.user = decoded as JwtPayload;
 
-
-        if (roles.length && !roles.includes(user.role)) {
-            throw new AppError(403, "You are not authorized to access this route");
-        }
-
-        req.user = decoded as JwtPayload
-
-        next()
+      next();
+    } catch (error) {
+      // 👇 এই লাইনটি সবচেয়ে গুরুত্বপূর্ণ। async এরর হ্যান্ডলিং এর জন্য next(error) দিতেই হবে
+      next(error);
     }
-}
+  };
+};
 
 export default auth;

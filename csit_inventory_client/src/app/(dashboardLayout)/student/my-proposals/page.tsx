@@ -59,7 +59,7 @@ export default async function MyProposalsPage({
         {/* Header */}
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold">My Proposals</h1>
-        <DownloadReportButton queryParams={queryParams} />
+        <DownloadReportButton forWho="student" queryParams={queryParams} />
         </div>
 
         <>
