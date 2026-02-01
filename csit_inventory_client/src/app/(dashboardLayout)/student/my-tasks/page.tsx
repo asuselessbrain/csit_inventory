@@ -1,9 +1,11 @@
 import { getAllTaskForStudent } from "@/services/taskService";
 import TaskCard from "@/components/modules/student/task/TaskCard";
-import { ITask, SortOption } from "@/types";
+import { ICourse, ITask, SortOption } from "@/types";
 import PaginationComponent from "@/components/shared/PaginationComponent";
 import ReusableSearch from "@/components/shared/ReusableSearch";
 import ReusableSorting from "@/components/shared/ReusableSorting";
+import ReusableFilter from "@/components/shared/ReusableFilter";
+import { getCourseForProjectThesis } from "@/services/courseService";
 
 export default async function MyTasksPage({
   searchParams,
@@ -13,6 +15,8 @@ export default async function MyTasksPage({
     search?: string;
     status?: string;
     sortBy?: string;
+    courseId?: string;
+    type?: string;
     sortOrder?: "asc" | "desc";
   }>;
 }) {
@@ -27,10 +31,13 @@ export default async function MyTasksPage({
     status: params.status,
     sortBy: params.sortBy,
     sortOrder: params.sortOrder,
+    "projectThesis.courseId": params.courseId,
+    "projectThesis.type": params.type,
     take: limit,
   };
   const res = await getAllTaskForStudent(queryParams);
   const tasks = res?.data?.data || [];
+  const activeCourses = await getCourseForProjectThesis();
 
   const sortOptions: SortOption[] = [
     { label: "Name (A → Z)", value: "title-asc" },
@@ -56,6 +63,35 @@ export default async function MyTasksPage({
 
         <div className="mb-6 flex items-center justify-between gap-6">
           <ReusableSearch placeholder="Search tasks..." />
+          <ReusableFilter
+            options={
+              activeCourses.data?.map((course: ICourse) => ({
+                id: course.id,
+                name: `${course.courseCode}-${course.courseName}`,
+              })) || []
+            }
+            queryKey="courseId"
+            placeholder="Filter by course"
+          />
+          <ReusableFilter
+            options={[
+              { id: "TODO", name: "To Do" },
+              { id: "IN_PROGRESS", name: "In Progress" },
+              { id: "REVIEW", name: "Review" },
+              { id: "DONE", name: "Completed" },
+              { id: "FAILED", name: "Failed" },
+            ]}
+            queryKey="status"
+            placeholder="Filter by status"
+          />
+          <ReusableFilter
+            options={[
+              { id: "PROJECT", name: "Project" },
+              { id: "THESIS", name: "Thesis" },
+            ]}
+            queryKey="type"
+            placeholder="Filter by type"
+          />
           <ReusableSorting options={sortOptions} />
         </div>
         {/* Tasks List */}

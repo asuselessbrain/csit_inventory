@@ -6,7 +6,8 @@ export const searching = (
     | Prisma.AdminWhereInput[]
     | Prisma.TeacherWhereInput[]
     | Prisma.CoursesWhereInput[]
-    | Prisma.TaskWhereInput[],
+    | Prisma.TaskWhereInput[]
+    | Prisma.ProjectThesisWhereInput[],
   searchFields: string[],
   searchTerm: string,
 ) => {

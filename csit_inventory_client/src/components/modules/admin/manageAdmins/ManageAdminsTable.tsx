@@ -46,8 +46,8 @@ export default function ManageAdminsTable({ admins }: ManageAdminsTableProps) {
         <div className="flex items-center gap-6">
           <ReusableFilter
             options={[
-              { _id: "false", name: "Active" },
-              { _id: "true", name: "Deleted" },
+              { id: "false", name: "Active" },
+              { id: "true", name: "Deleted" },
             ]}
             queryKey="isDeleted"
             placeholder="Filter by status"

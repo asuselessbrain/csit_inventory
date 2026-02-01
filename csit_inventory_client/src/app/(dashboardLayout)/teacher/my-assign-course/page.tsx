@@ -7,6 +7,8 @@ import PaginationComponent from "@/components/shared/PaginationComponent";
 import ReusableSearch from "@/components/shared/ReusableSearch";
 import { getSemesterFormate } from "@/components/shared/formatter";
 import ReusableSorting from "@/components/shared/ReusableSorting";
+import ReusableFilter from "@/components/shared/ReusableFilter";
+import { semesterOptions } from "@/components/modules/admin/manageCourses/ManageCoursesTable";
 
 export default async function MyAssignCoursePage({
   searchParams,
@@ -16,6 +18,8 @@ export default async function MyAssignCoursePage({
     search?: string;
     status?: string;
     sortBy?: string;
+    department?: string;
+    semester?: string;
     sortOrder?: "asc" | "desc";
   }>;
 }) {
@@ -30,6 +34,7 @@ export default async function MyAssignCoursePage({
     status: params.status,
     sortBy: params.sortBy,
     sortOrder: params.sortOrder,
+    semester: params.semester,
     take: limit,
   };
 
@@ -80,7 +85,14 @@ export default async function MyAssignCoursePage({
 
       <div className="mb-6 flex items-center justify-between gap-6">
         <ReusableSearch placeholder="Search assigned courses courseCode or title..." />
-        <ReusableSorting options={sortOptions} />
+        <div className="flex items-center gap-6">
+          <ReusableFilter
+            options={semesterOptions}
+            queryKey="semester"
+            placeholder="Filter by semester"
+          />
+          <ReusableSorting options={sortOptions} />
+        </div>
       </div>
 
       {/* Courses List */}

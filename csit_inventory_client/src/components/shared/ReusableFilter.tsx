@@ -20,7 +20,7 @@ import {
 import { useState } from "react";
 
 interface FilterOption {
-  _id: string;
+  id: string;
   name: string;
 }
 
@@ -112,13 +112,13 @@ export default function ReusableFilter({
               <CommandGroup>
                 {options.map((option) => (
                   <CommandItem
-                    key={option._id}
-                    onSelect={() => handleSelect(option._id)}
+                    key={option.id}
+                    onSelect={() => handleSelect(option.id)}
                   >
                     <div
                       className={cn(
                         "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                        selectedValues.includes(option._id)
+                        selectedValues.includes(option.id)
                           ? "bg-primary text-primary-foreground"
                           : "opacity-50 [&_svg]:invisible",
                       )}

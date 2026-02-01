@@ -1,9 +1,11 @@
 import TaskReviewCard from "@/components/modules/teacher/tasks/TaskReviewCard";
 import PaginationComponent from "@/components/shared/PaginationComponent";
+import ReusableFilter from "@/components/shared/ReusableFilter";
 import ReusableSearch from "@/components/shared/ReusableSearch";
 import ReusableSorting from "@/components/shared/ReusableSorting";
+import { getCourseForProjectThesis } from "@/services/courseService";
 import { getAllTaskForTeacherReview } from "@/services/taskService";
-import { ITask, SortOption } from "@/types";
+import { ICourse, ITask, SortOption } from "@/types";
 
 export default async function TaskToReviewPage({
   searchParams,
@@ -13,6 +15,9 @@ export default async function TaskToReviewPage({
     search?: string;
     status?: string;
     sortBy?: string;
+    courseId?: string;
+    session?: string;
+    type?: string;
     sortOrder?: "asc" | "desc";
   }>;
 }) {
@@ -27,11 +32,15 @@ export default async function TaskToReviewPage({
     status: params.status,
     sortBy: params.sortBy,
     sortOrder: params.sortOrder,
+    "projectThesis.courseId": params.courseId,
+    "projectThesis.student.session": params.session,
+    "projectThesis.type": params.type,
     take: limit,
   };
 
   const res = await getAllTaskForTeacherReview(queryParams);
   const tasks = res?.data?.data || [];
+  const activeCourses = await getCourseForProjectThesis();
 
   const sortOptions: SortOption[] = [
     { label: "Name (A → Z)", value: "title-asc" },
@@ -55,6 +64,34 @@ export default async function TaskToReviewPage({
 
         <div className="mb-6 flex items-center justify-between gap-6">
           <ReusableSearch placeholder="Search tasks to review..." />
+          <ReusableFilter
+            options={
+              activeCourses.data?.map((course: ICourse) => ({
+                id: course.id,
+                name: `${course.courseCode}-${course.courseName}`,
+              })) || []
+            }
+            queryKey="courseId"
+            placeholder="Filter by course"
+          />
+          <ReusableFilter
+            options={[
+              { id: "2020-21", name: "2020-21" },
+              { id: "2021-22", name: "2021-22" },
+              { id: "2022-23", name: "2022-23" },
+              { id: "2023-24", name: "2023-24" },
+            ]}
+            queryKey="session"
+            placeholder="Filter by session"
+          />
+          <ReusableFilter
+            options={[
+              { id: "PROJECT", name: "Project" },
+              { id: "THESIS", name: "Thesis" },
+            ]}
+            queryKey="type"
+            placeholder="Filter by type"
+          />
           <ReusableSorting options={sortOptions} />
         </div>
 

@@ -81,27 +81,27 @@ export default async function ManageUsersPage({
           <ReusableSearch placeholder="Search students..." />
           <ReusableFilter
             options={[
-              { _id: "2020-21", name: "2020-21" },
-              { _id: "2021-22", name: "2021-22" },
-              { _id: "2022-23", name: "2022-23" },
-              { _id: "2023-24", name: "2023-24" },
+              { id: "2020-21", name: "2020-21" },
+              { id: "2021-22", name: "2021-22" },
+              { id: "2022-23", name: "2022-23" },
+              { id: "2023-24", name: "2023-24" },
             ]}
             queryKey="session"
             placeholder="Filter by session"
           />
           <ReusableFilter
             options={[
-              { _id: "ACTIVE", name: "Active" },
-              { _id: "INACTIVE", name: "Inactive" },
-              { _id: "GRADUATED", name: "Graduated" },
+              { id: "ACTIVE", name: "Active" },
+              { id: "INACTIVE", name: "Inactive" },
+              { id: "GRADUATED", name: "Graduated" },
             ]}
             queryKey="status"
             placeholder="Filter by status"
           />
           <ReusableFilter
             options={[
-              { _id: "true", name: "Approved" },
-              { _id: "false", name: "Pending" },
+              { id: "true", name: "Approved" },
+              { id: "false", name: "Pending" },
             ]}
             queryKey="isApproved"
             placeholder="Filter by approval"

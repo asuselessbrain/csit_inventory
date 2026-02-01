@@ -6,7 +6,9 @@ import {
   TeacherStatus,
 } from "../../../../generated/prisma/client";
 import { prisma } from "../../../lib/prisma";
+import { filtering } from "../../../shared/filtering";
 import sendEmail from "../../../shared/mailSender";
+import { searching } from "../../../shared/searching";
 import { projectThesisApprovalTemplate } from "../../../utils/emailTemplates/projectThesisApprovalTemplete";
 import { projectThesisRejectionTemplate } from "../../../utils/emailTemplates/projectThesisRejectionTemplate";
 import AppError from "../../errors/appErrors";
@@ -284,31 +286,10 @@ const getSingleStudentProjectThesisFromDB = async (
   let inputFields: Prisma.ProjectThesisWhereInput[] = [];
 
   if (searchTerm) {
-    inputFields.push({
-      OR: [
-        { projectTitle: { contains: searchTerm, mode: "insensitive" } },
-        { student: { name: { contains: searchTerm, mode: "insensitive" } } },
-        { supervisor: { name: { contains: searchTerm, mode: "insensitive" } } },
-        {
-          student: { studentId: { contains: searchTerm, mode: "insensitive" } },
-        },
-      ],
-    });
+    searching(inputFields, ["projectTitle", "description"], searchTerm);
   }
   if (Object.keys(filterData).length) {
-    Object.entries(filterData).forEach(([field, value]) => {
-      if (field === "session") {
-        inputFields.push({
-          student: {
-            session: { equals: value as string },
-          },
-        });
-      } else {
-        inputFields.push({
-          [field]: { equals: value },
-        });
-      }
-    });
+    filtering(inputFields, filterData);
   }
 
   const whereCondition: Prisma.ProjectThesisWhereInput = { AND: inputFields };
@@ -371,31 +352,10 @@ const getSingleSupervisorProjectThesisFromDB = async (
   let inputFields: Prisma.ProjectThesisWhereInput[] = [];
 
   if (searchTerm) {
-    inputFields.push({
-      OR: [
-        { projectTitle: { contains: searchTerm, mode: "insensitive" } },
-        { student: { name: { contains: searchTerm, mode: "insensitive" } } },
-        { supervisor: { name: { contains: searchTerm, mode: "insensitive" } } },
-        {
-          student: { studentId: { contains: searchTerm, mode: "insensitive" } },
-        },
-      ],
-    });
+    searching(inputFields, ["projectTitle", "description"], searchTerm);
   }
   if (Object.keys(filterData).length) {
-    Object.entries(filterData).forEach(([field, value]) => {
-      if (field === "session") {
-        inputFields.push({
-          student: {
-            session: { equals: value as string },
-          },
-        });
-      } else {
-        inputFields.push({
-          [field]: { equals: value },
-        });
-      }
-    });
+    filtering(inputFields, filterData);
   }
 
   const whereCondition: Prisma.ProjectThesisWhereInput = { AND: inputFields };

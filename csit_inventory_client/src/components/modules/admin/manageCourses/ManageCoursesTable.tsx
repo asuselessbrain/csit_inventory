@@ -37,6 +37,17 @@ interface ManageCoursesTableProps {
   };
 }
 
+export const semesterOptions = [
+    { id: "FIRST", name: "1st Semester" },
+    { id: "SECOND", name: "2nd Semester" },
+    { id: "THIRD", name: "3rd Semester" },
+    { id: "FOURTH", name: "4th Semester" },
+    { id: "FIFTH", name: "5th Semester" },
+    { id: "SIXTH", name: "6th Semester" },
+    { id: "SEVENTH", name: "7th Semester" },
+    { id: "EIGHTH", name: "8th Semester" },
+  ];
+
 export default function ManageCoursesTable({
   courses,
 }: ManageCoursesTableProps) {
@@ -96,17 +107,6 @@ export default function ManageCoursesTable({
     { label: "Credits (High → Low)", value: "credits-desc" },
   ];
 
-  const semesterOptions = [
-    { _id: "FIRST", name: "1st Semester" },
-    { _id: "SECOND", name: "2nd Semester" },
-    { _id: "THIRD", name: "3rd Semester" },
-    { _id: "FOURTH", name: "4th Semester" },
-    { _id: "FIFTH", name: "5th Semester" },
-    { _id: "SIXTH", name: "6th Semester" },
-    { _id: "SEVENTH", name: "7th Semester" },
-    { _id: "EIGHTH", name: "8th Semester" },
-  ];
-
   return (
     <>
       <div className="flex items-center justify-between gap-6">
@@ -120,8 +120,8 @@ export default function ManageCoursesTable({
           />
           <ReusableFilter
             options={[
-              { _id: "ACTIVE", name: "Active" },
-              { _id: "ARCHIVED", name: "Archived" },
+              { id: "ACTIVE", name: "Active" },
+              { id: "ARCHIVED", name: "Archived" },
             ]}
             queryKey="status"
             placeholder="Filter by status"

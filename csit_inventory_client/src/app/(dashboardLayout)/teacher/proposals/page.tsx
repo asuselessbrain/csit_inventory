@@ -3,13 +3,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
-import { IProposal, SortOption } from "@/types";
+import { ICourse, IProposal, SortOption } from "@/types";
 import Link from "next/link";
 import ProjectThesisAction from "@/components/modules/teacher/projectThesisAction/ProjectThesisAction";
 import ReusableSearch from "@/components/shared/ReusableSearch";
 import PaginationComponent from "@/components/shared/PaginationComponent";
 import ReusableSorting from "@/components/shared/ReusableSorting";
 import { Progress } from "@/components/ui/progress";
+import ReusableFilter from "@/components/shared/ReusableFilter";
+import { getCourseForProjectThesis } from "@/services/courseService";
 
 const getStatusBadge = (status?: string) => {
   switch (status) {
@@ -31,6 +33,9 @@ export default async function ProposalsPage({
     search?: string;
     status?: string;
     sortBy?: string;
+    type?: string;
+    courseId?: string;
+    session?: string;
     sortOrder?: "asc" | "desc";
   }>;
 }) {
@@ -45,10 +50,14 @@ export default async function ProposalsPage({
     status: params.status,
     sortBy: params.sortBy,
     sortOrder: params.sortOrder,
+    "student.session": params.session,
+    courseId: params.courseId,
+    type: params.type,
     take: limit,
   };
 
   const response = await getSingleTeacherProposal(queryParams);
+  const activeCourses = await getCourseForProjectThesis();
   const proposals = response?.data?.data || [];
 
   const sortOptions: SortOption[] = [
@@ -73,6 +82,45 @@ export default async function ProposalsPage({
 
         <div className="flex items-center justify-between gap-6">
           <ReusableSearch placeholder="Search proposals..." />
+          <ReusableFilter
+            options={[
+              { id: "PROJECT", name: "Project" },
+              { id: "THESIS", name: "Thesis" },
+            ]}
+            queryKey="type"
+            placeholder="Filter by type"
+          />
+          <ReusableFilter
+            options={
+              activeCourses.data?.map((course: ICourse) => ({
+                id: course.id,
+                name: `${course.courseCode}-${course.courseName}`,
+              })) || []
+            }
+            queryKey="courseId"
+            placeholder="Filter by course"
+          />
+          <ReusableFilter
+            options={[
+              { id: "PENDING", name: "Pending" },
+              { id: "APPROVED", name: "Approved" },
+              { id: "REJECTED", name: "Rejected" },
+              { id: "in_PROGRESS", name: "In Progress" },
+              { id: "COMPLETED", name: "Completed" },
+            ]}
+            queryKey="status"
+            placeholder="Filter by status"
+          />
+          <ReusableFilter
+            options={[
+              { id: "2020-21", name: "2020-21" },
+              { id: "2021-22", name: "2021-22" },
+              { id: "2022-23", name: "2022-23" },
+              { id: "2023-24", name: "2023-24" },
+            ]}
+            queryKey="session"
+            placeholder="Filter by session"
+          />
           <ReusableSorting options={sortOptions} />
         </div>
         {/* Proposals Section */}

@@ -6,7 +6,8 @@ export const filtering = (
     | Prisma.AdminWhereInput[]
     | Prisma.TeacherWhereInput[]
     | Prisma.CoursesWhereInput[]
-    | Prisma.TaskWhereInput[],
+    | Prisma.TaskWhereInput[]
+    | Prisma.ProjectThesisWhereInput[],
   filterData: Record<string, any>,
 ) => {
   const filterConditions = Object.keys(filterData).map((key) => {
