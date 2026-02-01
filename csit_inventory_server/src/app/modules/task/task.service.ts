@@ -2,8 +2,10 @@ import { Prisma } from "../../../../generated/prisma/client";
 import { TaskStatus } from "../../../../generated/prisma/enums";
 import { prisma } from "../../../lib/prisma";
 import { filtering } from "../../../shared/filtering";
+import sendEmail from "../../../shared/mailSender";
 import { pagination } from "../../../shared/pagination";
 import { searching } from "../../../shared/searching";
+import { taskCompletionTemplate } from "../../../utils/emailTemplates/taskCompletionTemplete";
 import AppError from "../../errors/appErrors";
 
 const createTaskIntoDB = async (taskInfo: any) => {
@@ -80,10 +82,13 @@ const updateStatusToDoneInDB = async (
   id: string,
   updateData: { rating: number; note?: string },
 ) => {
-  const isTaskExist = await prisma.task.findUniqueOrThrow({ where: { id } });
+  const isTaskExist = await prisma.task.findUnique({
+    where: { id },
+    include: { projectThesis: { include: { student: true } } },
+  });
 
   if (!isTaskExist) {
-    throw new Error("Task not found");
+    throw new AppError(404, "Task not found");
   }
 
   if (isTaskExist.status !== TaskStatus.REVIEW) {
@@ -104,7 +109,15 @@ const updateStatusToDoneInDB = async (
     data,
   });
 
-  return result;
+  await sendEmail({
+    to: isTaskExist.projectThesis.student.email,
+    subject: "✅ Task Completed Successfully",
+    html: taskCompletionTemplate(isTaskExist),
+  });
+
+  console.log(isTaskExist);
+
+  return isTaskExist;
 };
 
 const updateStatusToRejectedInDB = async (id: string, rejectionNote: any) => {

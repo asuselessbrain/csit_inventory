@@ -2,11 +2,10 @@ import { config } from "../config";
 
 import nodemailer from "nodemailer";
 
-    // Create a test account or replace with real credentials.
     const transporter = nodemailer.createTransport({
         host: config.email_host,
         port: Number(config.email_port),
-        secure: false, // true for 465, false for other ports
+        secure: false,
         auth: {
             user: config.email,
             pass: config.email_password,
