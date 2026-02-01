@@ -9,18 +9,7 @@ import ProjectThesisAction from "@/components/modules/teacher/projectThesisActio
 import ReusableSearch from "@/components/shared/ReusableSearch";
 import PaginationComponent from "@/components/shared/PaginationComponent";
 import ReusableSorting from "@/components/shared/ReusableSorting";
-
-const getStatusColor = (status?: string) => {
-  switch (status) {
-    case "APPROVED":
-      return "bg-green-50";
-    case "REJECTED":
-      return "bg-red-50";
-    case "PENDING":
-    default:
-      return "bg-yellow-50";
-  }
-};
+import { Progress } from "@/components/ui/progress";
 
 const getStatusBadge = (status?: string) => {
   switch (status) {
@@ -63,11 +52,11 @@ export default async function ProposalsPage({
   const proposals = response?.data?.data || [];
 
   const sortOptions: SortOption[] = [
-      { label: "Name (A → Z)", value: "projectTitle-asc" },
-      { label: "Name (Z → A)", value: "projectTitle-desc" },
-      { label: "Oldest first", value: "createdAt-asc" },
-      { label: "Newest first", value: "createdAt-desc" },
-    ];
+    { label: "Name (A → Z)", value: "projectTitle-asc" },
+    { label: "Name (Z → A)", value: "projectTitle-desc" },
+    { label: "Oldest first", value: "createdAt-asc" },
+    { label: "Newest first", value: "createdAt-desc" },
+  ];
 
   return (
     <div className="min-h-screen py-8">
@@ -136,6 +125,18 @@ export default async function ProposalsPage({
                           </span>
                         </p>
                       )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="font-medium">
+                          Progress ({proposal.overallProgress}%)
+                        </span>
+                      </div>
+                      <Progress
+                        value={proposal.overallProgress}
+                        className="h-2"
+                      />
                     </div>
 
                     {/* Actions */}

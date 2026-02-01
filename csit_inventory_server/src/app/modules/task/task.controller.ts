@@ -73,7 +73,7 @@ const allowResubmit = catchAsync(
 const rejectTask = catchAsync(async (req: Request, res: Response) => {
   const result = await TaskService.rejectTask(
     req.params.id as string,
-    req.body.note,
+    req.body
   );
   sendResponse(res, 200, "Task rejected successfully", result);
 });

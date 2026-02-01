@@ -1,6 +1,7 @@
 import ProjectThesisAction from "@/components/modules/teacher/projectThesisAction/ProjectThesisAction";
 import ShowTasks from "@/components/modules/teacher/tasks/ShowTasks";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { getSingleProposal } from "@/services/proposalService";
 
 const formatEnum = (value?: string) => {
@@ -19,7 +20,6 @@ export default async function ViewDetailsPage({
   const { slug } = await params;
 
   const { data: proposal } = await getSingleProposal(slug);
-  console.log(proposal);
   const formattedAbstract = proposal.abstract
     .replace(/\[bold\]/g, "<strong>")
     .replace(/\[\/bold\]/g, "</strong>")
@@ -62,6 +62,16 @@ export default async function ViewDetailsPage({
               <span>
                 Submitted: {new Date(proposal.createdAt).toLocaleDateString()}
               </span>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium">Overall Progress ({proposal.overallProgress}%)</span>
+                <span className="text-muted-foreground">
+                  {proposal.taskCompleted} of {proposal.totalTasks} tasks completed
+                  tasks completed
+                </span>
+              </div>
+              <Progress value={proposal.overallProgress} className="h-2" />
             </div>
           </div>
 

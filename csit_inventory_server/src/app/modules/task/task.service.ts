@@ -82,7 +82,7 @@ const updateStatusToReviewInDB = async (id: string, updateData: any) => {
 
 const updateStatusToDoneInDB = async (
   id: string,
-  updateData: { rating: number; note?: string },
+  updateData: { rating: number; note?: string; updateLogId: string },
 ) => {
   const isTaskExist = await prisma.task.findUnique({
     where: { id },
@@ -106,9 +106,20 @@ const updateStatusToDoneInDB = async (
     feedback: updateData.note !== undefined ? updateData.note : null,
   };
 
-  const result = await prisma.task.update({
-    where: { id: isTaskExist.id },
-    data,
+  const result = prisma.$transaction(async (transactionClient) => {
+    await transactionClient.task.update({
+      where: { id: isTaskExist.id },
+      data: data,
+    });
+
+    const updateLog = await transactionClient.projectThesisUpdateLog.update({
+      where: { id: updateData.updateLogId },
+      data: {
+        supervisorFeedback:
+          updateData.note !== undefined ? updateData.note : null,
+      },
+    });
+    return updateLog
   });
 
   await sendEmail({
@@ -117,7 +128,7 @@ const updateStatusToDoneInDB = async (
     html: taskCompletionTemplate(isTaskExist),
   });
 
-  return isTaskExist;
+  return result;
 };
 
 const allowResubmit = async (id: string, note: string) => {
@@ -135,6 +146,8 @@ const allowResubmit = async (id: string, note: string) => {
   }
 
   const data = {
+    ratting: 0,
+    progressPercentage: 0,
     feedback: note,
     status: TaskStatus.IN_PROGRESS,
   };
@@ -153,8 +166,11 @@ const allowResubmit = async (id: string, note: string) => {
   return result;
 };
 
-const rejectTask = async (id: string, note: string) => {
-  const isTaskExist = await prisma.task.findUnique({ where: { id }, include: { projectThesis: { include: { student: true } } } });
+const rejectTask = async (id: string, updatedData: { note: string; updateLogId: string }) => {
+  const isTaskExist = await prisma.task.findUnique({
+    where: { id },
+    include: { projectThesis: { include: { student: true } } },
+  });
 
   if (!isTaskExist) {
     throw new AppError(404, "Task not found");
@@ -165,26 +181,42 @@ const rejectTask = async (id: string, note: string) => {
   }
 
   const data = {
-    feedback: note,
+    ratting: 0,
+    progressPercentage: 0,
+    feedback: updatedData.note,
     status: TaskStatus.FAILED,
   };
 
-  const result = await prisma.task.update({
-    where: { id: isTaskExist.id },
-    data: data,
+  const result = prisma.$transaction(async (transactionClient) => {
+    await transactionClient.task.update({
+      where: { id: isTaskExist.id },
+      data: data,
+    });
+    const updateLog = await transactionClient.projectThesisUpdateLog.update({
+      where: { id: updatedData.updateLogId },
+      data: {
+        supervisorFeedback: updatedData.note,
+      },
+    });
+    return updateLog;
   });
 
   await sendEmail({
     to: isTaskExist.projectThesis.student.email,
     subject: "❌ Task Failed",
-    html: taskFailedTemplate(isTaskExist, note),
-  })
+    html: taskFailedTemplate(isTaskExist, updatedData.note),
+  });
 
   return result;
 };
 
 const getAllTasksForStudent = async (email: string, query: any) => {
   const { searchTerm, skip, take, sortBy, sortOrder, ...filterData } = query;
+
+  const isStudentExist = await prisma.student.findUniqueOrThrow({
+    where: { email },
+  });
+  
 
   const searchFields = [
     "title",
@@ -207,7 +239,7 @@ const getAllTasksForStudent = async (email: string, query: any) => {
   const { currentPage, skipValue, takeValue, sortByField, sortOrderValue } =
     pagination(Number(skip), Number(take), sortBy, sortOrder);
 
-  const whereCondition: Prisma.TaskWhereInput = { AND: inputFilter };
+  const whereCondition: Prisma.TaskWhereInput = { AND: inputFilter, projectThesis: { studentId: isStudentExist.id } };
 
   const tasks = await prisma.task.findMany({
     where: whereCondition,
@@ -242,6 +274,10 @@ const getAllTasksForStudent = async (email: string, query: any) => {
 const getTaskForTeacherReview = async (email: string, query: any) => {
   const { searchTerm, skip, take, sortBy, sortOrder, ...filterData } = query;
 
+  const isTeacherExist = await prisma.teacher.findUniqueOrThrow({
+    where: { email },
+  });
+
   const searchFields = [
     "title",
     "projectThesis.projectTitle",
@@ -266,6 +302,7 @@ const getTaskForTeacherReview = async (email: string, query: any) => {
   const whereCondition: Prisma.TaskWhereInput = {
     status: TaskStatus.REVIEW,
     AND: inputFilter,
+    projectThesis: { supervisorId: isTeacherExist.id },
   };
 
   const tasks = await prisma.task.findMany({

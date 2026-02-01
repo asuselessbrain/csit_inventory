@@ -25,9 +25,11 @@ import { toastId } from "@/components/shared/toastId";
 
 export default function TeacherReviewTaskForm({
   id,
+  submissionTask: reviewForId,
   for: reviewFor,
 }: {
   id: string;
+  submissionTask?: string;
   for: string;
 }) {
   const [hoverRating, setHoverRating] = useState(0);
@@ -45,7 +47,9 @@ export default function TeacherReviewTaskForm({
     mode: "onChange",
   });
 
+
   const handleSubmitReview = async (data: FieldValues) => {
+    data.updateLogId = reviewForId;
     if (reviewFor === "done") {
       await completeTask(id, data);
     }

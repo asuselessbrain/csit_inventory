@@ -15,6 +15,7 @@ export interface IProposal {
   type?: "PROJECT" | "THESIS"
   status: "PENDING" | "APPROVED" | "REJECTED" | "in_PROGRESS" | "COMPLETED"
   courseId?: string
+  overallProgress: number
   supervisorId?: string
   course: ICourse
   supervisor: ITeacher
