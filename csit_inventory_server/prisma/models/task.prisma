@@ -4,6 +4,7 @@ model Task {
   description             String
   dueDate                 DateTime
   status                  TaskStatus               @default(TODO)
+  
   projectThesisId         String
   projectThesis           ProjectThesis            @relation(fields: [projectThesisId], references: [id])
   requirements            String[]
