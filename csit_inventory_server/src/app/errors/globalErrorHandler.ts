@@ -25,7 +25,6 @@ export const globalErrorHandler = (
     if (error.code === "P2002") {
       statusCode = 409;
       message = "Duplicate Entry";
-
       let fieldName = "Unknown field";
 
       if (error.meta?.target) {
@@ -40,7 +39,6 @@ export const globalErrorHandler = (
           fieldName = match[1];
         }
       }
-
       errorMessage = `${fieldName} already exists. Please use a different one.`;
     } else if (error.code === "P2025") {
       statusCode = 404;
@@ -53,13 +51,21 @@ export const globalErrorHandler = (
     statusCode = 400;
     message = "Validation Error";
     errorMessage = "Invalid data format or missing required fields.";
+
+    const missingFieldMatch = error.message.match(
+      /Argument `(\w+)` is missing/,
+    );
+
+    if (missingFieldMatch) {
+      errorMessage = `Missing required field: ${missingFieldMatch[1]}`;
+    }
   }
   else if (error instanceof CustomError) {
     statusCode = error.statusCode;
     message = error.message;
     errorMessage = error.message;
   }
-    console.log(error);
+  console.log(error);
   res.status(statusCode).json({
     success: false,
     statusCode: statusCode,

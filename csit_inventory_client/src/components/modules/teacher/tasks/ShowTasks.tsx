@@ -25,6 +25,8 @@ import {
   completeTask,
   rejectTask,
 } from "./TaskAcceptRejectResubmit";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import TeacherReviewTaskForm from "./TeacherReviewTaskForm";
 
 export default function ShowTasks({ proposal }: { proposal: IProposal }) {
   const tasks: ITask[] = proposal.tasks || [];
@@ -175,13 +177,18 @@ export default function ShowTasks({ proposal }: { proposal: IProposal }) {
                       Review submission from student
                     </p>
                     <div className="flex gap-2">
-                      <Button
-                        onClick={() => completeTask(task.id)}
-                        className="flex-1"
-                      >
-                        <Check className="w-4 h-4 mr-2" />
-                        Mark as Done
-                      </Button>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            // onClick={() => completeTask(task.id)}
+                            className="flex-1"
+                          >
+                            <Check className="w-4 h-4 mr-2" />
+                            Mark as Done
+                          </Button>
+                        </DialogTrigger>
+                        <TeacherReviewTaskForm id={task.id} />
+                      </Dialog>
 
                       <Button
                         onClick={() => rejectTask(task.id)}

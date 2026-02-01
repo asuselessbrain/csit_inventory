@@ -54,13 +54,14 @@ export const submitTask = async (id: string, submissionData: FieldValues) => {
   }
 };
 
-export const markAsDone = async (id: string) => {
+export const markAsDone = async (id: string, data: FieldValues) => {
   try {
     const res = await baseApi(`${baseUrl}/tasks/done/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(data),
     });
     revalidateTag("project", "max");
     return res;

@@ -76,7 +76,10 @@ const updateStatusToReviewInDB = async (id: string, updateData: any) => {
   return result;
 };
 
-const updateStatusToDoneInDB = async (id: string) => {
+const updateStatusToDoneInDB = async (
+  id: string,
+  updateData: { rating: number; note?: string },
+) => {
   const isTaskExist = await prisma.task.findUniqueOrThrow({ where: { id } });
 
   if (!isTaskExist) {
@@ -84,12 +87,21 @@ const updateStatusToDoneInDB = async (id: string) => {
   }
 
   if (isTaskExist.status !== TaskStatus.REVIEW) {
-    throw new Error("Only review task can be set to done");
+    throw new AppError(400, "Only review task can be set to done");
   }
+
+  const calculatedProgress = Number(updateData.rating) * 20;
+
+  const data = {
+    status: TaskStatus.DONE,
+    ratting: updateData.rating,
+    progressPercentage: calculatedProgress,
+    feedback: updateData.note !== undefined ? updateData.note : null,
+  };
 
   const result = await prisma.task.update({
     where: { id: isTaskExist.id },
-    data: { status: TaskStatus.DONE },
+    data,
   });
 
   return result;

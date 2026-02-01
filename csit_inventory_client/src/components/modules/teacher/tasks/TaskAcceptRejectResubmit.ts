@@ -4,10 +4,11 @@ import {
   markAsDone,
   rejectTasks,
 } from "@/services/taskService";
+import { FieldValues } from "react-hook-form";
 import { toast } from "sonner";
 
-export const completeTask = async (taskId: string) => {
-  const res = await markAsDone(taskId);
+export const completeTask = async (taskId: string, data: FieldValues) => {
+  const res = await markAsDone(taskId, data);
 
   if (res.success) {
     toast.success(res.message || "Task marked as done", {

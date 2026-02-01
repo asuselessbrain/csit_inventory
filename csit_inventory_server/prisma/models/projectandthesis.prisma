@@ -8,6 +8,7 @@ model ProjectThesis {
   technologiesTools String[]
   estimatedTimeline String
   attachments       String[]
+  feedback          String?
   type              ProjectThesisType
   status            ProjectThesisStatus @default(PENDING)
   courseId          String

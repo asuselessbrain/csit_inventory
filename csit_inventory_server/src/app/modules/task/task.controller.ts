@@ -49,6 +49,7 @@ const updateStatusToDoneInDB = catchAsync(
   async (req: Request, res: Response) => {
     const result = await TaskService.updateStatusToDoneInDB(
       req.params.id as string,
+      req.body
     );
     sendResponse(res, 200, "Task marked as done", result);
   },
