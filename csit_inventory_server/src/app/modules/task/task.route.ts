@@ -24,7 +24,7 @@ router.post("/", TaskController.createTaskIntoDB);
 router.patch("/in-progress/:id", TaskController.updateStatusToInProgressInDB);
 router.patch("/submit-task/:id", TaskController.updateStatusToReviewInDB);
 router.patch("/done/:id", TaskController.updateStatusToDoneInDB);
-router.patch("/resubmit/:id", TaskController.updateStatusToRejectedInDB);
+router.patch("/resubmit/:id", TaskController.allowResubmit);
 router.patch("/reject/:id", TaskController.rejectTask);
 router.patch("/:id", TaskController.updateTaskInDB);
 

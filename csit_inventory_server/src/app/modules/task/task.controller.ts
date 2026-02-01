@@ -55,11 +55,11 @@ const updateStatusToDoneInDB = catchAsync(
   },
 );
 
-const updateStatusToRejectedInDB = catchAsync(
+const allowResubmit = catchAsync(
   async (req: Request, res: Response) => {
-    const result = await TaskService.updateStatusToRejectedInDB(
+    const result = await TaskService.allowResubmit(
       req.params.id as string,
-      req.body,
+      req.body.note,
     );
     sendResponse(
       res,
@@ -73,7 +73,7 @@ const updateStatusToRejectedInDB = catchAsync(
 const rejectTask = catchAsync(async (req: Request, res: Response) => {
   const result = await TaskService.rejectTask(
     req.params.id as string,
-    req.body,
+    req.body.note,
   );
   sendResponse(res, 200, "Task rejected successfully", result);
 });
@@ -113,7 +113,7 @@ export const TaskController = {
   updateStatusToInProgressInDB,
   updateStatusToReviewInDB,
   updateStatusToDoneInDB,
-  updateStatusToRejectedInDB,
+  allowResubmit,
   rejectTask,
   getAllTasksForStudent,
   getTaskForTeacherReview,

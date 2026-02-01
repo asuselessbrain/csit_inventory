@@ -70,13 +70,14 @@ export const markAsDone = async (id: string, data: FieldValues) => {
   }
 };
 
-export const rejectTasks = async (id: string) => {
+export const rejectTasks = async (id: string, data: FieldValues) => {
   try {
     const res = await baseApi(`${baseUrl}/tasks/reject/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(data),
     });
     revalidateTag("project", "max");
     return res;
@@ -85,13 +86,14 @@ export const rejectTasks = async (id: string) => {
   }
 };
 
-export const allowStudentResubmit = async (id: string) => {
+export const allowStudentResubmit = async (id: string, data: FieldValues) => {
   try {
     const res = await baseApi(`${baseUrl}/tasks/resubmit/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(data),
     });
     revalidateTag("project", "max");
     return res;

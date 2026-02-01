@@ -179,35 +179,37 @@ export default function ShowTasks({ proposal }: { proposal: IProposal }) {
                     <div className="flex gap-2">
                       <Dialog>
                         <DialogTrigger asChild>
-                          <Button
-                            // onClick={() => completeTask(task.id)}
-                            className="flex-1"
-                          >
+                          <Button className="flex-1">
                             <Check className="w-4 h-4 mr-2" />
                             Mark as Done
                           </Button>
                         </DialogTrigger>
-                        <TeacherReviewTaskForm id={task.id} />
+                        <TeacherReviewTaskForm id={task.id} for="done" />
                       </Dialog>
 
-                      <Button
-                        onClick={() => rejectTask(task.id)}
-                        variant="outline"
-                        className="flex-1"
-                      >
-                        <X className="w-4 h-4 mr-2" />
-                        Mark as Failed
-                      </Button>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="flex-1"
+                          >
+                            <X className="w-4 h-4 mr-2" />
+                            Mark as Failed
+                          </Button>
+                        </DialogTrigger>
+                        <TeacherReviewTaskForm id={task.id} for="reject" />
+                      </Dialog>
 
                       {/* Allow resubmission */}
-                      <Button
-                        onClick={() => allowResubmission(task.id)}
-                        variant="outline"
-                        className="flex-1"
-                      >
-                        <RefreshCcw className="w-4 h-4 mr-2" />
-                        Allow Resubmission
-                      </Button>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" className="flex-1">
+                            <RefreshCcw className="w-4 h-4 mr-2" />
+                            Allow Resubmission
+                          </Button>
+                        </DialogTrigger>
+                        <TeacherReviewTaskForm id={task.id} for="resubmit" />
+                      </Dialog>
                     </div>
                   </div>
                 )}

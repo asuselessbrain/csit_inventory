@@ -21,8 +21,8 @@ export const completeTask = async (taskId: string, data: FieldValues) => {
   }
 };
 
-export const rejectTask = async (taskId: string) => {
-  const res = await rejectTasks(taskId);
+export const rejectTask = async (taskId: string, data: FieldValues) => {
+  const res = await rejectTasks(taskId, data);
 
   if (res.success) {
     toast.success(res.message || "Task rejected successfully", {
@@ -35,8 +35,8 @@ export const rejectTask = async (taskId: string) => {
   }
 };
 
-export const allowResubmission = async (taskId: string) => {
-  const res = await allowStudentResubmit(taskId);
+export const allowResubmission = async (taskId: string, data: FieldValues) => {
+  const res = await allowStudentResubmit(taskId, data);
 
   if (res.success) {
     toast.success(

@@ -6,6 +6,8 @@ import sendEmail from "../../../shared/mailSender";
 import { pagination } from "../../../shared/pagination";
 import { searching } from "../../../shared/searching";
 import { taskCompletionTemplate } from "../../../utils/emailTemplates/taskCompletionTemplete";
+import { taskFailedTemplate } from "../../../utils/emailTemplates/taskRejectTemplate";
+import { taskResubmissionTemplate } from "../../../utils/emailTemplates/taskResubmissionTemplate";
 import AppError from "../../errors/appErrors";
 
 const createTaskIntoDB = async (taskInfo: any) => {
@@ -115,24 +117,25 @@ const updateStatusToDoneInDB = async (
     html: taskCompletionTemplate(isTaskExist),
   });
 
-  console.log(isTaskExist);
-
   return isTaskExist;
 };
 
-const updateStatusToRejectedInDB = async (id: string, rejectionNote: any) => {
-  const isTaskExist = await prisma.task.findUniqueOrThrow({ where: { id } });
+const allowResubmit = async (id: string, note: string) => {
+  const isTaskExist = await prisma.task.findUnique({
+    where: { id },
+    include: { projectThesis: { include: { student: true } } },
+  });
 
   if (!isTaskExist) {
-    throw new Error("Task not found");
+    throw new AppError(404, "Task not found");
   }
 
   if (isTaskExist.status !== TaskStatus.REVIEW) {
-    throw new Error("Only review task can be rejected");
+    throw new AppError(400, "Only review task can be resubmitted");
   }
 
   const data = {
-    ...rejectionNote,
+    feedback: note,
     status: TaskStatus.IN_PROGRESS,
   };
 
@@ -141,22 +144,28 @@ const updateStatusToRejectedInDB = async (id: string, rejectionNote: any) => {
     data: data,
   });
 
+  await sendEmail({
+    to: isTaskExist.projectThesis.student.email,
+    subject: "🔁 Task Resubmission Allowed",
+    html: taskResubmissionTemplate(isTaskExist, note),
+  });
+
   return result;
 };
 
-const rejectTask = async (id: string, rejectionNote: any) => {
-  const isTaskExist = await prisma.task.findUniqueOrThrow({ where: { id } });
+const rejectTask = async (id: string, note: string) => {
+  const isTaskExist = await prisma.task.findUnique({ where: { id }, include: { projectThesis: { include: { student: true } } } });
 
   if (!isTaskExist) {
-    throw new Error("Task not found");
+    throw new AppError(404, "Task not found");
   }
 
   if (isTaskExist.status !== TaskStatus.REVIEW) {
-    throw new Error("Only review task can be rejected");
+    throw new AppError(400, "Only review task can be rejected");
   }
 
   const data = {
-    ...rejectionNote,
+    feedback: note,
     status: TaskStatus.FAILED,
   };
 
@@ -164,6 +173,12 @@ const rejectTask = async (id: string, rejectionNote: any) => {
     where: { id: isTaskExist.id },
     data: data,
   });
+
+  await sendEmail({
+    to: isTaskExist.projectThesis.student.email,
+    subject: "❌ Task Failed",
+    html: taskFailedTemplate(isTaskExist, note),
+  })
 
   return result;
 };
@@ -310,7 +325,7 @@ export const TaskService = {
   updateStatusToInProgressInDB,
   updateStatusToReviewInDB,
   updateStatusToDoneInDB,
-  updateStatusToRejectedInDB,
+  allowResubmit,
   rejectTask,
   getAllTasksForStudent,
   getTaskForTeacherReview,

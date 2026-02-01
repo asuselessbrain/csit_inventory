@@ -1,5 +1,4 @@
 import SubmitProposalForm from '@/components/modules/student/submitProposal/SubmitProposalForm';
-import { AlertCircle } from 'lucide-react';
 
 export default function SubmitProposalPage() {
   

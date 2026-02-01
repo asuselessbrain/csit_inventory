@@ -15,11 +15,21 @@ import { Textarea } from "@/components/ui/textarea";
 import { Star } from "lucide-react";
 import { useState } from "react";
 import { Controller, FieldValues, useForm } from "react-hook-form";
-import { completeTask } from "./TaskAcceptRejectResubmit";
+import {
+  allowResubmission,
+  completeTask,
+  rejectTask,
+} from "./TaskAcceptRejectResubmit";
 import { toast } from "sonner";
 import { toastId } from "@/components/shared/toastId";
 
-export default function TeacherReviewTaskForm(task: { id: string }) {
+export default function TeacherReviewTaskForm({
+  id,
+  for: reviewFor,
+}: {
+  id: string;
+  for: string;
+}) {
   const [hoverRating, setHoverRating] = useState(0);
 
   const {
@@ -36,7 +46,16 @@ export default function TeacherReviewTaskForm(task: { id: string }) {
   });
 
   const handleSubmitReview = async (data: FieldValues) => {
-    await completeTask(task.id, data);
+    if (reviewFor === "done") {
+      await completeTask(id, data);
+    }
+    if (reviewFor === "resubmit") {
+      await allowResubmission(id, data);
+    }
+
+    if (reviewFor === "reject") {
+      await rejectTask(id, data);
+    }
     reset();
   };
 
@@ -54,55 +73,57 @@ export default function TeacherReviewTaskForm(task: { id: string }) {
           </DialogDescription>
         </DialogHeader>
         <FieldGroup>
-          <Controller
-            name="rating"
-            control={control}
-            rules={{
-              required: "Rating is required",
-              min: { value: 1, message: "Please select at least 1 star" },
-            }}
-            render={({ field }) => (
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3">
-                  Rating
-                </label>
-                <div className="flex gap-2">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      type="button"
-                      onClick={() => field.onChange(star)}
-                      onMouseEnter={() => setHoverRating(star)}
-                      onMouseLeave={() => setHoverRating(0)}
-                      className="transition-transform hover:scale-110"
-                    >
-                      <Star
-                        className={`h-8 w-8 ${
-                          star <= (hoverRating || field.value)
-                            ? "fill-yellow-400 text-yellow-400"
-                            : "text-gray-300"
-                        }`}
-                      />
-                    </button>
-                  ))}
+          {reviewFor === "done" && (
+            <Controller
+              name="rating"
+              control={control}
+              rules={{
+                required: "Rating is required",
+                min: { value: 1, message: "Please select at least 1 star" },
+              }}
+              render={({ field }) => (
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    Rating
+                  </label>
+                  <div className="flex gap-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => field.onChange(star)}
+                        onMouseEnter={() => setHoverRating(star)}
+                        onMouseLeave={() => setHoverRating(0)}
+                        className="transition-transform hover:scale-110"
+                      >
+                        <Star
+                          className={`h-8 w-8 ${
+                            star <= (hoverRating || field.value)
+                              ? "fill-yellow-400 text-yellow-400"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                  {field.value > 0 && (
+                    <p className="text-sm text-gray-600 mt-2">
+                      {
+                        ["Poor", "Fair", "Good", "Very Good", "Excellent"][
+                          field.value - 1
+                        ]
+                      }
+                    </p>
+                  )}
+                  {errors.rating && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {errors.rating.message}
+                    </p>
+                  )}
                 </div>
-                {field.value > 0 && (
-                  <p className="text-sm text-gray-600 mt-2">
-                    {
-                      ["Poor", "Fair", "Good", "Very Good", "Excellent"][
-                        field.value - 1
-                      ]
-                    }
-                  </p>
-                )}
-                {errors.rating && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {errors.rating.message}
-                  </p>
-                )}
-              </div>
-            )}
-          />
+              )}
+            />
+          )}
           <Controller
             name="note"
             control={control}
@@ -139,7 +160,15 @@ export default function TeacherReviewTaskForm(task: { id: string }) {
           </DialogClose>
           <DialogClose asChild>
             <Button disabled={isSubmitting} type="submit">
-              {isSubmitting ? "Saving..." : "Mark as Done"}
+              {isSubmitting
+                ? "Processing..."
+                : reviewFor === "done"
+                  ? "Mark as Done"
+                  : reviewFor === "resubmit"
+                    ? "Allow Resubmission"
+                    : reviewFor === "reject"
+                      ? "Mark as Failed"
+                      : "Submit"}
             </Button>
           </DialogClose>
         </DialogFooter>
