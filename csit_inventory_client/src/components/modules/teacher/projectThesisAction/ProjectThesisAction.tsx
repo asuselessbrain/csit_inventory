@@ -18,40 +18,13 @@ import {
 import { toast } from "sonner";
 import AssignTask from "../tasks/AssignTask";
 import { toastId } from "@/components/shared/toastId";
+import ApproveAndRejectProposal from "./ApproveAndRejectProposal";
 
 export default function ProjectThesisAction({
   proposal,
 }: {
   proposal: IProposal;
 }) {
-  const approve = async () => {
-    const res = await approveProposal(proposal.id);
-
-    if (res.success) {
-      toast.success(res.message || "Proposal approved successfully.", {
-        id: toastId,
-      });
-    } else {
-      toast.error(res.errorMessage || "Failed to approve the proposal.", {
-        id: toastId,
-      });
-    }
-  };
-
-  const reject = async () => {
-    const res = await rejectProposal(proposal.id);
-
-    if (res.success) {
-      toast.success(res.message || "Proposal rejected successfully.", {
-        id: toastId,
-      });
-    } else {
-      toast.error(res.errorMessage || "Failed to reject the proposal.", {
-        id: toastId,
-      });
-    }
-  };
-
   const markAsComplete = async () => {
     const res = await completeProject(proposal.id);
 
@@ -76,20 +49,25 @@ export default function ProjectThesisAction({
     <>
       {proposal.status === "PENDING" ? (
         <div className="flex items-center gap-4">
-          <Button onClick={approve} size="sm" className="gap-2">
-            <CheckCircle2 className="h-4 w-4" />
-            Approve & Assign Tasks
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button size="sm" className="gap-2">
+                <CheckCircle2 className="h-4 w-4" />
+                Approve & Assign Tasks
+              </Button>
+            </DialogTrigger>
+            <ApproveAndRejectProposal approve="approve" id={proposal.id} />
+          </Dialog>
 
-          <Button
-            onClick={reject}
-            size="sm"
-            variant="destructive"
-            className="gap-2"
-          >
-            <XCircle className="h-4 w-4" />
-            Reject
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button size="sm" variant="destructive" className="gap-2">
+                <XCircle className="h-4 w-4" />
+                Reject
+              </Button>
+            </DialogTrigger>
+            <ApproveAndRejectProposal reject="reject" id={proposal.id} />
+          </Dialog>
         </div>
       ) : proposal.status === "APPROVED" ? (
         <div className="flex items-center gap-2 rounded-md border bg-muted px-3 py-2 text-sm text-muted-foreground">

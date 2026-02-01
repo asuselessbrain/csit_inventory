@@ -28,13 +28,13 @@ const updateProjectThesisInDB = catchAsync(async (req: Request, res: Response) =
 
 const approveProjectThesis = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const result = await ProjectThesisService.approveProjectThesisInDB(id as string);
-    sendResponse(res, 200, "Project or Thesis approved successfully", result)
+    const result = await ProjectThesisService.approveProjectThesisInDB(id as string, req.body.note);
+    sendResponse(res, 200, "Project or Thesis approved successfully", null)
 })
 
 const rejectProjectThesis = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const result = await ProjectThesisService.rejectProjectThesisInDB(id as string);
+    const result = await ProjectThesisService.rejectProjectThesisInDB(id as string, req.body.note);
     sendResponse(res, 200, "Project or Thesis rejected successfully", result)
 })
 

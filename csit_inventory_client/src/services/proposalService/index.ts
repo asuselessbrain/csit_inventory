@@ -95,7 +95,7 @@ export const getSingleTeacherProposal = async (queryParams?: QueryParams) => {
   }
 };
 
-export const approveProposal = async (id: string) => {
+export const approveProposal = async (id: string, data: FieldValues) => {
   try {
     const res = await baseApi(
       `${baseUrl}/project-thesis/approve-project-thesis/${id}`,
@@ -104,6 +104,7 @@ export const approveProposal = async (id: string) => {
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify(data),
       },
     );
     revalidateTag("project", "max");
@@ -113,7 +114,7 @@ export const approveProposal = async (id: string) => {
   }
 };
 
-export const rejectProposal = async (id: string) => {
+export const rejectProposal = async (id: string, data: FieldValues) => {
   try {
     const res = await baseApi(
       `${baseUrl}/project-thesis/reject-project-thesis/${id}`,
@@ -122,6 +123,7 @@ export const rejectProposal = async (id: string) => {
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify(data),
       },
     );
     revalidateTag("project", "max");

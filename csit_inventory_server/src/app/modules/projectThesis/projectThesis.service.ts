@@ -6,6 +6,9 @@ import {
   TeacherStatus,
 } from "../../../../generated/prisma/client";
 import { prisma } from "../../../lib/prisma";
+import sendEmail from "../../../shared/mailSender";
+import { projectThesisApprovalTemplate } from "../../../utils/emailTemplates/projectThesisApprovalTemplete";
+import { projectThesisRejectionTemplate } from "../../../utils/emailTemplates/projectThesisRejectionTemplate";
 import AppError from "../../errors/appErrors";
 import { pagination } from "./../../../shared/pagination";
 
@@ -145,53 +148,78 @@ const updateProjectThesisInDB = async (id: string, updateInfo: any) => {
   return result;
 };
 
-const approveProjectThesisInDB = async (id: string) => {
+const approveProjectThesisInDB = async (id: string, note: string) => {
   const isProjectThesisExist = await prisma.projectThesis.findUnique({
     where: { id },
+    include: {
+      student: true,
+    },
   });
   if (!isProjectThesisExist) {
-    throw new Error("Project or Thesis not found");
+    throw new AppError(404, "Project or Thesis not found");
   }
 
   if (isProjectThesisExist.status === ProjectThesisStatus.APPROVED) {
-    throw new Error("Project or Thesis is already approved");
+    throw new AppError(400, "Project or Thesis is already approved");
   }
 
   if (isProjectThesisExist.status === ProjectThesisStatus.REJECTED) {
-    throw new Error("Project or Thesis is already rejected");
+    throw new AppError(400, "Project or Thesis is already rejected");
   }
 
   const approveStatus = ProjectThesisStatus.APPROVED;
 
   const result = await prisma.projectThesis.update({
     where: { id },
-    data: { status: approveStatus },
+    data: { status: approveStatus, feedback: note },
+  });
+  await sendEmail({
+    to: isProjectThesisExist.student.email,
+    subject: "Project/Thesis Approved",
+    html: projectThesisApprovalTemplate(
+      isProjectThesisExist.student.name,
+      isProjectThesisExist.projectTitle,
+      note,
+    ),
   });
   return result;
 };
 
-const rejectProjectThesisInDB = async (id: string) => {
+const rejectProjectThesisInDB = async (id: string, note: string) => {
   const isProjectThesisExist = await prisma.projectThesis.findUnique({
     where: { id },
+    include: {
+      student: true,
+    },
   });
 
   if (!isProjectThesisExist) {
-    throw new Error("Project or Thesis not found");
+    throw new AppError(404, "Project or Thesis not found");
   }
 
   if (isProjectThesisExist.status === ProjectThesisStatus.REJECTED) {
-    throw new Error("Project or Thesis is already rejected");
+    throw new AppError(400, "Project or Thesis is already rejected");
   }
 
   if (isProjectThesisExist.status === ProjectThesisStatus.APPROVED) {
-    throw new Error("Project or Thesis is already approved");
+    throw new AppError(400, "Project or Thesis is already approved");
   }
 
   const rejectionStatus = ProjectThesisStatus.REJECTED;
 
   const result = await prisma.projectThesis.update({
     where: { id },
-    data: { status: rejectionStatus },
+    data: { status: rejectionStatus, feedback: note },
+  });
+
+  await sendEmail({
+    to: isProjectThesisExist.student.email,
+    subject: "Project/Thesis Rejected",
+    html: projectThesisRejectionTemplate(
+      isProjectThesisExist.student.name,
+      isProjectThesisExist.projectTitle,
+      note,
+    ),
   });
 
   return result;
@@ -322,7 +350,7 @@ const getSingleStudentProjectThesisFromDB = async (
     };
   });
 
-  console.log(proposalsWithProgress)
+  console.log(proposalsWithProgress);
   return {
     meta: {
       currentPage,

@@ -3,24 +3,27 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { resendOtp } from "@/services/authService";
 import { toast } from "sonner";
 import { useUser } from "@/context/UserContext";
 import { toastId } from "@/components/shared/toastId";
 import { verifyOtp } from "@/services/authService/auth.client";
 
-export default function VerifyOtp() {
-  const [otpDigits, setOtpDigits] = useState<string[]>(["", "", "", "", "", ""]);
+export default function VerifyOtp({ email }: { email?: string }) {
+  const [otpDigits, setOtpDigits] = useState<string[]>([
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ]);
   const [isLoading, setIsLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
 
-  const searchParams = useSearchParams();
   const router = useRouter();
   const user = useUser();
-
-  // Safe access to email param
-  const email = searchParams?.get("email");
 
   // Redirect if email is missing
   useEffect(() => {
@@ -45,7 +48,10 @@ export default function VerifyOtp() {
     }
   };
 
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
     if (e.key === "Backspace" && !otpDigits[index] && index > 0) {
       const prevInput = document.getElementById(`otp-${index - 1}`);
       prevInput?.focus();
@@ -64,16 +70,23 @@ export default function VerifyOtp() {
     const res = await verifyOtp({ email, otp: otpCode });
 
     if (res.success) {
-      toast.success(res.message || "OTP Verified Successfully!", { id: toastId });
-      user?.refreshUser();
+      toast.success(res.message || "OTP Verified Successfully!", {
+        id: toastId,
+      });
+      if (user?.refreshUser) {
+        await user.refreshUser();
+      }
+
+      setIsLoading(false); // stop loading
       router.push("/");
     } else {
-      toast.error(res.errorMessage || "OTP Verification Failed!", { id: toastId });
+      toast.error(res.errorMessage || "OTP Verification Failed!", {
+        id: toastId,
+      });
       setIsLoading(false);
     }
   };
 
-  // Resend OTP
   const handleResendOtp = async () => {
     if (!email) return;
 
@@ -198,7 +211,9 @@ export default function VerifyOtp() {
                 variant="ghost"
                 className="font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors disabled:text-slate-400 disabled:cursor-not-allowed disabled:hover:bg-transparent"
               >
-                {resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : "Resend OTP"}
+                {resendTimer > 0
+                  ? `Resend OTP in ${resendTimer}s`
+                  : "Resend OTP"}
               </Button>
             </div>
           </form>
