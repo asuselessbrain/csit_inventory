@@ -312,6 +312,17 @@ const getSingleStudentProjectThesisFromDB = async (
   });
 
   const totalPages = Math.ceil(total / takeValue);
+
+  const proposalsWithProgress = result.map((proposal) => {
+    const progress = calculateOverall(proposal.tasks);
+
+    return {
+      ...proposal,
+      overallProgress: progress,
+    };
+  });
+
+  console.log(proposalsWithProgress)
   return {
     meta: {
       currentPage,
@@ -319,7 +330,7 @@ const getSingleStudentProjectThesisFromDB = async (
       limit: takeValue,
       totalPages,
     },
-    data: result,
+    data: proposalsWithProgress,
   };
 };
 
