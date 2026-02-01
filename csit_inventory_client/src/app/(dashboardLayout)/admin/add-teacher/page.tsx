@@ -1,7 +1,5 @@
 import { Metadata } from "next";
 import AddTeacherForm from "@/components/modules/admin/addTeacher/AddTeacherForm";
-import Image from "next/image";
-import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Add Teacher | Admin Dashboard",

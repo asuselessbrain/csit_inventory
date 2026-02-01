@@ -28,6 +28,7 @@ import ReusableSearch from "@/components/shared/ReusableSearch";
 import { getSemesterFormate } from "@/components/shared/formatter";
 import { toastId } from "@/components/shared/toastId";
 import ReusableSorting from "@/components/shared/ReusableSorting";
+import ReusableFilter from "@/components/shared/ReusableFilter";
 
 interface ManageCoursesTableProps {
   courses: {
@@ -95,11 +96,38 @@ export default function ManageCoursesTable({
     { label: "Credits (High → Low)", value: "credits-desc" },
   ];
 
+  const semesterOptions = [
+    { _id: "FIRST", name: "1st Semester" },
+    { _id: "SECOND", name: "2nd Semester" },
+    { _id: "THIRD", name: "3rd Semester" },
+    { _id: "FOURTH", name: "4th Semester" },
+    { _id: "FIFTH", name: "5th Semester" },
+    { _id: "SIXTH", name: "6th Semester" },
+    { _id: "SEVENTH", name: "7th Semester" },
+    { _id: "EIGHTH", name: "8th Semester" },
+  ];
+
   return (
     <>
       <div className="flex items-center justify-between gap-6">
         <ReusableSearch placeholder="Search courses..." />
-        <ReusableSorting options={sortOptions} />
+
+        <div className="flex items-center gap-4">
+          <ReusableFilter
+            options={semesterOptions}
+            queryKey="semester"
+            placeholder="Filter by semester"
+          />
+          <ReusableFilter
+            options={[
+              { _id: "ACTIVE", name: "Active" },
+              { _id: "ARCHIVED", name: "Archived" },
+            ]}
+            queryKey="status"
+            placeholder="Filter by status"
+          />
+          <ReusableSorting options={sortOptions} />
+        </div>
       </div>
       <div className="rounded-lg border bg-white shadow-sm my-8">
         <Table>

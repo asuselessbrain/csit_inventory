@@ -26,6 +26,7 @@ import { IStudent, SortOption } from "@/types";
 import PaginationComponent from "@/components/shared/PaginationComponent";
 import ReusableSearch from "@/components/shared/ReusableSearch";
 import ReusableSorting from "@/components/shared/ReusableSorting";
+import ReusableFilter from "@/components/shared/ReusableFilter";
 
 export default async function ManageUsersPage({
   searchParams,
@@ -35,6 +36,8 @@ export default async function ManageUsersPage({
     search?: string;
     status?: string;
     sortBy?: string;
+    session?: string;
+    isApproved?: string;
     sortOrder?: "asc" | "desc";
   }>;
 }) {
@@ -49,6 +52,8 @@ export default async function ManageUsersPage({
     status: params.status,
     sortBy: params.sortBy,
     sortOrder: params.sortOrder,
+    session: params.session,
+    isApproved: params.isApproved,
     take: limit,
   };
 
@@ -72,9 +77,36 @@ export default async function ManageUsersPage({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex items-center justify-between gap-6">
           <ReusableSearch placeholder="Search students..." />
-          <ReusableSorting  options={sortOptions} />
+          <ReusableFilter
+            options={[
+              { _id: "2020-21", name: "2020-21" },
+              { _id: "2021-22", name: "2021-22" },
+              { _id: "2022-23", name: "2022-23" },
+              { _id: "2023-24", name: "2023-24" },
+            ]}
+            queryKey="session"
+            placeholder="Filter by session"
+          />
+          <ReusableFilter
+            options={[
+              { _id: "ACTIVE", name: "Active" },
+              { _id: "INACTIVE", name: "Inactive" },
+              { _id: "GRADUATED", name: "Graduated" },
+            ]}
+            queryKey="status"
+            placeholder="Filter by status"
+          />
+          <ReusableFilter
+            options={[
+              { _id: "true", name: "Approved" },
+              { _id: "false", name: "Pending" },
+            ]}
+            queryKey="isApproved"
+            placeholder="Filter by approval"
+          />
+          <ReusableSorting options={sortOptions} />
         </div>
         <div className="rounded-md border">
           <Table>

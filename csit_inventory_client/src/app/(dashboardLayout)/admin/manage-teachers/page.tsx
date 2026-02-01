@@ -8,6 +8,8 @@ export default async function ManageTeachersPage({
     page?: string;
     search?: string;
     status?: string;
+    designation?: string;
+    department?: string;
     sortBy?: string;
     sortOrder?: "asc" | "desc";
   }>;
@@ -23,6 +25,8 @@ export default async function ManageTeachersPage({
     status: params.status,
     sortBy: params.sortBy,
     sortOrder: params.sortOrder,
+    designation: params.designation,
+    department: params.department,
     take: limit,
   };
 

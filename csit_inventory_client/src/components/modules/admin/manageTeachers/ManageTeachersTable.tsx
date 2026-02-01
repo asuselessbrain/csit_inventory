@@ -16,6 +16,7 @@ import {
 } from "@/components/shared/formatter";
 import ManageTeacherAction from "./ManageTeacherAction";
 import ReusableSorting from "@/components/shared/ReusableSorting";
+import ReusableFilter from "@/components/shared/ReusableFilter";
 
 interface ManageTeachersTableProps {
   teachers: {
@@ -51,6 +52,9 @@ export default function ManageTeachersTable({
     <>
       <div className="flex items-center justify-between gap-6">
         <ReusableSearch placeholder="Search teachers..." />
+        <ReusableFilter options={[{_id: "LECTURER", name: "Lecturer"}, {_id: "ASSISTANT_PROFESSOR", name: "Assistant Professor"}, {_id: "ASSOCIATE_PROFESSOR", name: "Associate Professor"}, {_id: "PROFESSOR", name: "Professor"}]} queryKey="designation" placeholder="Filter by designation" />
+        <ReusableFilter options={[{_id: "Computer_Science_And_Information_Technology", name: "Computer Science And Information Technology"}, {_id: "Computer_science_And_Communication_Engineering", name: "Computer Science And Communication Engineering"}, {_id: "Electrical_And_Electronic_Engineering", name: "Electrical And Electronic Engineering"}, {_id: "Physics_And_Mechanical_Engineering", name: "Physics and Mechanical Engineering"}, {_id: "Mathematics", name: "Mathematics"}]} queryKey="department" placeholder="Filter by department" />
+        <ReusableFilter options={[{_id: "ACTIVE", name: "Active"}, {_id: "STUDY_LEAVE", name: "Study Leave"}, {_id: "RETIRED", name: "Retired"}]} queryKey="status" placeholder="Filter by status" />
         <ReusableSorting options={sortOptions} />
       </div>
       <div className="rounded-lg border bg-white shadow-sm my-8">

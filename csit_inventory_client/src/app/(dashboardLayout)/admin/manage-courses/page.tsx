@@ -9,8 +9,9 @@ export default async function ManageCoursePage({ searchParams }: {
   searchParams: Promise<{
     page?: string
     search?: string
-    status?: string
+    semester?: string
     sortBy?: string
+    status?: string
     sortOrder?: "asc" | "desc"
   }>
 }) {
@@ -23,9 +24,10 @@ export default async function ManageCoursePage({ searchParams }: {
   const queryParams = {
     skip: (page - 1),
     searchTerm: params.search,
-    status: params.status,
     sortBy: params.sortBy,
     sortOrder: params.sortOrder,
+    semester: params.semester,
+    status: params.status,
     take: limit
   }
   const response = await getCourses(queryParams)
@@ -53,7 +55,7 @@ export default async function ManageCoursePage({ searchParams }: {
         </div>
 
         {/* Stats Overview */}
-        <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {/* <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div className="rounded-lg border bg-white p-4 shadow-sm">
             <p className="text-sm font-medium text-gray-600">Total Courses</p>
             <p className="mt-2 text-2xl font-bold text-gray-900">{courses?.data.length}</p>
@@ -70,7 +72,7 @@ export default async function ManageCoursePage({ searchParams }: {
               {courses?.data.reduce((sum: number, c: ICourse) => sum + (c.credits || 0), 0)}
             </p>
           </div>
-        </div>
+        </div> */}
         <ManageCoursesTable courses={courses} />
       </div>
     </div>
