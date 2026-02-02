@@ -40,64 +40,54 @@ const createProjectThesisIntoDB = async (
 
   return result;
 };
-// const getAllProjectThesesFromDB = async (query: any) => {
+const getAllProjectThesesFromDB = async (query: any) => {
+  const { searchTerm, skip, take, sortBy, sortOrder, ...filterData } = query;
+  console.log(filterData);
 
-//     const { searchTerm, skip, take, sortBy, sortOrder, ...filterData } = query
-//     console.log(filterData)
+  let inputFields: Prisma.ProjectThesisWhereInput[] = [];
 
-//     let inputFields: Prisma.ProjectThesisWhereInput[] = []
+  if (searchTerm) {
+    searching(inputFields, ["projectTitle"], searchTerm);
+  }
 
-//     if (searchTerm) {
-//         inputFields.push({
-//             OR: [
-//                 { title: { contains: searchTerm, mode: 'insensitive' } },
-//                 { description: { contains: searchTerm, mode: 'insensitive' } },
-//                 { student: { name: { contains: searchTerm, mode: "insensitive" } } },
-//                 { supervisor: { name: { contains: searchTerm, mode: "insensitive" } } },
-//                 { student: { studentId: { contains: searchTerm, mode: "insensitive" } } }
-//             ]
-//         })
-//     }
-//     if (Object.keys(filterData).length) {
-//         Object.entries(filterData).forEach(([field, value]) => {
-//             if (field === 'session') {
-//                 inputFields.push({
-//                     student: {
-//                         session: { equals: value as string }
-//                     }
-//                 })
-//             }
-//             else {
-//                 inputFields.push({
-//                     [field]: { equals: value }
-//                 })
-//             }
-//         }
-//         )
-//     }
+  if (Object.keys(filterData).length) {
+    filtering(inputFields, filterData);
+  }
 
-//     const whereCondition: Prisma.ProjectThesisWhereInput = { AND: inputFields }
+  const whereCondition: Prisma.ProjectThesisWhereInput = { AND: inputFields };
 
-//     const { currentPage, skipValue, takeValue, sortByField, sortOrderValue } = pagination(skip, take, sortBy, sortOrder)
+  const { currentPage, skipValue, takeValue, sortByField, sortOrderValue } =
+    pagination(skip, take, sortBy, sortOrder);
 
-//     const result = await prisma.projectThesis.findMany({
-//         where: whereCondition,
-//         include: { tasks: true, student: true, supervisor: true },
-//         skip: skipValue,
-//         take: takeValue,
-//         orderBy: { [sortByField]: sortOrderValue }
-//     })
+  const result = await prisma.projectThesis.findMany({
+    where: whereCondition,
+    include: { tasks: true, student: true, supervisor: true },
+    skip: skipValue,
+    take: takeValue,
+    orderBy: { [sortByField]: sortOrderValue },
+  });
 
-//     const total = await prisma.projectThesis.count({ where: whereCondition })
-//     return {
-//         meta: {
-//             currentPage,
-//             limit: takeValue,
-//             total
-//         },
-//         data: result
-//     }
-// }
+  const total = await prisma.projectThesis.count({ where: whereCondition });
+  const totalPages = Math.ceil(total / takeValue);
+
+  const proposalsWithProgress = result.map((proposal) => {
+    const progress = calculateOverall(proposal.tasks);
+
+    return {
+      ...proposal,
+      overallProgress: progress,
+    };
+  });
+  return {
+    meta: {
+      currentPage,
+      limit: takeValue,
+      total,
+      totalPages,
+    },
+    data: proposalsWithProgress,
+  };
+};
 
 const getSingleProjectThesisFromDB = async (id: string) => {
   const result = await prisma.projectThesis.findUniqueOrThrow({
@@ -286,7 +276,7 @@ const getSingleStudentProjectThesisFromDB = async (
   let inputFields: Prisma.ProjectThesisWhereInput[] = [];
 
   if (searchTerm) {
-    searching(inputFields, ["projectTitle", "description"], searchTerm);
+    searching(inputFields, ["projectTitle"], searchTerm);
   }
   if (Object.keys(filterData).length) {
     filtering(inputFields, filterData);
@@ -350,7 +340,7 @@ const getSingleSupervisorProjectThesisFromDB = async (
   let inputFields: Prisma.ProjectThesisWhereInput[] = [];
 
   if (searchTerm) {
-    searching(inputFields, ["projectTitle", "description"], searchTerm);
+    searching(inputFields, ["projectTitle"], searchTerm);
   }
   if (Object.keys(filterData).length) {
     filtering(inputFields, filterData);
@@ -407,7 +397,6 @@ const getSingleSupervisorProjectThesisFromDB = async (
 };
 
 const generateStudentProposalReport = async (email: string, query: any) => {
-  console.log(email)
   const student = await prisma.student.findUnique({
     where: {
       email,
@@ -426,7 +415,7 @@ const generateStudentProposalReport = async (email: string, query: any) => {
   let inputFields: Prisma.ProjectThesisWhereInput[] = [];
 
   if (searchTerm) {
-    searching(inputFields, ["projectTitle", "description"], searchTerm);
+    searching(inputFields, ["projectTitle"], searchTerm);
   }
 
   if (Object.keys(filterData).length) {
@@ -441,8 +430,6 @@ const generateStudentProposalReport = async (email: string, query: any) => {
   const result = await prisma.projectThesis.findMany({
     where: { studentId, ...whereCondition },
     include: { tasks: true, student: true, supervisor: true, course: true },
-    skip: skipValue,
-    take: takeValue,
     orderBy: { [sortByField]: sortOrderValue },
   });
   const total = await prisma.projectThesis.count({
@@ -487,7 +474,7 @@ const generateTeacherProposalReport = async (email: string, query: any) => {
   let inputFields: Prisma.ProjectThesisWhereInput[] = [];
 
   if (searchTerm) {
-    searching(inputFields, ["projectTitle", "description"], searchTerm);
+    searching(inputFields, ["projectTitle"], searchTerm);
   }
 
   if (Object.keys(filterData).length) {
@@ -502,8 +489,6 @@ const generateTeacherProposalReport = async (email: string, query: any) => {
   const result = await prisma.projectThesis.findMany({
     where: { supervisorId: teacherId, ...whereCondition },
     include: { tasks: true, student: true, supervisor: true, course: true },
-    skip: skipValue,
-    take: takeValue,
     orderBy: { [sortByField]: sortOrderValue },
   });
   const total = await prisma.projectThesis.count({
@@ -529,9 +514,54 @@ const generateTeacherProposalReport = async (email: string, query: any) => {
   };
 };
 
+const generateProjectThesisReportForAdmin = async (query?: any) => {
+  const { searchTerm, skip, take, sortBy, sortOrder, ...filterData } = query;
+
+  let inputFields: Prisma.ProjectThesisWhereInput[] = [];
+
+  if (searchTerm) {
+    searching(inputFields, ["projectTitle"], searchTerm);
+  }
+
+  if (Object.keys(filterData).length) {
+    filtering(inputFields, filterData);
+  }
+
+  const whereCondition: Prisma.ProjectThesisWhereInput = { AND: inputFields };
+
+  const { currentPage, skipValue, takeValue, sortByField, sortOrderValue } =
+    pagination(skip, take, sortBy, sortOrder);
+  const result = await prisma.projectThesis.findMany({
+    where: whereCondition,
+    include: { tasks: true, student: true, supervisor: true, course: true },
+    orderBy: { [sortByField]: sortOrderValue },
+  });
+
+  const total = await prisma.projectThesis.count({ where: whereCondition });
+  const totalPages = Math.ceil(total / takeValue);
+
+  const proposalsWithProgress = result.map((proposal) => {
+    const progress = calculateOverall(proposal.tasks);
+    return {
+      ...proposal,
+      overallProgress: progress,
+    };
+  });
+
+  return {
+    meta: {
+      currentPage,
+      total,
+      limit: takeValue,
+      totalPages,
+    },
+    data: proposalsWithProgress,
+  };
+};
+
 export const ProjectThesisService = {
   createProjectThesisIntoDB,
-  // getAllProjectThesesFromDB,
+  getAllProjectThesesFromDB,
   getSingleProjectThesisFromDB,
   getSingleStudentProjectThesisFromDB,
   getSingleSupervisorProjectThesisFromDB,
@@ -542,4 +572,5 @@ export const ProjectThesisService = {
   completeProjectThesisInDB,
   generateStudentProposalReport,
   generateTeacherProposalReport,
+  generateProjectThesisReportForAdmin,
 };

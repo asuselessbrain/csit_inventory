@@ -1,0 +1,237 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>All Teachers Report</title>
+    <style>
+      /* General Layout - Margins handled by Puppeteer */
+      body {
+        font-family: "Helvetica", "Arial", sans-serif;
+        color: #333;
+        line-height: 1.5;
+        font-size: 12px;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Report Title Section */
+      .report-title-section {
+        text-align: center;
+        margin-bottom: 20px;
+        padding-top: 10px;
+      }
+
+      .report-title-section h1 {
+        color: #1e293b;
+        margin: 0;
+        font-size: 20px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+      }
+
+      .report-meta {
+        font-size: 10px;
+        color: #64748b;
+        margin-top: 5px;
+        font-style: italic;
+      }
+
+      /* Summary Info Box */
+      .summary-box {
+        display: flex;
+        justify-content: space-between;
+        background-color: #f8fafc;
+        padding: 12px 15px;
+        border-radius: 6px;
+        margin-bottom: 25px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .summary-item {
+        font-weight: bold;
+        font-size: 11px;
+        color: #334155;
+      }
+
+      /* Table Styling */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        margin-bottom: 20px;
+      }
+
+      th,
+      td {
+        padding: 10px 12px;
+        border: 1px solid #e2e8f0;
+        text-align: left;
+        vertical-align: top;
+        word-wrap: break-word;
+      }
+
+      th {
+        background-color: #f1f5f9;
+        color: #334155;
+        font-weight: 700;
+        font-size: 10px;
+        text-transform: uppercase;
+        border-bottom: 2px solid #cbd5e1;
+      }
+
+      tr:nth-child(even) {
+        background-color: #fcfcfc;
+      }
+
+      tr {
+        page-break-inside: avoid;
+      }
+
+      /* Column Widths */
+      .col-id {
+        width: 15%;
+      }
+      .col-name {
+        width: 25%;
+      }
+      .col-contact {
+        width: 25%;
+      }
+      .col-dept {
+        width: 20%;
+      }
+      .col-status {
+        width: 15%;
+      }
+
+      /* Status Badges */
+      .badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 9px;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+      .badge-active {
+        background-color: #f0fdf4;
+        color: #15803d;
+        border: 1px solid #dcfce7;
+      }
+      .badge-blocked {
+        background-color: #fef2f2;
+        color: #b91c1c;
+        border: 1px solid #fee2e2;
+      }
+      .badge-default {
+        background-color: #f3f4f6;
+        color: #374151;
+      }
+
+      /* DEPARTMENT ACRONYM LOGIC (CSS ONLY) */
+      .dept-badge::after {
+        /* Default: Show the full text if no match found */
+        content: attr(data-dept);
+      }
+
+      /* Match specific long names and replace content with Acronyms */
+      .dept-badge[data-dept="Computer_Science_And_Information_Technology"]::after {
+        content: "CSIT";
+      }
+
+      .dept-badge[data-dept="Computer_science_And_Communication_Engineering"]::after {
+        content: "CCE";
+      }
+
+      .dept-badge[data-dept="Electrical_And_Electronic_Engineering"]::after {
+        content: "EEE";
+      }
+
+      .dept-badge[data-dept="Physics_And_Mechanical_Engineering"]::after {
+        content: "PME";
+      }
+
+      .dept-badge[data-dept="Mathematics"]::after {
+        content: "MATH";
+      }
+
+      /* Optional: Fallback for empty/null */
+      .dept-badge[data-dept=""]::after,
+      .dept-badge:not([data-dept])::after {
+        content: "-";
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="report-title-section">
+      <h1>Teacher List</h1>
+      <div class="report-meta">Generated Date: {{generatedDate}}</div>
+    </div>
+
+    <div class="summary-box">
+      <span class="summary-item">Total Teachers: {{meta.total}}</span>
+      <span class="summary-item">Total Pages: {{meta.totalPages}}</span>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th class="col-name">Name & Designation</th>
+          <th class="col-contact">Contact Info</th>
+          <th class="col-dept">Department</th>
+          <th class="col-status">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each teachers}}
+          <tr>
+            <td>
+              <strong style="color: #334155;">{{this.name}}</strong>
+              {{#if this.designation}}
+                <br />
+                <span
+                  style="font-size: 10px; color: #64748b;"
+                >{{this.designation}}</span>
+              {{/if}}
+            </td>
+
+            <td>
+              <span
+                style="font-size: 10px; color: #334155;"
+              >{{this.email}}</span>
+              {{#if this.phoneNumber}}
+                <br />
+                <span
+                  style="font-size: 10px; color: #64748b;"
+                >{{this.phoneNumber}}</span>
+              {{/if}}
+            </td>
+
+            <td>
+              <strong
+                class="dept-badge"
+                data-dept="{{this.department}}"
+                style="color: #334155;"
+              ></strong>
+            </td>
+
+            <td>
+              <span class="badge badge-default">{{this.status}}</span>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+
+    {{#unless teachers.length}}
+      <div
+        style="text-align: center; padding: 40px; border: 1px dashed #cbd5e1; border-radius: 6px; margin-top: 20px;"
+      >
+        <p style="color: #64748b; font-size: 14px; margin: 0;">No teachers
+          found.</p>
+      </div>
+    {{/unless}}
+
+  </body>
+</html>

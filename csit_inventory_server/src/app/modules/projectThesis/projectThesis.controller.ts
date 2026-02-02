@@ -15,10 +15,14 @@ const createProjectThesisIntoDB = catchAsync(
   },
 );
 
-// const getAllProjectThesesFromDB = catchAsync(async (req: Request, res: Response) => {
-//     const result = await ProjectThesisService.getAllProjectThesesFromDB(req.query);
-//     sendResponse(res, 200, "Project and Thesis fetched successfully", result)
-// })
+const getAllProjectThesesFromDB = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await ProjectThesisService.getAllProjectThesesFromDB(
+      req.query,
+    );
+    sendResponse(res, 200, "Project and Thesis fetched successfully", result);
+  },
+);
 
 const getSingleProjectThesisFromDB = catchAsync(
   async (req: Request, res: Response) => {
@@ -173,9 +177,32 @@ const generateTeacherProposalReport = catchAsync(
   },
 );
 
+const generateProjectThesisReportForAdmin = catchAsync(
+  async (req: Request, res: Response) => {
+    const result =
+      await ProjectThesisService.generateProjectThesisReportForAdmin(req.query);
+    const pdfContext = {
+      generatedDate: new Date().toLocaleDateString(),
+      proposals: result.data,
+      meta: result.meta,
+    };
+    const pdfBuffer = await generatePdf(
+      "project-thesis-report-admin.hbs",
+      pdfContext,
+    );
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename="project-thesis-report-admin.pdf"`,
+      "Content-Length": pdfBuffer.length,
+      "Cache-Control": "no-cache",
+    });
+    res.end(pdfBuffer);
+  },
+);
+
 export const ProjectThesisController = {
   createProjectThesisIntoDB,
-  // getAllProjectThesesFromDB,
+  getAllProjectThesesFromDB,
   getSingleProjectThesisFromDB,
   getSingleStudentProjectThesisFromDB,
   getSingleSupervisorProjectThesisFromDB,
@@ -186,4 +213,5 @@ export const ProjectThesisController = {
   completeProjectThesisInDB,
   generateStudentProposalReport,
   generateTeacherProposalReport,
+  generateProjectThesisReportForAdmin,
 };

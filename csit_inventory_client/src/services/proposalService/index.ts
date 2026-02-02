@@ -184,3 +184,31 @@ export const completeProject = async (id: string) => {
     throw error;
   }
 };
+
+export const getAllProposals = async (queryParams?: QueryParams) => {
+  const params = new URLSearchParams();
+  if (queryParams) {
+    Object.entries(queryParams).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        params.append(key, String(value));
+      }
+    });
+  }
+  try {
+    const res = await baseApi(
+      `${baseUrl}/project-thesis?${params.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        next: {
+          tags: ["project"],
+        },
+      },
+    );
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { catchAsync } from "../../../shared/catchAsync";
 import { sendResponse } from "../../../shared/responser";
 import { TeacherService } from "./teacher.service";
+import { generatePdf } from "../../../shared/pdfService";
 
 const getAllTeacherFromDB = catchAsync(async (req: Request, res: Response) => {
   const query = req.query;
@@ -50,6 +51,37 @@ const reActivateTeacherInDB = catchAsync(
   },
 );
 
+const generateAllTeachersReport = catchAsync(
+  async (req: Request, res: Response) => {
+    // 1. Fetch data from the service (Pass query params for filtering/pagination)
+    // Note: Ensure TeacherService.getAllTeachers returns { data: [], meta: {} }
+    const result = await TeacherService.generateReportForTeacher(req.query);
+
+    // 2. Prepare context for the Handlebars template
+    const pdfContext = {
+      generatedDate: new Date().toLocaleDateString(),
+      teachers: result.data,
+      meta: result.meta,
+    };
+
+    // 3. Generate PDF Buffer using the new template
+    const pdfBuffer = await generatePdf(
+      "all-teachers-report.hbs",
+      pdfContext,
+    );
+
+    // 4. Send the PDF file to the client
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename="all-teachers-report.pdf"`,
+      "Content-Length": pdfBuffer.length,
+      "Cache-Control": "no-cache",
+    });
+
+    res.end(pdfBuffer);
+  }
+);
+
 export const TeacherController = {
   getAllTeacherFromDB,
   updateTeacherIntoDB,
@@ -57,4 +89,5 @@ export const TeacherController = {
   deleteTeacherFromDB,
   getAllTeacherForCourseAssign,
   reActivateTeacherInDB,
+  generateAllTeachersReport
 };

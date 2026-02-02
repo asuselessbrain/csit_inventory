@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { StudentService } from "./student.service";
 import { catchAsync } from "../../../shared/catchAsync";
 import { sendResponse } from "../../../shared/responser";
+import { generatePdf } from "../../../shared/pdfService";
 
 const getAllStudentFromDB = catchAsync(async (req: Request, res: Response) => {
   const query = req.query;
@@ -49,6 +50,36 @@ const reActivateStudentInDB = catchAsync(
   },
 );
 
+const generateReportForStudent = catchAsync(
+  async (req: Request, res: Response) => {
+    // 1. Fetch data from Student Service
+    const result = await StudentService.generateReportForStudent(req.query);
+
+    // 2. Prepare context for HBS
+    const pdfContext = {
+      generatedDate: new Date().toLocaleDateString(),
+      students: result.data,
+      meta: result.meta,
+    };
+
+    // 3. Generate PDF Buffer
+    const pdfBuffer = await generatePdf(
+      "all-students-report.hbs",
+      pdfContext,
+    );
+
+    // 4. Send Response
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename="all-students-report.pdf"`,
+      "Content-Length": pdfBuffer.length,
+      "Cache-Control": "no-cache",
+    });
+
+    res.end(pdfBuffer);
+  }
+);
+
 export const StudentController = {
   getAllStudentFromDB,
   updateStudentIntoDB,
@@ -56,4 +87,5 @@ export const StudentController = {
   deleteStudentFromDB,
   approveStudentInDB,
   reActivateStudentInDB,
+  generateReportForStudent,
 };

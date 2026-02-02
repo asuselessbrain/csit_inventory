@@ -7,6 +7,7 @@ const router = express.Router()
 
 router.get('/', auth(UserRole.ADMIN), TeacherController.getAllTeacherFromDB)
 router.get('/teacher-list', auth(UserRole.ADMIN), TeacherController.getAllTeacherForCourseAssign)
+router.get('/generate-report', auth(UserRole.ADMIN), TeacherController.generateAllTeachersReport)
 router.get('/:id', auth(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT), TeacherController.getSingleTeacherFromDB)
 router.patch('/delete-teacher/:id', auth(UserRole.ADMIN), TeacherController.deleteTeacherFromDB)
 router.patch('/re-activate-teacher/:id', auth(UserRole.ADMIN), TeacherController.reActivateTeacherInDB)

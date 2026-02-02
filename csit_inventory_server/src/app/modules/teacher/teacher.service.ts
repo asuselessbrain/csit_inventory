@@ -138,11 +138,52 @@ const reActivateTeacherInDB = async (id: string) => {
   });
   return null;
 };
+
+const generateReportForTeacher = async (query?: any) => {
+  const { searchTerm, skip, take, sortBy, sortOrder, ...filterData } = query;
+
+  let inputFilter: Prisma.TeacherWhereInput[] = [];
+
+  const searchFields = ["name", "email"];
+
+  if (searchTerm) {
+    searching(inputFilter, searchFields, searchTerm);
+  }
+
+  if (Object.keys(filterData).length > 0) {
+    filtering(inputFilter, filterData);
+  }
+
+  const whereCondition: Prisma.TeacherWhereInput = { AND: inputFilter };
+
+  const { currentPage, skipValue, takeValue, sortByField, sortOrderValue } =
+    pagination(skip, take, sortBy, sortOrder);
+
+  const result = await prisma.teacher.findMany({
+    where: whereCondition,
+    orderBy: { [sortByField]: sortOrderValue },
+  });
+
+  const total = await prisma.teacher.count({ where: whereCondition });
+
+  const totalPages = Math.ceil(total / takeValue);
+
+  return {
+    meta: {
+      currentPage,
+      limit: takeValue,
+      total,
+      totalPages,
+    },
+    data: result,
+  };
+};
 export const TeacherService = {
   getAllTeacherFromDB,
   updateTeacherIntoDB,
   getSingleTeacherFromDB,
   deleteTeacherFromDB,
   getAllTeacherForAssignCourse,
-  reActivateTeacherInDB
+  reActivateTeacherInDB,
+  generateReportForTeacher,
 };

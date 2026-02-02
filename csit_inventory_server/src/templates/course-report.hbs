@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Course Report</title>
+    <style>
+        /* General Layout - Margins handled by Puppeteer */
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            color: #333;
+            line-height: 1.5;
+            font-size: 12px;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Report Title Section */
+        .report-title-section {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-top: 10px;
+        }
+
+        .report-title-section h1 {
+            color: #1e293b; /* Slate 800 */
+            margin: 0;
+            font-size: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .report-meta {
+            font-size: 10px;
+            color: #64748b;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        /* Summary Info Box */
+        .summary-box {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f8fafc;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .summary-item {
+            font-weight: bold;
+            font-size: 11px;
+            color: #334155;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed; /* Ensures column widths are respected */
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+            vertical-align: middle;
+            word-wrap: break-word;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 10px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #cbd5e1;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fcfcfc;
+        }
+
+        /* Prevent rows from splitting across pages */
+        tr {
+            page-break-inside: avoid;
+        }
+
+        /* Column Widths Configuration */
+        .col-code { width: 15%; }
+        .col-title { width: 45%; }
+        .col-credit { width: 15%; text-align: center; }
+        .col-type { width: 25%; }
+
+        /* Badges for Course Type */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .badge-theory { background-color: #eff6ff; color: #1d4ed8; border: 1px solid #dbeafe; } /* Blue */
+        .badge-sessional { background-color: #f0fdf4; color: #15803d; border: 1px solid #dcfce7; } /* Green */
+        .badge-default { background-color: #f3f4f6; color: #374151; } /* Gray */
+
+    </style>
+</head>
+<body>
+
+    <div class="report-title-section">
+        <h1>Course Details Report</h1>
+        <div class="report-meta">Generated Date: {{generatedDate}}</div>
+    </div>
+
+    <div class="summary-box">
+        <span class="summary-item">Total Courses: {{meta.total}}</span>
+        <span class="summary-item">Total Pages: {{meta.totalPages}}</span>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th class="col-code">Course Code</th>
+                <th class="col-title">Course Title</th>
+                <th class="col-credit">Credits</th>
+                <th class="col-type">Semester</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each courses}}
+            <tr>
+                <td>
+                    <strong style="color: #0f172a;">{{this.courseCode}}</strong>
+                </td>
+
+                <td>
+                    <span style="font-weight: 600; color: #334155;">{{this.courseName}}</span>
+                    {{#if this.description}}
+                    <br>
+                    <span style="font-size: 10px; color: #64748b;">{{this.description}}</span>
+                    {{/if}}
+                </td>
+
+                <td style="text-align: center;">
+                    {{this.credits}}
+                </td>
+
+                <td>
+                    <span class="badge">
+                        {{this.semester}}
+                    </span>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+    {{#unless courses.length}}
+    <div style="text-align: center; padding: 40px; border: 1px dashed #cbd5e1; border-radius: 6px; margin-top: 20px;">
+        <p style="color: #64748b; font-size: 14px; margin: 0;">No courses found matching the criteria.</p>
+    </div>
+    {{/unless}}
+
+</body>
+</html>

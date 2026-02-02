@@ -84,6 +84,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       icon: LayoutDashboard,
     },
     {
+      title: "Project/Thesis Collections",
+      url: "/admin/project-thesis-collections",
+      icon: Book,
+    },
+    {
       title: "Add Course",
       url: "/admin/add-course",
       icon: PlusSquare,
@@ -111,8 +116,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     {
       title: "Manage Admins",
       url: "/admin/manage-admins",
-      icon: UserCog
-    }
+      icon: UserCog,
+    },
   ];
 
   const navTeacher = [

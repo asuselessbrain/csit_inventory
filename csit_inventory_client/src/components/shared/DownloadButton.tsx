@@ -1,6 +1,13 @@
 "use client";
 
-import { myProposalsForStudentReport, myProposalsForTeacherReport } from "@/services/reportService";
+import {
+  courseReportForAdmin,
+  myProposalsForStudentReport,
+  myProposalsForTeacherReport,
+  projectThesisReportForAdmin,
+  studentReportForAdmin,
+  teacherReportForAdmin,
+} from "@/services/reportService";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
@@ -33,8 +40,24 @@ const DownloadReportButton = ({ forWho, queryParams }: Props) => {
         base64Data = await myProposalsForStudentReport(queryParams);
       }
 
-      if(forWho === 'teacher'){
+      if (forWho === "teacher") {
         base64Data = await myProposalsForTeacherReport(queryParams);
+      }
+
+      if (forWho === "admin-course") {
+        base64Data = await courseReportForAdmin(queryParams);
+      }
+
+      if (forWho === "admin-teacher") {
+        base64Data = await teacherReportForAdmin(queryParams);
+      }
+
+      if (forWho === "admin-student") {
+        base64Data = await studentReportForAdmin(queryParams);
+      }
+
+      if(forWho === "admin-proposals"){
+        base64Data = await projectThesisReportForAdmin(queryParams);
       }
 
       if (!base64Data) {

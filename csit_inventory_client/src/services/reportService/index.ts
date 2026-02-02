@@ -32,7 +32,6 @@ export const myProposalsForStudentReport = async (
       const errorText = await response.text();
       throw new Error(`API Error: ${response.status} - ${errorText}`);
     }
-
   } catch (error) {
     console.error("Fetch Error:", error);
     throw error;
@@ -68,9 +67,149 @@ export const myProposalsForTeacherReport = async (
       const errorText = await response.text();
       throw new Error(`API Error: ${response.status} - ${errorText}`);
     }
-
   } catch (error) {
     console.error("Fetch Error:", error);
     throw error;
   }
 };
+
+export const courseReportForAdmin = async (
+  queryParams?: QueryParams,
+) => {
+  const params = new URLSearchParams();
+
+  if (queryParams) {
+    Object.entries(queryParams).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        params.append(key, String(value));
+      }
+    });
+  }
+
+  const apiUrl = `${process.env.NEXT_PUBLIC_BASE_API}/courses/generate-report?${params.toString()}`;
+
+  try {
+    const response = await fetchWithAuth(apiUrl, {
+      method: "GET",
+      cache: "no-store",
+    });
+
+    if (response.ok) {
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      return buffer.toString("base64");
+    } else {
+      const errorText = await response.text();
+      throw new Error(`API Error: ${response.status} - ${errorText}`);
+    }
+  } catch (error) {
+    console.error("Fetch Error:", error);
+    throw error;
+  }
+};
+
+export const teacherReportForAdmin = async (
+  queryParams?: QueryParams,
+) => {
+  const params = new URLSearchParams();
+
+  if (queryParams) {
+    Object.entries(queryParams).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        params.append(key, String(value));
+      }
+    });
+  }
+
+  const apiUrl = `${process.env.NEXT_PUBLIC_BASE_API}/teachers/generate-report?${params.toString()}`;
+
+  try {
+    const response = await fetchWithAuth(apiUrl, {
+      method: "GET",
+      cache: "no-store",
+    });
+
+    if (response.ok) {
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      return buffer.toString("base64");
+    } else {
+      const errorText = await response.text();
+      throw new Error(`API Error: ${response.status} - ${errorText}`);
+    }
+  } catch (error) {
+    console.error("Fetch Error:", error);
+    throw error;
+  }
+};
+
+export const studentReportForAdmin = async (
+  queryParams?: QueryParams,
+) => {
+  const params = new URLSearchParams();
+
+  if (queryParams) {
+    Object.entries(queryParams).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        params.append(key, String(value));
+      }
+    });
+  }
+
+  const apiUrl = `${process.env.NEXT_PUBLIC_BASE_API}/students/generate-report?${params.toString()}`;
+
+  try {
+    const response = await fetchWithAuth(apiUrl, {
+      method: "GET",
+      cache: "no-store",
+    });
+
+    if (response.ok) {
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      return buffer.toString("base64");
+    } else {
+      const errorText = await response.text();
+      throw new Error(`API Error: ${response.status} - ${errorText}`);
+    }
+  } catch (error) {
+    console.error("Fetch Error:", error);
+    throw error;
+  }
+};
+
+export const projectThesisReportForAdmin = async (
+  queryParams?: QueryParams,
+) => {
+  const params = new URLSearchParams();
+
+  if (queryParams) {
+    Object.entries(queryParams).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        params.append(key, String(value));
+      }
+    });
+  }
+
+  const apiUrl = `${process.env.NEXT_PUBLIC_BASE_API}/project-thesis/project-thesis-report-admin?${params.toString()}`;
+
+  try {
+    const response = await fetchWithAuth(apiUrl, {
+      method: "GET",
+      cache: "no-store",
+    });
+
+    if (response.ok) {
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      return buffer.toString("base64");
+    } else {
+      const errorText = await response.text();
+      throw new Error(`API Error: ${response.status} - ${errorText}`);
+    }
+  } catch (error) {
+    console.error("Fetch Error:", error);
+    throw error;
+  }
+};
+

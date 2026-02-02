@@ -176,6 +176,51 @@ const reActivateStudentInDB = async (id: string) => {
   return reActivatedStudent;
 };
 
+const generateReportForStudent = async (query?: any) => {
+  const { searchTerm, skip, take, sortBy, sortOrder, ...filterData } = query;
+
+  let inputFilter: Prisma.StudentWhereInput[] = [];
+
+  if (searchTerm) {
+    const searchFields = [
+      "name",
+      "email",
+      "address",
+      "studentId",
+      "registrationNumber",
+    ];
+    searching(inputFilter, searchFields, searchTerm);
+  }
+
+  if (Object.keys(filterData).length > 0) {
+    filtering(inputFilter, filterData);
+  }
+
+  const whereCondition: Prisma.StudentWhereInput = { AND: inputFilter };
+
+  const { currentPage, skipValue, takeValue, sortByField, sortOrderValue } =
+    pagination(skip, take, sortBy, sortOrder);
+
+  const students = await prisma.student.findMany({
+    where: whereCondition,
+    orderBy: { [sortBy || "name"]: sortOrder === "desc" ? "desc" : "asc" },
+  });
+
+  const total = await prisma.student.count({ where: whereCondition });
+
+  const totalPages = Math.ceil(total / (takeValue || total));
+
+  return {
+    meta: {
+      currentPage,
+      limit: takeValue,
+      total,
+      totalPages,
+    },
+    data: students,
+  };
+};
+
 export const StudentService = {
   getAllStudentFromDB,
   updateStudentIntoDB,
@@ -183,4 +228,5 @@ export const StudentService = {
   deleteStudentFromDB,
   approveStudentInDB,
   reActivateStudentInDB,
+  generateReportForStudent,
 };

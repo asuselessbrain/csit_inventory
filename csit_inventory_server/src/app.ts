@@ -1,3 +1,4 @@
+import { DashboardDataRoutes } from './app/modules/dashboardData/dashboardData.router';
 import express, { Application, Response, Request } from 'express';
 import { StudentRoutes } from './app/modules/student/student.route';
 import { UserRoutes } from './app/modules/user/user.route';
@@ -29,6 +30,7 @@ app.use('/api/v1/course-teachers', CourseTeacherRoutes)
 app.use('/api/v1/project-thesis', ProjectThesisRoutes);
 app.use('/api/v1/tasks', TaskRoutes);
 app.use('/api/v1/auth', AuthRoutes);
+app.use('/api/v1/dashboard', DashboardDataRoutes)
 
 app.get("/", (req: Request, res: Response) => {
     res.status(200).json({

@@ -1,38 +1,40 @@
-import Link from 'next/link'
-import { Plus } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { getCourses } from '@/services/courseService'
-import ManageCoursesTable from '@/components/modules/admin/manageCourses/ManageCoursesTable'
-import { ICourse } from '@/types'
+import Link from "next/link";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { getCourses } from "@/services/courseService";
+import ManageCoursesTable from "@/components/modules/admin/manageCourses/ManageCoursesTable";
+import { ICourse } from "@/types";
+import DownloadReportButton from "@/components/shared/DownloadButton";
 
-export default async function ManageCoursePage({ searchParams }: {
+export default async function ManageCoursePage({
+  searchParams,
+}: {
   searchParams: Promise<{
-    page?: string
-    search?: string
-    semester?: string
-    sortBy?: string
-    status?: string
-    sortOrder?: "asc" | "desc"
-  }>
+    page?: string;
+    search?: string;
+    semester?: string;
+    sortBy?: string;
+    status?: string;
+    sortOrder?: "asc" | "desc";
+  }>;
 }) {
-
   const params = await searchParams;
 
-  const page = Number(params.page ?? 1)
-  const limit = 10
+  const page = Number(params.page ?? 1);
+  const limit = 10;
 
   const queryParams = {
-    skip: (page - 1),
+    skip: page - 1,
     searchTerm: params.search,
     sortBy: params.sortBy,
     sortOrder: params.sortOrder,
     semester: params.semester,
     status: params.status,
-    take: limit
-  }
-  const response = await getCourses(queryParams)
+    take: limit,
+  };
+  const response = await getCourses(queryParams);
 
-  const courses = response?.data || []
+  const courses = response?.data || [];
   return (
     <div className="min-h-screen p-6">
       <div className="mx-auto max-w-7xl">
@@ -46,12 +48,7 @@ export default async function ManageCoursePage({ searchParams }: {
               Manage and organize all courses in your system
             </p>
           </div>
-          <Link href="/admin/add-course">
-            <Button className="gap-2 cursor-pointer">
-              <Plus className="h-4 w-4 text-white" />
-              Create Course
-            </Button>
-          </Link>
+          <DownloadReportButton forWho="admin-course" queryParams={queryParams} />
         </div>
 
         {/* Stats Overview */}
@@ -76,5 +73,5 @@ export default async function ManageCoursePage({ searchParams }: {
         <ManageCoursesTable courses={courses} />
       </div>
     </div>
-  )
+  );
 }

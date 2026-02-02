@@ -1,5 +1,6 @@
 import { allTeachers } from "@/services/teacherService";
 import ManageTeachersTable from "@/components/modules/admin/manageTeachers/ManageTeachersTable";
+import DownloadReportButton from "@/components/shared/DownloadButton";
 
 export default async function ManageTeachersPage({
   searchParams,
@@ -34,11 +35,17 @@ export default async function ManageTeachersPage({
 
   return (
     <div className="container mx-auto py-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Manage Teachers</h1>
-        <p className="text-gray-600 mt-2">
-          View and manage all registered teachers
-        </p>
+      <div className="flex items-center justify-between">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-900">Manage Teachers</h1>
+          <p className="text-gray-600 mt-2">
+            View and manage all registered teachers
+          </p>
+        </div>
+        <DownloadReportButton
+          forWho="admin-teacher"
+          queryParams={queryParams}
+        />
       </div>
       <ManageTeachersTable teachers={res.data} />
     </div>

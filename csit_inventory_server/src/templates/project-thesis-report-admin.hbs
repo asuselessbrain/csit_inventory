@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Admin Project & Thesis Report</title>
+    <style>
+        /* General Layout - Margins handled by Puppeteer (Top: 120px) */
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            color: #333;
+            line-height: 1.4;
+            font-size: 11px; /* Slightly smaller font to fit more columns */
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Report Title Section */
+        .report-title-section {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-top: 10px;
+        }
+
+        .report-title-section h1 {
+            color: #1e293b;
+            margin: 0;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 700;
+        }
+
+        .report-meta {
+            font-size: 9px;
+            color: #64748b;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        /* Summary Info Box */
+        .summary-box {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f8fafc;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .summary-item {
+            font-weight: bold;
+            font-size: 10px;
+            color: #334155;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 8px 10px;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+            vertical-align: top;
+            word-wrap: break-word;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 9px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #cbd5e1;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fcfcfc;
+        }
+
+        tr {
+            page-break-inside: avoid;
+        }
+
+        /* Column Widths Configuration */
+        .col-title { width: 30%; }
+        .col-student { width: 20%; }
+        .col-supervisor { width: 20%; }
+        .col-course { width: 15%; } /* Includes Dept */
+        .col-status { width: 15%; }
+
+        /* --- DEPARTMENT SHORT NAME LOGIC (CSS ONLY) --- */
+        /* This reads the data-dept attribute and replaces content based on value */
+        .dept-badge::after {
+            content: attr(data-dept); /* Fallback to full text */
+        }
+        .dept-badge[data-dept="Computer_Science_And_Information_Technology"]::after {
+            content: "CSIT";
+        }
+        .dept-badge[data-dept="Computer_science_And_Communication_Engineering"]::after {
+            content: "CCE";
+        }
+        .dept-badge[data-dept="Electrical_And_Electronic_Engineering"]::after {
+            content: "EEE";
+        }
+        .dept-badge[data-dept="Physics_And_Mechanical_Engineering"]::after {
+            content: "PME";
+        }
+        .dept-badge[data-dept="Mathematics"]::after {
+            content: "MATH";
+        }
+        /* Handle empty or null department */
+        .dept-badge[data-dept=""]::after, .dept-badge:not([data-dept])::after {
+            content: "-";
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            background-color: #f3f4f6; 
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .text-muted { color: #64748b; font-size: 9px; }
+        .text-dark { color: #0f172a; font-weight: 600; }
+
+    </style>
+</head>
+<body>
+
+    <div class="report-title-section">
+        <h1>Project & Thesis</h1>
+        <div class="report-meta">Generated Date: {{generatedDate}}</div>
+    </div>
+
+    <div class="summary-box">
+        <span class="summary-item">Total Proposals: {{meta.total}}</span>
+        <span class="summary-item">Total Pages: {{meta.totalPages}}</span>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th class="col-title">Project Title</th>
+                <th class="col-student">Student Details</th>
+                <th class="col-supervisor">Supervisor</th>
+                <th class="col-course">Course / Dept</th>
+                <th class="col-status">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each proposals}}
+            <tr>
+                <td>
+                    <span class="text-dark">{{this.projectTitle}}</span>
+                </td>
+
+                <td>
+                    {{#if this.student}}
+                        <span class="text-dark">{{this.student.name}}</span><br>
+                        <span class="text-muted">ID: {{this.student.studentId}}</span>
+                    {{else}}
+                        <span style="color: #ef4444; font-size: 9px;">Not Assigned</span>
+                    {{/if}}
+                </td>
+
+                <td>
+                    {{#if this.supervisor}}
+                        <span class="text-dark">{{this.supervisor.name}}</span><br>
+                        <span class="text-muted">{{this.supervisor.email}}</span>
+                    {{else}}
+                        <span class="text-muted">-</span>
+                    {{/if}}
+                </td>
+
+                <td>
+                    {{#if this.course}}
+                        <strong style="color: #334155;">{{this.course.courseCode}}</strong><br>
+                    {{/if}}
+                    <span class="dept-badge text-muted" data-dept="{{this.course.department}}"></span>
+                </td>
+
+                <td>
+                    <span class="status-badge">{{this.status}}</span>
+                    <div style="margin-top: 5px; font-size: 9px;">
+                        Progress: <strong>{{this.overallProgress}}%</strong>
+                    </div>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+    {{#unless proposals.length}}
+    <div style="text-align: center; padding: 40px; border: 1px dashed #cbd5e1; border-radius: 6px; margin-top: 20px;">
+        <p style="color: #64748b; font-size: 14px; margin: 0;">No project proposals found.</p>
+    </div>
+    {{/unless}}
+
+</body>
+</html>

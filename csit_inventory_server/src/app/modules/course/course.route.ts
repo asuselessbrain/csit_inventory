@@ -13,6 +13,11 @@ router.get(
   auth(UserRole.TEACHER),
   CourseController.getMyAssignedCourses,
 );
+router.get(
+  "/generate-report",
+  auth(UserRole.ADMIN, UserRole.TEACHER),
+  CourseController.generateReportForCourse,
+);
 router.get("/:id", CourseController.getSingleCourseFromDB);
 router.patch(
   "/:id",

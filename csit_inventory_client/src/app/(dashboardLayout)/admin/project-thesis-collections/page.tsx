@@ -1,32 +1,22 @@
-import { getSingleTeacherProposal } from "@/services/proposalService";
-import { Card, CardContent } from "@/components/ui/card";
+import ProjectThesisAction from "@/components/modules/teacher/projectThesisAction/ProjectThesisAction";
+import DownloadReportButton from "@/components/shared/DownloadButton";
+import ReusableFilter from "@/components/shared/ReusableFilter";
+import ReusableSearch from "@/components/shared/ReusableSearch";
+import ReusableSorting from "@/components/shared/ReusableSorting";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Eye } from "lucide-react";
-import { ICourse, IProposal, SortOption } from "@/types";
-import Link from "next/link";
-import ProjectThesisAction from "@/components/modules/teacher/projectThesisAction/ProjectThesisAction";
-import ReusableSearch from "@/components/shared/ReusableSearch";
-import PaginationComponent from "@/components/shared/PaginationComponent";
-import ReusableSorting from "@/components/shared/ReusableSorting";
+import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import ReusableFilter from "@/components/shared/ReusableFilter";
 import { getCourseForProjectThesis } from "@/services/courseService";
-import DownloadReportButton from "@/components/shared/DownloadButton";
+import { getAllProposals } from "@/services/proposalService";
+import { ICourse, IProposal, SortOption } from "@/types";
+import { Eye } from "lucide-react";
+import Link from "next/dist/client/link";
+import React from "react";
+import { getStatusBadge } from "../../teacher/proposals/page";
+import PaginationComponent from "@/components/shared/PaginationComponent";
 
-export const getStatusBadge = (status?: string) => {
-  switch (status) {
-    case "APPROVED":
-      return "default";
-    case "REJECTED":
-      return "destructive";
-    case "PENDING":
-    default:
-      return "secondary";
-  }
-};
-
-export default async function ProposalsPage({
+export default async function ProjectThesisCollectionPage({
   searchParams,
 }: {
   searchParams: Promise<{
@@ -57,11 +47,9 @@ export default async function ProposalsPage({
     take: limit,
   };
 
-  const response = await getSingleTeacherProposal(queryParams);
+  const response = await getAllProposals(queryParams);
   const activeCourses = await getCourseForProjectThesis();
   const proposals = response?.data?.data || [];
-  console.log(response);
-
   const sortOptions: SortOption[] = [
     { label: "Name (A → Z)", value: "projectTitle-asc" },
     { label: "Name (Z → A)", value: "projectTitle-desc" },
@@ -82,7 +70,10 @@ export default async function ProposalsPage({
               your supervision
             </p>
           </div>
-          <DownloadReportButton forWho="teacher" queryParams={queryParams} />
+          <DownloadReportButton
+            forWho="admin-proposals"
+            queryParams={queryParams}
+          />
         </div>
 
         <div className="flex items-center justify-between gap-6">
@@ -194,10 +185,9 @@ export default async function ProposalsPage({
 
                     {/* Actions */}
                     <div className="flex flex-col xl:flex-row gap-2">
-                      <ProjectThesisAction proposal={proposal} />
 
                       <Link
-                        href={`/teacher/proposals/${proposal?.id}`}
+                        href={`/admin/project-thesis-collections/${proposal?.id}`}
                         className="w-full sm:w-auto"
                       >
                         <Button
@@ -216,7 +206,7 @@ export default async function ProposalsPage({
             </div>
           )}
         </div>
-        <PaginationComponent totalPage={response?.data.meta.totalPages} />
+        <PaginationComponent totalPage={response.data.meta.totalPages} />
       </div>
     </div>
   );

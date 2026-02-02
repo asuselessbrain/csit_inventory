@@ -11,6 +11,11 @@ router.get(
   StudentController.getAllStudentFromDB,
 );
 router.get(
+  "/generate-report",
+  auth(UserRole.ADMIN, UserRole.TEACHER),
+  StudentController.generateReportForStudent,
+);
+router.get(
   "/:id",
   auth(UserRole.ADMIN, UserRole.STUDENT, UserRole.TEACHER),
   StudentController.getSingleStudentFromDB,

@@ -162,6 +162,46 @@ const getMyAssignedCourses = async (email: string, query: any) => {
   };
 };
 
+const generateReportForCourse = async (query?: any) => {
+  const { searchTerm, skip, take, sortBy, sortOrder, ...filterData } = query;
+
+  let filterInput: Prisma.CoursesWhereInput[] = [];
+
+  if (searchTerm) {
+    searching(filterInput, ["courseCode", "courseName"], searchTerm);
+  }
+
+  if (Object.keys(filterData).length) {
+    filtering(filterInput, filterData);
+  }
+
+  const { currentPage, skipValue, takeValue, sortByField, sortOrderValue } =
+    pagination(skip, take, sortBy, sortOrder);
+
+  const whereCondition: Prisma.CoursesWhereInput = {
+    AND: filterInput,
+  };
+
+  const result = await prisma.courses.findMany({
+    where: whereCondition,
+    orderBy: { [sortByField]: sortOrderValue },
+  });
+
+  const total = await prisma.courses.count({ where: whereCondition });
+
+  const totalPages = Math.ceil(total / takeValue);
+
+  return {
+    meta: {
+      currentPage,
+      limit: takeValue,
+      total,
+      totalPages,
+    },
+    data: result,
+  };
+};
+
 export const CourseService = {
   createCourseIntoDB,
   getAllCoursesFromDB,
@@ -171,4 +211,5 @@ export const CourseService = {
   getSingleCourseFromDB,
   getAllCourseForProjectThesis,
   getMyAssignedCourses,
+  generateReportForCourse
 };

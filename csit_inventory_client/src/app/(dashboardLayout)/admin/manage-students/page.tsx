@@ -27,6 +27,7 @@ import PaginationComponent from "@/components/shared/PaginationComponent";
 import ReusableSearch from "@/components/shared/ReusableSearch";
 import ReusableSorting from "@/components/shared/ReusableSorting";
 import ReusableFilter from "@/components/shared/ReusableFilter";
+import DownloadReportButton from "@/components/shared/DownloadButton";
 
 export default async function ManageUsersPage({
   searchParams,
@@ -70,11 +71,18 @@ export default async function ManageUsersPage({
 
   return (
     <div className="max-w-360 w-full mx-auto py-6 space-y-6">
-      <CardHeader>
-        <CardTitle>Manage Students</CardTitle>
-        <CardDescription>
-          View and manage all registered students in the system
-        </CardDescription>
+      <CardHeader className="flex flex-row items-start justify-between gap-4">
+        <div className="space-y-1">
+          <CardTitle>Manage Students</CardTitle>
+          <CardDescription>
+            View and manage all registered students in the system
+          </CardDescription>
+        </div>
+
+        <DownloadReportButton
+          forWho="admin-student"
+          queryParams={queryParams}
+        />
       </CardHeader>
       <CardContent>
         <div className="mb-6 flex items-center justify-between gap-6">

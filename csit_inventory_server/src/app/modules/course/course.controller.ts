@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { catchAsync } from "../../../shared/catchAsync";
 import { CourseService } from "./course.service";
 import { sendResponse } from "../../../shared/responser";
+import { generatePdf } from "../../../shared/pdfService";
 
 const createCourseIntoDB = catchAsync(async (req: Request, res: Response) => {
   const { accessToken, ...courseData } = req.body;
@@ -62,6 +63,33 @@ const getMyAssignedCourses = catchAsync(
   },
 );
 
+const generateReportForCourse = catchAsync(
+  async (req: Request & { user?: any }, res: Response) => {
+    const result = await CourseService.generateReportForCourse(
+      req.query,
+    );
+
+    const pdfContext = {
+      generatedDate: new Date().toLocaleDateString(),
+      courses: result.data,
+      meta: result.meta,  
+    };
+
+    const pdfBuffer = await generatePdf(
+      "course-report.hbs", 
+      pdfContext,
+    );
+
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename="course-report.pdf"`,
+      "Content-Length": pdfBuffer.length,
+      "Cache-Control": "no-cache",
+    });
+    
+    res.end(pdfBuffer);
+  }
+);
 export const CourseController = {
   createCourseIntoDB,
   getAllCoursesFromDB,
@@ -70,5 +98,6 @@ export const CourseController = {
   reActivateCourseInDB,
   getSingleCourseFromDB,
   getAllCourseForProjectThesis,
-  getMyAssignedCourses
+  getMyAssignedCourses,
+  generateReportForCourse
 };
