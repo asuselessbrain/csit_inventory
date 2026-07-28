@@ -70,29 +70,31 @@ const getStatusText = (status: string) => {
 export default function TaskCard({ task }: TaskCardProps) {
   console.log(task);
   return (
-    <div className="w-full rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <StatusIcon status={task.status} />
+    <div className="w-full rounded-xl border bg-white p-4 sm:p-5 shadow-sm transition hover:shadow-md">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+        <div className="flex items-start gap-3 flex-1 min-w-0">
+          <div className="shrink-0">
+            <StatusIcon status={task.status} />
+          </div>
 
-          <div>
-            <h3 className="text-base font-semibold text-gray-900">
+          <div className="flex-1 min-w-0">
+            <h3 className="text-base font-semibold text-gray-900 break-words">
               {task.title}
             </h3>
-            <p className="mt-1 text-sm text-gray-600 line-clamp-2 max-w-4xl">
+            <p className="mt-1 text-sm text-gray-600 line-clamp-2 max-w-4xl break-words">
               {task.description}
             </p>
           </div>
         </div>
 
-        <Badge className={getStatusColor(task.status)}>
+        <Badge className={`${getStatusColor(task.status)} whitespace-nowrap shrink-0`}>
           {getStatusText(task.status)}
         </Badge>
       </div>
 
-      {/* Meta Info */}
-      <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-gray-500 ml-8">
-        <div className="flex gap-4">
+      {/* Meta Info & Actions */}
+      <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm text-gray-500 pt-3 border-t border-gray-100 sm:border-none sm:pt-0 sm:ml-8">
+        <div className="flex flex-wrap gap-x-4 gap-y-1">
           <span>
             <strong>Due Date:</strong> {formatDate(task.dueDate)}
           </span>
@@ -100,17 +102,21 @@ export default function TaskCard({ task }: TaskCardProps) {
             <strong>Submitted:</strong> {formatDate(task.updatedAt)}
           </span>
         </div>
-      </div>
-      <Link href={`/student/my-proposals/${task?.projectThesis?.id}`}>
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex items-center gap-2 mt-4 ml-8"
+
+        <Link
+          href={`/student/my-proposals/${task?.projectThesis?.id}`}
+          className="w-full sm:w-auto mt-1 sm:mt-0"
         >
-          <Eye className="h-4 w-4" />
-          View Details
-        </Button>
-      </Link>
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex items-center justify-center gap-2 w-full sm:w-auto"
+          >
+            <Eye className="h-4 w-4 shrink-0" />
+            <span>View Details</span>
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 }

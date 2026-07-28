@@ -24,7 +24,7 @@ const getStudentDashboardData = catchAsync(
   async (req: Request & { user?: any }, res: Response) => {
     const user = req.user;
     const result = await DashboardService.studentDashboardData(
-      "anomious31@gmail.com" as string,
+      user.email as string,
     );
     sendResponse(res, 200, "Dashboard data retrieved successfully", result);
   },

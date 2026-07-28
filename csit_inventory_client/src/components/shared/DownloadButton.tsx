@@ -78,8 +78,15 @@ const DownloadReportButton = ({ forWho, queryParams }: Props) => {
 
       link.parentNode?.removeChild(link);
       window.URL.revokeObjectURL(url);
-    } catch (error) {
-      toast.error("Failed to download PDF. Please try again.");
+    } catch (error: any) {
+      console.error("PDF Download Error Details:", error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+            ? error
+            : "Failed to download PDF. Please try again.";
+      toast.error(errorMessage, { duration: 6000 });
     } finally {
       setIsLoading(false);
     }
@@ -89,7 +96,7 @@ const DownloadReportButton = ({ forWho, queryParams }: Props) => {
     <Button
       onClick={handleDownload}
       disabled={isLoading}
-      className="disabled:cursor-no-drop cursor-pointer"
+      className="disabled:cursor-no-drop cursor-pointer w-full sm:w-auto"
     >
       {isLoading ? "Generating PDF..." : "Download Report"}
     </Button>

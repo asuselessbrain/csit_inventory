@@ -27,17 +27,11 @@ import {
 } from "@/components/ui/sidebar";
 import { useUser } from "@/context/UserContext";
 
-// This is sample data.
 const data = {
-  user: {
-    name: "Arfan Ahmed",
-    email: "arfan@gmail.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   teams: {
     name: "PSTU",
     logo: "https://res.cloudinary.com/dwduymu1l/image/upload/v1769187917/Patuakhali_Science_and_Technology_University_logo_rv2zwu.png",
-    plan: "Dapartment of CSIT",
+    plan: "Department of CSIT",
   },
 };
 
@@ -99,6 +93,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       icon: ListChecks,
     },
     {
+      title: "Course Teacher Assign",
+      url: "/admin/course-teacher",
+      icon: Users,
+    },
+    {
       title: "Add Teacher",
       url: "/admin/add-teacher",
       icon: UserPlus,
@@ -106,7 +105,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     {
       title: "Manage Teachers",
       url: "/admin/manage-teachers",
-      icon: Users,
+      icon: UserCog,
+    },
+    {
+      title: "Add Student",
+      url: "/admin/add-student",
+      icon: UserPlus,
     },
     {
       title: "Manage Students",
@@ -142,6 +146,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       icon: BookOpen,
     },
   ];
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -159,7 +164,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser
+          user={{
+            name: user?.user?.email
+              ? user.user.email
+                .split("@")[0]
+                .replace(/[\._-]/g, " ")
+                .trim()
+                .split(" ")
+                .filter(Boolean)
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" ") || "User"
+              : user?.user?.role || "User Profile",
+            email: user?.user?.email || "Active Session",
+            role: user?.user?.role || "",
+            profilePhoto: "",
+          }}
+        />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

@@ -48,12 +48,12 @@ export default function ProjectThesisAction({
   return (
     <>
       {proposal.status === "PENDING" ? (
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-2.5 w-full">
           <Dialog>
             <DialogTrigger asChild>
-              <Button size="sm" className="gap-2">
-                <CheckCircle2 className="h-4 w-4" />
-                Approve & Assign Tasks
+              <Button size="sm" className="gap-2 flex-1 min-w-[160px] justify-center cursor-pointer">
+                <CheckCircle2 className="h-4 w-4 shrink-0" />
+                <span>Approve & Assign Tasks</span>
               </Button>
             </DialogTrigger>
             <ApproveAndRejectProposal approve="approve" id={proposal.id} />
@@ -61,34 +61,34 @@ export default function ProjectThesisAction({
 
           <Dialog>
             <DialogTrigger asChild>
-              <Button size="sm" variant="destructive" className="gap-2">
-                <XCircle className="h-4 w-4" />
-                Reject
+              <Button size="sm" variant="destructive" className="gap-2 flex-1 min-w-[120px] justify-center cursor-pointer">
+                <XCircle className="h-4 w-4 shrink-0" />
+                <span>Reject</span>
               </Button>
             </DialogTrigger>
             <ApproveAndRejectProposal reject="reject" id={proposal.id} />
           </Dialog>
         </div>
       ) : proposal.status === "APPROVED" ? (
-        <div className="flex items-center gap-2 rounded-md border bg-muted px-3 py-2 text-sm text-muted-foreground">
-          <Clock className="h-4 w-4" />
+        <div className="flex items-start gap-2 rounded-md border bg-muted px-3 py-2 text-xs sm:text-sm text-muted-foreground w-full">
+          <Clock className="h-4 w-4 shrink-0 mt-0.5" />
           <span>
             Proposal approved. Waiting for the student to request task
             assignment.
           </span>
         </div>
       ) : proposal.status === "REJECTED" ? (
-        <div className="flex items-center gap-2 rounded-md border bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          <XCircle className="h-4 w-4" />
+        <div className="flex items-start gap-2 rounded-md border bg-destructive/10 px-3 py-2 text-xs sm:text-sm text-destructive w-full">
+          <XCircle className="h-4 w-4 shrink-0 mt-0.5" />
           <span>This proposal has been rejected.</span>
         </div>
       ) : proposal.status === "in_PROGRESS" ? (
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5 w-full">
           <Dialog>
             <DialogTrigger asChild>
-              <Button size="sm" className="gap-2">
-                <ClipboardList className="h-4 w-4" />
-                Assign Task
+              <Button size="sm" className="gap-2 flex-1 min-w-[130px] justify-center cursor-pointer">
+                <ClipboardList className="h-4 w-4 shrink-0" />
+                <span>Assign Task</span>
               </Button>
             </DialogTrigger>
             <AssignTask proposal={proposal} />
@@ -98,16 +98,16 @@ export default function ProjectThesisAction({
             onClick={markAsComplete}
             size="sm"
             variant="outline"
-            className="gap-2"
+            className="gap-2 flex-1 min-w-[140px] justify-center cursor-pointer"
           >
-            <CheckCheck className="h-4 w-4" />
-            Mark as Completed
+            <CheckCheck className="h-4 w-4 shrink-0" />
+            <span>Mark as Completed</span>
           </Button>
         </div>
       ) : (
-        <div className="flex items-center gap-2 text-green-700 font-medium">
-          <CheckCheck className="h-4 w-4" />
-          Project Completed
+        <div className="flex items-center gap-2 text-green-700 font-medium text-sm sm:text-base w-full">
+          <CheckCheck className="h-4 w-4 shrink-0" />
+          <span>Project Completed</span>
         </div>
       )}
     </>

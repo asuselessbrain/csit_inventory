@@ -17,8 +17,10 @@ import { pagination } from "./../../../shared/pagination";
 const calculateOverall = (tasks: any) => {
   if (!tasks.length) return 0;
   return Math.round(
-    tasks.reduce((sum: number, t: any) => sum + t.progressPercentage, 0) /
-      tasks.length,
+    tasks.reduce(
+      (sum: number, t: any) => sum + (t.progressPercentage ?? t.ratting ?? 0),
+      0,
+    ) / tasks.length,
   );
 };
 
@@ -61,7 +63,15 @@ const getAllProjectThesesFromDB = async (query: any) => {
 
   const result = await prisma.projectThesis.findMany({
     where: whereCondition,
-    include: { tasks: true, student: true, supervisor: true },
+    include: {
+      tasks: {
+        include: {
+          projectThesisUpdateLogs: true,
+        },
+      },
+      student: true,
+      supervisor: true,
+    },
     skip: skipValue,
     take: takeValue,
     orderBy: { [sortByField]: sortOrderValue },
@@ -107,8 +117,10 @@ const getSingleProjectThesisFromDB = async (id: string) => {
     result.tasks.length === 0
       ? 0
       : Math.round(
-          result.tasks.reduce((acc, t) => acc + t.progressPercentage, 0) /
-            result.tasks.length,
+          result.tasks.reduce(
+            (acc, t) => acc + (t.progressPercentage ?? t.ratting ?? 0),
+            0,
+          ) / result.tasks.length,
         );
 
   const taskCompleted = result.tasks.filter(

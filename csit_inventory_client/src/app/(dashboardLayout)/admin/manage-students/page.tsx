@@ -70,22 +70,24 @@ export default async function ManageUsersPage({
   ];
 
   return (
-    <div className="max-w-360 w-full mx-auto py-6 space-y-6">
-      <CardHeader className="flex flex-row items-start justify-between gap-4">
+    <div className="max-w-360 w-full mx-auto py-6 px-3 sm:px-6 space-y-6">
+      <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-0">
         <div className="space-y-1">
-          <CardTitle>Manage Students</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">Manage Students</CardTitle>
+          <CardDescription className="text-sm sm:text-base text-gray-600">
             View and manage all registered students in the system
           </CardDescription>
         </div>
 
-        <DownloadReportButton
-          forWho="admin-student"
-          queryParams={queryParams}
-        />
+        <div className="w-full sm:w-auto">
+          <DownloadReportButton
+            forWho="admin-student"
+            queryParams={queryParams}
+          />
+        </div>
       </CardHeader>
-      <CardContent>
-        <div className="mb-6 flex items-center justify-between gap-6">
+      <CardContent className="px-0">
+        <div className="mb-6 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-start gap-3 sm:gap-4">
           <ReusableSearch placeholder="Search students..." />
           <ReusableFilter
             options={[
@@ -116,8 +118,8 @@ export default async function ManageUsersPage({
           />
           <ReusableSorting options={sortOptions} />
         </div>
-        <div className="rounded-md border">
-          <Table>
+        <div className="rounded-md border overflow-x-auto w-full">
+          <Table className="min-w-[850px]">
             <TableHeader>
               <TableRow>
                 <TableHead>Student</TableHead>

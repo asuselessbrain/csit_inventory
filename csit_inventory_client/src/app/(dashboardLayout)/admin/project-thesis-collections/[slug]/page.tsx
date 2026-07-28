@@ -29,13 +29,13 @@ export default async function ViewDetailsPage({
     .replace(/\n/g, "<br/>");
 
   return (
-    <div className="w-full max-w-screen-2xl mx-auto min-h-screen space-y-6">
+    <div className="w-full max-w-screen-2xl mx-auto min-h-screen px-3 sm:px-6 py-4 sm:py-6 space-y-6">
       {/* MAIN CONTENT */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="space-y-6 p-8 lg:col-span-2">
+        <div className="space-y-6 sm:p-4 md:p-6 lg:col-span-2">
           {/* Header */}
-          <div className="border rounded-md p-4 space-y-2">
-            <h1 className="text-2xl font-semibold">{proposal.projectTitle}</h1>
+          <div className="border rounded-md p-4 space-y-3 bg-white">
+            <h1 className="text-xl sm:text-2xl font-semibold break-words">{proposal.projectTitle}</h1>
 
             <Badge
               variant={
@@ -146,7 +146,7 @@ export default async function ViewDetailsPage({
         </div>
 
         {/* SIDEBAR */}
-        <div className="space-y-6 p-8">
+        <div className="space-y-6 sm:p-4 md:p-6">
           {/* People */}
           <section className="border rounded-md p-4 space-y-4">
             <h2 className="text-lg font-medium">People Involved</h2>
@@ -191,7 +191,7 @@ export default async function ViewDetailsPage({
       </div>
 
       {/* FULL WIDTH TASKS SECTION */}
-      <div className="p-8">
+      <div className="sm:p-4 md:p-6">
         <ShowTasks proposal={proposal} user={user} />
       </div>
     </div>

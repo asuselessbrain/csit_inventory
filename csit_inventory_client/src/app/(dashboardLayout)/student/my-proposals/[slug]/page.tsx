@@ -41,11 +41,11 @@ export default async function ProposalDetails({
   console.log(proposal.data);
 
   return (
-    <div className="max-w-7xl mx-auto p-6 sm:p-8 space-y-8">
+    <div className="max-w-7xl mx-auto w-full p-3 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
-        <div>
-          <h1 className="text-3xl font-bold">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+        <div className="space-y-1 flex-1 min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-bold break-words">
             {proposal.data.course.courseName}
           </h1>
           <p className="text-sm text-slate-500">
@@ -55,7 +55,7 @@ export default async function ProposalDetails({
             Semester: {proposal.data.semester}
           </p>
         </div>
-        <div className="mt-4 sm:mt-0 flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {/* Status Badge */}
           <Badge
             variant={
@@ -265,17 +265,17 @@ export default async function ProposalDetails({
                   className="hover:shadow-lg transition-shadow border-slate-200 dark:border-slate-700"
                 >
                   <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <CardTitle className="text-lg text-gray-900 dark:text-white">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-lg text-gray-900 dark:text-white break-words">
                           {task.title}
                         </CardTitle>
-                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
+                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 break-words">
                           {task.description}
                         </p>
                       </div>
                       <div
-                        className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap ${getStatusColor(task.status)}`}
+                        className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap w-fit shrink-0 ${getStatusColor(task.status)}`}
                       >
                         {getStatusIcon(task.status)}
                         {task.status.replace("_", " ")}

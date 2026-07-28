@@ -127,7 +127,7 @@ export function SubmitTaskDialog({ taskId }: SubmitTaskDialogProps) {
       <DialogTrigger asChild>
         <Button className="w-full">Submit Task</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto p-4 sm:p-6 rounded-xl">
         <DialogHeader>
           <DialogTitle>Submit Task</DialogTitle>
         </DialogHeader>
@@ -226,18 +226,20 @@ export function SubmitTaskDialog({ taskId }: SubmitTaskDialogProps) {
             </p>
           </div>
 
-          <DialogFooter className="flex gap-2 sm:justify-end">
+          <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:justify-end mt-6">
             <Button
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
               disabled={loading}
+              className="w-full sm:w-auto"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={loading || (!selectedFile && !fileUrl)}
+              className="w-full sm:w-auto"
             >
               {loading ? "Submitting..." : "Submit Task"}
             </Button>

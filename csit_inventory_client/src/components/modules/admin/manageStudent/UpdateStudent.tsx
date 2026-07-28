@@ -78,9 +78,9 @@ export default function UpdateStudent({ student }: { student: IStudent }) {
     toast.loading("Updating student details...", { id: toastId });
   }
   return (
-    <DialogContent className="max-w-4xl max-h-9/10 overflow-y-auto">
+    <DialogContent className="w-[95vw] sm:max-w-4xl max-h-[90vh] overflow-y-auto p-4 sm:p-6 rounded-xl">
       <DialogHeader>
-        <DialogTitle className="text-2xl font-bold text-gray-900">
+        <DialogTitle className="text-xl sm:text-2xl font-bold text-gray-900">
           Update Student
         </DialogTitle>
         <DialogDescription className="text-gray-600">
@@ -431,12 +431,12 @@ export default function UpdateStudent({ student }: { student: IStudent }) {
           />
         </div>
 
-        <DialogFooter className="flex gap-3">
+        <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-6">
           <DialogClose asChild>
             <Button
               variant="outline"
               disabled={isSubmitting}
-              className="cursor-pointer"
+              className="cursor-pointer w-full sm:w-auto"
             >
               Cancel
             </Button>
@@ -445,7 +445,7 @@ export default function UpdateStudent({ student }: { student: IStudent }) {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="cursor-pointer disabled:cursor-no-drop"
+              className="cursor-pointer disabled:cursor-no-drop w-full sm:w-auto"
             >
               {isSubmitting ? "Saving..." : "Save Changes"}
             </Button>

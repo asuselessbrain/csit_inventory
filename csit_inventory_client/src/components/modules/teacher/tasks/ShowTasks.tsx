@@ -20,7 +20,10 @@ import {
   Target,
   TrendingUp,
   ExternalLink,
+  Eye,
+  ArrowUpRight,
 } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { TaskUpdateLogs } from "@/components/modules/student/task/TaskUpdateLogs";
 import { TaskSubmissionModal } from "./TaskSubmissionModal";
@@ -81,12 +84,12 @@ export default function ShowTasks({
     <div className="space-y-6">
       {/* Tasks Section */}
       <section className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
               Project Tasks
             </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
               {tasks.length} {tasks.length === 1 ? "task" : "tasks"} assigned to
               this project
             </p>
@@ -100,25 +103,35 @@ export default function ShowTasks({
                 <Card key={task.id}>
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center flex-wrap gap-2 sm:gap-3 mb-2">
                           <Badge
                             variant="outline"
-                            className="font-mono text-xs"
+                            className="font-mono text-xs whitespace-nowrap"
                           >
                             Task #{index + 1}
                           </Badge>
                           <div
-                            className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(task.status)}`}
+                            className={`inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getStatusColor(task.status)}`}
                           >
                             {getStatusIcon(task.status)}
                             {task.status.replace("_", " ")}
                           </div>
                         </div>
-                        <CardTitle className="text-xl mb-2">
-                          {task.title}
+                        <CardTitle className="text-lg sm:text-xl mb-2 break-words">
+                          {user?.role === "TEACHER" ? (
+                            <Link
+                              href={`/teacher/task-to-review/${task.id}`}
+                              className="group inline-flex items-center gap-1.5 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                            >
+                              <span>{task.title}</span>
+                              <ArrowUpRight className="w-4 h-4 text-slate-400 opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                            </Link>
+                          ) : (
+                            task.title
+                          )}
                         </CardTitle>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
+                        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed break-words">
                           {task.description}
                         </p>
                       </div>
@@ -127,7 +140,7 @@ export default function ShowTasks({
 
                   <CardContent className="space-y-4">
                     {/* Task Metadata */}
-                    <div className="flex items-center gap-10 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
+                    <div className="grid grid-cols-2 gap-4 sm:flex sm:items-center sm:gap-10 p-3 sm:p-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
                       <div className="flex items-center gap-2 text-sm">
                         <Calendar className="w-4 h-4 text-muted-foreground" />
                         <div>
@@ -145,9 +158,11 @@ export default function ShowTasks({
                         <Target className="w-4 h-4 text-muted-foreground" />
                         <div>
                           <p className="text-xs text-muted-foreground">
-                            Rating
+                            Task Score / Progress
                           </p>
-                          <p className="font-medium">{task.ratting || 0}/5</p>
+                          <p className="font-medium text-emerald-600 dark:text-emerald-400">
+                            {task.progressPercentage ?? task.ratting ?? 0}%
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -165,7 +180,7 @@ export default function ShowTasks({
                           <FileText className="w-4 h-4 text-blue-600" />
                           Requirements
                         </div>
-                        <ul className="space-y-2 ml-6">
+                        <ul className="space-y-2 pl-2 sm:ml-6">
                           {task.requirements.map((req, idx) => (
                             <li
                               key={idx}
@@ -187,7 +202,7 @@ export default function ShowTasks({
                             <Download className="w-4 h-4 text-purple-600" />
                             Reference Materials
                           </div>
-                          <div className="flex flex-wrap gap-2 ml-6">
+                          <div className="flex flex-wrap gap-2 sm:ml-6 mt-1">
                             {task.referenceMaterials.map((url, idx) => (
                               <Button
                                 key={idx}
@@ -239,7 +254,7 @@ export default function ShowTasks({
                               <Clock className="w-4 h-4 text-blue-600" />
                               Review submission from student
                             </p>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3">
                               <Dialog>
                                 <DialogTrigger asChild>
                                   <Button className="w-full bg-green-600 hover:bg-green-700">
@@ -303,23 +318,38 @@ export default function ShowTasks({
                           </div>
                         )}
 
-                        {/* Edit Task Button */}
-                        {(task.status === "TODO" ||
-                          task.status === "IN_PROGRESS") && (
-                          <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+                        {/* Task Action Bar for Teacher */}
+                        <div className="pt-4 border-t border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-end gap-3">
+                          {(task.status === "TODO" ||
+                            task.status === "IN_PROGRESS") && (
                             <Button
                               onClick={() => {
                                 setSelectedTask(task);
                                 setIsModalOpen(true);
                               }}
                               variant="outline"
-                              className="w-full"
+                              size="sm"
+                              className="w-full sm:w-auto flex items-center justify-center gap-2 cursor-pointer"
                             >
-                              <Edit className="w-4 h-4 mr-2" />
+                              <Edit className="w-4 h-4 mr-1" />
                               Edit Task
                             </Button>
-                          </div>
-                        )}
+                          )}
+
+                          <Link
+                            href={`/teacher/task-to-review/${task.id}`}
+                            className="w-full sm:w-auto"
+                          >
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="w-full sm:w-auto flex items-center justify-center gap-2 border-slate-300 dark:border-slate-600 hover:bg-blue-50 dark:hover:bg-slate-800 text-blue-600 dark:text-blue-400 font-semibold transition-colors cursor-pointer"
+                            >
+                              <Eye className="w-4 h-4" />
+                              View Task Details
+                            </Button>
+                          </Link>
+                        </div>
                       </>
                     )}
                   </CardContent>

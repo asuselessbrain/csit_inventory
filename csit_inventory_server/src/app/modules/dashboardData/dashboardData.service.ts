@@ -172,7 +172,7 @@ const teacherDashboardData = async (email: string) => {
 };
 
 const studentDashboardData = async (email: string) => {
-    console.log(email)
+  console.log(email)
   const student = await prisma.student.findUniqueOrThrow({
     where: { email },
   });
@@ -210,11 +210,18 @@ const studentDashboardData = async (email: string) => {
 
   const totalTasks = myProject.tasks.length;
   const completedTasks = myProject.tasks.filter(
-    (t) =>t.status === "DONE",
+    (t) => t.status === "DONE",
   ).length;
 
   const progressPercentage =
-    totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
+    totalTasks === 0
+      ? 0
+      : Math.round(
+        myProject.tasks.reduce(
+          (acc: number, t: any) => acc + (t.progressPercentage ?? t.ratting ?? 0),
+          0,
+        ) / totalTasks,
+      );
 
   const pendingTasksCount = totalTasks - completedTasks;
 

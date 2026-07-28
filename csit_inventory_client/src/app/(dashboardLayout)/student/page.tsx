@@ -3,7 +3,9 @@ import StudentDashboardOverview from '@/components/modules/student/student-dashb
 
 export default async function StudentDashboardPage() {
   const res = await studentDashboardData();
+  console.log(res)
   const hasProject = res?.data?.hasProject ?? false;
+
   const overview = res?.data?.overview ?? {};
   const supervisor = res?.data?.supervisor ?? {};
   const recentTasks = res?.data?.recentTasks ?? [];

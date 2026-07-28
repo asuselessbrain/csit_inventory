@@ -47,10 +47,10 @@ export default function TaskAction({
       <Link href={`/teacher/task-to-review/${taskId}`}>
         <Button
           variant="outline"
-          className="flex items-center gap-2 cursor-pointer disabled:cursor-no-drop"
+          className="flex items-center gap-2 cursor-pointer font-semibold border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-blue-600 dark:text-blue-400 disabled:cursor-no-drop"
         >
           <Eye className="h-4 w-4" />
-          View Submission
+          View Task Details
         </Button>
       </Link>
     </div>

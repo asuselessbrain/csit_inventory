@@ -18,7 +18,7 @@ router.get(
 
 router.get(
   "/student",
-//   auth(UserRole.STUDENT),
+  auth(UserRole.STUDENT),
   DashboardDataController.getStudentDashboardData,
 );
 export const DashboardDataRoutes = router;

@@ -17,6 +17,7 @@ export const verifyOtp = async (data: { email: string; otp: string }) => {
       },
     );
     const result = await res.json();
+    console.log(result);
     if (result.success) {
       cookieStore.set("accessToken", result.data.data.token, {
         httpOnly: true,

@@ -47,6 +47,10 @@ export default function Navbar() {
     }
   };
 
+  if (pathname === "/") {
+    return null;
+  }
+
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/inventory", label: "Inventory" },

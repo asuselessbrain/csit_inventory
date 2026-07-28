@@ -75,7 +75,7 @@ export default function ApproveAndRejectProposal({
   }
 
   return (
-    <DialogContent className="sm:max-w-sm">
+    <DialogContent className="w-[95vw] sm:max-w-sm max-h-[90vh] overflow-y-auto rounded-xl p-4 sm:p-6">
       <form onSubmit={handleSubmit(handleApproveRejectProposal)}>
         <DialogHeader>
           <DialogTitle>
@@ -122,12 +122,12 @@ export default function ApproveAndRejectProposal({
             )}
           />
         </FieldGroup>
-        <DialogFooter>
+        <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0 mt-4">
           <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline" className="w-full sm:w-auto">Cancel</Button>
           </DialogClose>
           <DialogClose asChild>
-            <Button disabled={isSubmitting} type="submit">
+            <Button disabled={isSubmitting} type="submit" className="w-full sm:w-auto">
               {isSubmitting ? "Submitting..." : approve ? "Approve" : "Reject"}
             </Button>
           </DialogClose>

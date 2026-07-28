@@ -89,6 +89,8 @@ const updateStatusToDoneInDB = async (
     include: { projectThesis: { include: { student: true } } },
   });
 
+  console.log(updateData);
+
   if (!isTaskExist) {
     throw new AppError(404, "Task not found");
   }
@@ -97,29 +99,32 @@ const updateStatusToDoneInDB = async (
     throw new AppError(400, "Only review task can be set to done");
   }
 
-  const calculatedProgress = Number(updateData.rating) * 20;
+  const score = Math.min(100, Math.max(0, Number(updateData.rating) || 0));
 
   const data = {
     status: TaskStatus.DONE,
-    ratting: updateData.rating,
-    progressPercentage: calculatedProgress,
+    ratting: score,
+    progressPercentage: score,
     feedback: updateData.note !== undefined ? updateData.note : null,
   };
 
   const result = prisma.$transaction(async (transactionClient) => {
-    await transactionClient.task.update({
+    const updatedTask = await transactionClient.task.update({
       where: { id: isTaskExist.id },
       data: data,
     });
 
-    const updateLog = await transactionClient.projectThesisUpdateLog.update({
-      where: { id: updateData.updateLogId },
-      data: {
-        supervisorFeedback:
-          updateData.note !== undefined ? updateData.note : null,
-      },
-    });
-    return updateLog
+    let updateLog = null;
+    if (updateData.updateLogId && updateData.updateLogId.trim() !== "") {
+      updateLog = await transactionClient.projectThesisUpdateLog.update({
+        where: { id: updateData.updateLogId },
+        data: {
+          supervisorFeedback:
+            updateData.note !== undefined ? updateData.note : null,
+        },
+      });
+    }
+    return updateLog || updatedTask;
   });
 
   await sendEmail({
@@ -188,17 +193,20 @@ const rejectTask = async (id: string, updatedData: { note: string; updateLogId: 
   };
 
   const result = prisma.$transaction(async (transactionClient) => {
-    await transactionClient.task.update({
+    const updatedTask = await transactionClient.task.update({
       where: { id: isTaskExist.id },
       data: data,
     });
-    const updateLog = await transactionClient.projectThesisUpdateLog.update({
-      where: { id: updatedData.updateLogId },
-      data: {
-        supervisorFeedback: updatedData.note,
-      },
-    });
-    return updateLog;
+    let updateLog = null;
+    if (updatedData.updateLogId && updatedData.updateLogId.trim() !== "") {
+      updateLog = await transactionClient.projectThesisUpdateLog.update({
+        where: { id: updatedData.updateLogId },
+        data: {
+          supervisorFeedback: updatedData.note,
+        },
+      });
+    }
+    return updateLog || updatedTask;
   });
 
   await sendEmail({
@@ -253,6 +261,7 @@ const getAllTasksForStudent = async (email: string, query: any) => {
           supervisor: true,
         },
       },
+      projectThesisUpdateLogs: true,
     },
   });
 
@@ -317,6 +326,7 @@ const getTaskForTeacherReview = async (email: string, query: any) => {
           student: true,
         },
       },
+      projectThesisUpdateLogs: true,
     },
   });
 

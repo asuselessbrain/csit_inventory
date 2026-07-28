@@ -50,19 +50,19 @@ export default async function TaskToReviewPage({
   ];
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen p-3 sm:p-6">
       <div className="mx-auto max-w-360">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
             Tasks to Review
           </h1>
-          <p className="mt-1 text-gray-600">
+          <p className="mt-1 text-sm sm:text-base text-gray-600">
             Review and manage student task submissions
           </p>
         </div>
 
-        <div className="mb-6 flex items-center justify-between gap-6">
+        <div className="mb-6 flex flex-col md:flex-row flex-wrap items-stretch sm:items-center justify-start gap-3 sm:gap-4 lg:gap-6">
           <ReusableSearch placeholder="Search tasks to review..." />
           <ReusableFilter
             options={
@@ -97,7 +97,7 @@ export default async function TaskToReviewPage({
 
         <div className="space-y-4">
           {tasks.length > 0 ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               {tasks.map((task: ITask) => (
                 <TaskReviewCard key={task.id} task={task} />
               ))}

@@ -64,11 +64,11 @@ export default async function TaskToReviewDetailsPage({
   console.log(task);
 
   return (
-    <div className="container mx-auto py-6 space-y-6 max-w-7xl">
+    <div className="container mx-auto px-4 sm:px-6 py-6 space-y-6 max-w-7xl">
       <div className="space-y-4">
         <div className="flex items-start justify-between">
-          <div className="space-y-3 flex-1">
-            <h1 className="text-3xl font-bold tracking-tight">{task.title}</h1>
+          <div className="space-y-3 flex-1 min-w-0">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight break-words">{task.title}</h1>
             <div className="flex items-center gap-2 flex-wrap">
               <Badge
                 variant={statusBadge.variant}
@@ -97,7 +97,7 @@ export default async function TaskToReviewDetailsPage({
           </CardContent>
         </Card>
 
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <TaskProjectCourseCard
             type={task.type}
             projectTitle={task.projectThesis?.projectTitle}
@@ -110,7 +110,7 @@ export default async function TaskToReviewDetailsPage({
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           {task.requirements && task.requirements.length > 0 && (
             <TaskRequirements requirements={task.requirements} />

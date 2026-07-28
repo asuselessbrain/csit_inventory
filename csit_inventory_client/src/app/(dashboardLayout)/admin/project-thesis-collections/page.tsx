@@ -58,25 +58,27 @@ export default async function ProjectThesisCollectionPage({
   ];
 
   return (
-    <div className="min-h-screen py-8">
-      <div className="max-w-360 mx-auto px-6 space-y-8">
-        <div className="flex items-center justify-between">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+    <div className="min-h-screen py-6 sm:py-8">
+      <div className="max-w-360 mx-auto px-3 sm:px-6 space-y-6 sm:space-y-8">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
               Submitted Proposals
             </h1>
-            <p className="mt-1 text-gray-600">
+            <p className="mt-1 text-sm sm:text-base text-gray-600">
               View, review, and manage proposals submitted by students under
               your supervision
             </p>
           </div>
-          <DownloadReportButton
-            forWho="admin-proposals"
-            queryParams={queryParams}
-          />
+          <div className="w-full md:w-auto">
+            <DownloadReportButton
+              forWho="admin-proposals"
+              queryParams={queryParams}
+            />
+          </div>
         </div>
 
-        <div className="flex items-center justify-between gap-6">
+        <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-start gap-3 sm:gap-4">
           <ReusableSearch placeholder="Search proposals..." />
           <ReusableFilter
             options={[
@@ -128,7 +130,7 @@ export default async function ProjectThesisCollectionPage({
               </CardContent>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {proposals.map((proposal: IProposal) => (
                 <Card
                   key={proposal.id}
@@ -137,14 +139,14 @@ export default async function ProjectThesisCollectionPage({
                   <CardContent className="pt-5 space-y-4">
                     {/* Title & Status */}
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
-                      <h3 className="font-semibold text-base leading-snug">
+                      <h3 className="font-semibold text-base sm:text-lg leading-snug break-words flex-1 min-w-0">
                         {proposal.projectTitle}
                       </h3>
 
                       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                       <Badge
                         variant={getStatusBadge(proposal.status)}
-                        className="w-fit"
+                        className="w-fit whitespace-nowrap"
                       >
                         {proposal.status || "PENDING"}
                       </Badge>
@@ -184,19 +186,19 @@ export default async function ProjectThesisCollectionPage({
                     </div>
 
                     {/* Actions */}
-                    <div className="flex flex-col xl:flex-row gap-2">
+                    <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 pt-2 border-t border-gray-100">
 
                       <Link
                         href={`/admin/project-thesis-collections/${proposal?.id}`}
-                        className="w-full sm:w-auto"
+                        className="w-full sm:w-auto sm:ml-auto"
                       >
                         <Button
                           size="sm"
                           variant="outline"
-                          className="w-full sm:w-auto gap-2"
+                          className="w-full sm:w-auto gap-2 justify-center"
                         >
-                          <Eye className="h-4 w-4" />
-                          View Details
+                          <Eye className="h-4 w-4 shrink-0" />
+                          <span>View Details</span>
                         </Button>
                       </Link>
                     </div>

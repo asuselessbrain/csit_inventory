@@ -16,6 +16,7 @@ export interface ITask {
   description: string;
   dueDate: string;
   ratting: number;
+  progressPercentage?: number;
   feedback: string;
   status: "TODO" | "IN_PROGRESS" | "REVIEW" | "DONE" | "FAILED";
   requirements: string[];

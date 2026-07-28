@@ -49,19 +49,19 @@ export default async function MyTasksPage({
   ];
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen p-3 sm:p-6">
       <div className="mx-auto max-w-7xl">
         {/* Header Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
             My Tasks
           </h1>
-          <p className="mt-1 text-gray-600">
+          <p className="mt-1 text-sm sm:text-base text-gray-600">
             View and manage your assigned tasks
           </p>
         </div>
 
-        <div className="mb-6 flex items-center justify-between gap-6">
+        <div className="mb-6 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-start gap-3 sm:gap-4">
           <ReusableSearch placeholder="Search tasks..." />
           <ReusableFilter
             options={

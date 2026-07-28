@@ -55,15 +55,17 @@ export default async function MyProposalsPage({
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-360 mx-auto px-6 py-8 space-y-4">
+      <div className="max-w-360 mx-auto px-3 sm:px-6 py-6 sm:py-8 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold">My Proposals</h1>
-        <DownloadReportButton forWho="student" queryParams={queryParams} />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">My Proposals</h1>
+          <div className="w-full sm:w-auto">
+            <DownloadReportButton forWho="student" queryParams={queryParams} />
+          </div>
         </div>
 
         <>
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-start gap-3 sm:gap-4">
             <ReusableSearch placeholder="Search proposals..." />
             <ReusableFilter
               options={[
@@ -117,19 +119,19 @@ export default async function MyProposalsPage({
               </div>
             </div>
           ) : (
-            <div className="space-y-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {proposals.map((proposal: IProposal) => (
-                <Card key={proposal.id} className="border">
-                  <CardContent className="pt-6">
+                <Card key={proposal.id} className="border flex flex-col justify-between">
+                  <CardContent className="pt-5 flex-1">
                     <div className="space-y-3">
                       {/* Title with Badge */}
-                      <div className="flex items-start justify-between gap-3">
-                        <h2 className="text-base font-semibold leading-tight flex-1">
+                      <div className="flex items-start justify-between gap-2">
+                        <h2 className="text-base sm:text-lg font-semibold leading-snug flex-1 break-words min-w-0">
                           {proposal.projectTitle}
                         </h2>
                         <Badge
                           variant="secondary"
-                          className="whitespace-nowrap"
+                          className="whitespace-nowrap shrink-0"
                         >
                           {proposal.type || "PROJECT"}
                         </Badge>
@@ -182,11 +184,11 @@ export default async function MyProposalsPage({
                   </CardContent>
 
                   {/* Action Buttons */}
-                  <CardFooter className="flex gap-2">
-                    <Link href={`/student/my-proposals/${proposal?.id}`}>
-                      <Button size="sm">View Full Details</Button>
+                  <CardFooter className="flex flex-col sm:flex-row flex-wrap gap-2 pt-4 border-t border-gray-100">
+                    <Link href={`/student/my-proposals/${proposal?.id}`} className="w-full sm:flex-1">
+                      <Button size="sm" className="w-full justify-center">View Full Details</Button>
                     </Link>
-                    <Button size="sm" variant="outline">
+                    <Button size="sm" variant="outline" className="w-full sm:w-auto justify-center">
                       Download Proposal
                     </Button>
                   </CardFooter>
