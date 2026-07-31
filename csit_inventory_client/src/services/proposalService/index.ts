@@ -22,6 +22,23 @@ export const createProjectThesis = async (ProjectThesisData: FieldValues) => {
   }
 };
 
+export const submitFinalReport = async (id: string, finalReportUrl: string) => {
+  try {
+    const res = await baseApi(`${baseUrl}/project-thesis/submit-final-report/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ finalReportUrl }),
+    });
+    // @ts-ignore - bypassing next/cache type mismatch for revalidateTag
+    revalidateTag("project", "max");
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getSingleStudentProposal = async (queryParams?: QueryParams) => {
   const params = new URLSearchParams();
   if (queryParams) {

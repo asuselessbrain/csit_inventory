@@ -17,6 +17,7 @@ router.patch('/approve-project-thesis/:id', auth(UserRole.TEACHER), ProjectThesi
 router.patch('/reject-project-thesis/:id', auth(UserRole.TEACHER), ProjectThesisController.rejectProjectThesis)
 router.patch('/start-project-thesis/:id', auth(UserRole.STUDENT), ProjectThesisController.startProjectThesisInDB)
 router.patch('/complete-project-thesis/:id', auth(UserRole.TEACHER), ProjectThesisController.completeProjectThesisInDB)
+router.patch('/submit-final-report/:id', auth(UserRole.STUDENT), ProjectThesisController.submitFinalReport)
 router.patch('/:id', ProjectThesisController.updateProjectThesisInDB)
 
 export const ProjectThesisRoutes = router;

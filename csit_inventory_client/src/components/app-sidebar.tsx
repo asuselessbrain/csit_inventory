@@ -69,6 +69,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "/student/my-proposals",
       icon: NotebookText,
     },
+    {
+      title: "Generate Report",
+      url: "/student/generate-report",
+      icon: FileText,
+    },
   ];
 
   const navAdmin = [

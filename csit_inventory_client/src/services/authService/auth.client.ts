@@ -21,13 +21,13 @@ export const verifyOtp = async (data: { email: string; otp: string }) => {
     if (result.success) {
       cookieStore.set("accessToken", result.data.data.token, {
         httpOnly: true,
-        secure: true,
+        secure: false,
         path: "/",
         maxAge: 1000 * 60 * 60 * 24,
       });
       cookieStore.set("refreshToken", result.data.data.refreshToken, {
         httpOnly: true,
-        secure: true,
+        secure: false,
         path: "/",
         maxAge: 1000 * 60 * 60 * 24 * 30,
       });
@@ -39,7 +39,7 @@ export const verifyOtp = async (data: { email: string; otp: string }) => {
 };
 
 export const logoutUser = async () => {
-    const cookieStore = await cookies();
+  const cookieStore = await cookies();
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/auth/logout`, {
       method: "GET",

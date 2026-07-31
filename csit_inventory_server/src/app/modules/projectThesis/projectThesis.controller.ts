@@ -45,6 +45,17 @@ const updateProjectThesisInDB = catchAsync(
   },
 );
 
+const submitFinalReport = catchAsync(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await ProjectThesisService.submitFinalReportInDB(
+      id as string,
+      req.body.finalReportUrl,
+    );
+    sendResponse(res, 200, "Final report submitted successfully", result);
+  },
+);
+
 const approveProjectThesis = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const result = await ProjectThesisService.approveProjectThesisInDB(
@@ -214,4 +225,5 @@ export const ProjectThesisController = {
   generateStudentProposalReport,
   generateTeacherProposalReport,
   generateProjectThesisReportForAdmin,
+  submitFinalReport,
 };

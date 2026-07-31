@@ -152,6 +152,23 @@ const updateProjectThesisInDB = async (id: string, updateInfo: any) => {
   return result;
 };
 
+const submitFinalReportInDB = async (id: string, finalReportUrl: string) => {
+  const isProjectThesisExist = await prisma.projectThesis.findUnique({
+    where: { id },
+  });
+
+  if (!isProjectThesisExist) {
+    throw new AppError(404, "Project or Thesis not found");
+  }
+
+  const result = await prisma.projectThesis.update({
+    where: { id },
+    data: { finalReport: finalReportUrl },
+  });
+
+  return result;
+};
+
 const approveProjectThesisInDB = async (id: string, note: string) => {
   const isProjectThesisExist = await prisma.projectThesis.findUnique({
     where: { id },
@@ -585,4 +602,5 @@ export const ProjectThesisService = {
   generateStudentProposalReport,
   generateTeacherProposalReport,
   generateProjectThesisReportForAdmin,
+  submitFinalReportInDB,
 };
