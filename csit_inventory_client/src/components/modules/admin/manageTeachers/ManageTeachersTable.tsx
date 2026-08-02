@@ -16,8 +16,7 @@ import {
 } from "@/components/shared/formatter";
 import ManageTeacherAction from "./ManageTeacherAction";
 import ReusableSorting from "@/components/shared/ReusableSorting";
-import ReusableFilter from "@/components/shared/ReusableFilter";
-
+import UnifiedFilter from "@/components/shared/UnifiedFilter";
 interface ManageTeachersTableProps {
   teachers: {
     meta: Meta;
@@ -52,9 +51,40 @@ export default function ManageTeachersTable({
     <>
       <div className="flex items-center justify-between gap-6">
         <ReusableSearch placeholder="Search teachers..." />
-        <ReusableFilter options={[{id: "LECTURER", name: "Lecturer"}, {id: "ASSISTANT_PROFESSOR", name: "Assistant Professor"}, {id: "ASSOCIATE_PROFESSOR", name: "Associate Professor"}, {id: "PROFESSOR", name: "Professor"}]} queryKey="designation" placeholder="Filter by designation" />
-        <ReusableFilter options={[{id: "Computer_Science_And_Information_Technology", name: "Computer Science And Information Technology"}, {id: "Computer_science_And_Communication_Engineering", name: "Computer Science And Communication Engineering"}, {id: "Electrical_And_Electronic_Engineering", name: "Electrical And Electronic Engineering"}, {id: "Physics_And_Mechanical_Engineering", name: "Physics and Mechanical Engineering"}, {id: "Mathematics", name: "Mathematics"}]} queryKey="department" placeholder="Filter by department" />
-        <ReusableFilter options={[{id: "ACTIVE", name: "Active"}, {id: "STUDY_LEAVE", name: "Study Leave"}, {id: "RETIRED", name: "Retired"}]} queryKey="status" placeholder="Filter by status" />
+        <UnifiedFilter
+          filters={[
+            {
+              title: "Designation",
+              queryKey: "designation",
+              options: [
+                { id: "LECTURER", name: "Lecturer" },
+                { id: "ASSISTANT_PROFESSOR", name: "Assistant Professor" },
+                { id: "ASSOCIATE_PROFESSOR", name: "Associate Professor" },
+                { id: "PROFESSOR", name: "Professor" },
+              ],
+            },
+            {
+              title: "Department",
+              queryKey: "department",
+              options: [
+                { id: "Computer_Science_And_Information_Technology", name: "Computer Science And Information Technology" },
+                { id: "Computer_science_And_Communication_Engineering", name: "Computer Science And Communication Engineering" },
+                { id: "Electrical_And_Electronic_Engineering", name: "Electrical And Electronic Engineering" },
+                { id: "Physics_And_Mechanical_Engineering", name: "Physics and Mechanical Engineering" },
+                { id: "Mathematics", name: "Mathematics" },
+              ],
+            },
+            {
+              title: "Status",
+              queryKey: "status",
+              options: [
+                { id: "ACTIVE", name: "Active" },
+                { id: "STUDY_LEAVE", name: "Study Leave" },
+                { id: "RETIRED", name: "Retired" },
+              ],
+            },
+          ]}
+        />
         <ReusableSorting options={sortOptions} />
       </div>
       <div className="rounded-lg border bg-white shadow-sm my-8">

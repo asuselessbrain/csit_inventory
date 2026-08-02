@@ -26,7 +26,7 @@ import { IStudent, SortOption } from "@/types";
 import PaginationComponent from "@/components/shared/PaginationComponent";
 import ReusableSearch from "@/components/shared/ReusableSearch";
 import ReusableSorting from "@/components/shared/ReusableSorting";
-import ReusableFilter from "@/components/shared/ReusableFilter";
+import UnifiedFilter from "@/components/shared/UnifiedFilter";
 import DownloadReportButton from "@/components/shared/DownloadButton";
 
 export default async function ManageUsersPage({
@@ -89,32 +89,36 @@ export default async function ManageUsersPage({
       <CardContent className="px-0">
         <div className="mb-6 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-start gap-3 sm:gap-4">
           <ReusableSearch placeholder="Search students..." />
-          <ReusableFilter
-            options={[
-              { id: "2020-21", name: "2020-21" },
-              { id: "2021-22", name: "2021-22" },
-              { id: "2022-23", name: "2022-23" },
-              { id: "2023-24", name: "2023-24" },
+          <UnifiedFilter
+            filters={[
+              {
+                title: "Session",
+                queryKey: "session",
+                options: [
+                  { id: "2020-21", name: "2020-21" },
+                  { id: "2021-22", name: "2021-22" },
+                  { id: "2022-23", name: "2022-23" },
+                  { id: "2023-24", name: "2023-24" },
+                ],
+              },
+              {
+                title: "Status",
+                queryKey: "status",
+                options: [
+                  { id: "ACTIVE", name: "Active" },
+                  { id: "INACTIVE", name: "Inactive" },
+                  { id: "GRADUATED", name: "Graduated" },
+                ],
+              },
+              {
+                title: "Approval",
+                queryKey: "isApproved",
+                options: [
+                  { id: "true", name: "Approved" },
+                  { id: "false", name: "Pending" },
+                ],
+              },
             ]}
-            queryKey="session"
-            placeholder="Filter by session"
-          />
-          <ReusableFilter
-            options={[
-              { id: "ACTIVE", name: "Active" },
-              { id: "INACTIVE", name: "Inactive" },
-              { id: "GRADUATED", name: "Graduated" },
-            ]}
-            queryKey="status"
-            placeholder="Filter by status"
-          />
-          <ReusableFilter
-            options={[
-              { id: "true", name: "Approved" },
-              { id: "false", name: "Pending" },
-            ]}
-            queryKey="isApproved"
-            placeholder="Filter by approval"
           />
           <ReusableSorting options={sortOptions} />
         </div>

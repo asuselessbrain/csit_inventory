@@ -48,6 +48,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return null;
   }
 
+  if (user.isLoading) {
+    return (
+      <Sidebar collapsible="icon" {...props}>
+        <SidebarHeader>
+          <TeamSwitcher teams={data.teams} />
+        </SidebarHeader>
+        <SidebarContent>
+          <div className="p-4 flex items-center justify-center h-full text-sm text-muted-foreground">
+            Loading...
+          </div>
+        </SidebarContent>
+        <SidebarRail />
+      </Sidebar>
+    );
+  }
+
   const navStudent = [
     {
       title: "Overview",
@@ -98,11 +114,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       icon: ListChecks,
     },
     {
-      title: "Course Teacher Assign",
-      url: "/admin/course-teacher",
-      icon: Users,
-    },
-    {
       title: "Add Teacher",
       url: "/admin/add-teacher",
       icon: UserPlus,
@@ -111,11 +122,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       title: "Manage Teachers",
       url: "/admin/manage-teachers",
       icon: UserCog,
-    },
-    {
-      title: "Add Student",
-      url: "/admin/add-student",
-      icon: UserPlus,
     },
     {
       title: "Manage Students",

@@ -7,7 +7,7 @@ import PaginationComponent from "@/components/shared/PaginationComponent";
 import ReusableSearch from "@/components/shared/ReusableSearch";
 import { getSemesterFormate } from "@/components/shared/formatter";
 import ReusableSorting from "@/components/shared/ReusableSorting";
-import ReusableFilter from "@/components/shared/ReusableFilter";
+import UnifiedFilter from "@/components/shared/UnifiedFilter";
 import { semesterOptions } from "@/components/modules/admin/manageCourses/ManageCoursesTable";
 
 export default async function MyAssignCoursePage({
@@ -86,10 +86,14 @@ export default async function MyAssignCoursePage({
       <div className="mb-6 flex items-center justify-between gap-6">
         <ReusableSearch placeholder="Search assigned courses courseCode or title..." />
         <div className="flex items-center gap-6">
-          <ReusableFilter
-            options={semesterOptions}
-            queryKey="semester"
-            placeholder="Filter by semester"
+          <UnifiedFilter
+            filters={[
+              {
+                title: "Semester",
+                queryKey: "semester",
+                options: semesterOptions,
+              },
+            ]}
           />
           <ReusableSorting options={sortOptions} />
         </div>

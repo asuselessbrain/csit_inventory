@@ -38,6 +38,73 @@ export interface ReportData {
   logoBuffer?: ArrayBuffer;
 }
 
+export const parseHtmlToDocx = (htmlStr: string): Paragraph[] => {
+  if (!htmlStr) return [];
+  // Use DOMParser to parse the HTML string
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlStr, "text/html");
+  const paragraphs: Paragraph[] = [];
+
+  const parseNode = (node: ChildNode, currentFormat: any = {}): TextRun[] => {
+    let runs: TextRun[] = [];
+    node.childNodes.forEach((child) => {
+      if (child.nodeType === Node.TEXT_NODE) {
+        if (child.textContent) {
+          // Replace non-breaking spaces with normal spaces to prevent Word from treating sentences as one long word
+          const text = child.textContent.replace(/\u00A0/g, ' ');
+          runs.push(new TextRun({ text: text, size: 24, ...currentFormat }));
+        }
+      } else if (child.nodeType === Node.ELEMENT_NODE) {
+        const el = child as HTMLElement;
+        const format = { ...currentFormat };
+        if (el.tagName === 'STRONG' || el.tagName === 'B') format.bold = true;
+        if (el.tagName === 'EM' || el.tagName === 'I') format.italics = true;
+        if (el.tagName === 'U') format.underline = { type: 'single' };
+        
+        runs = runs.concat(parseNode(child, format));
+      }
+    });
+    return runs;
+  };
+
+  const pSpacing = { line: 360, after: 400 };
+
+  doc.body.childNodes.forEach((node) => {
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const el = node as HTMLElement;
+      const textContent = el.textContent || "";
+      if (el.tagName === 'P') {
+        const runs = parseNode(el);
+        if (runs.length > 0 && textContent.trim() !== '') {
+          paragraphs.push(new Paragraph({ children: runs, spacing: pSpacing, alignment: AlignmentType.JUSTIFIED }));
+        }
+      } else if (el.tagName === 'UL') {
+        el.childNodes.forEach((li) => {
+          if (li.nodeName === 'LI' && li.textContent?.trim() !== '') {
+            paragraphs.push(new Paragraph({ children: parseNode(li), bullet: { level: 0 }, spacing: pSpacing, alignment: AlignmentType.JUSTIFIED }));
+          }
+        });
+      } else if (el.tagName === 'OL') {
+        el.childNodes.forEach((li) => {
+          if (li.nodeName === 'LI' && li.textContent?.trim() !== '') {
+            paragraphs.push(new Paragraph({ children: parseNode(li), bullet: { level: 0 }, spacing: pSpacing, alignment: AlignmentType.JUSTIFIED }));
+          }
+        });
+      } else {
+        // Fallback for other elements
+        const runs = parseNode(el);
+        if (runs.length > 0 && textContent.trim() !== '') {
+          paragraphs.push(new Paragraph({ children: runs, spacing: pSpacing, alignment: AlignmentType.JUSTIFIED }));
+        }
+      }
+    } else if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
+      paragraphs.push(new Paragraph({ children: [new TextRun({ text: node.textContent, size: 24 })], spacing: pSpacing, alignment: AlignmentType.JUSTIFIED }));
+    }
+  });
+
+  return paragraphs;
+};
+
 export const generateDocx = async (data: ReportData): Promise<Blob> => {
   const sections = [];
 
@@ -228,9 +295,9 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
       }),
       new TableRow({
         children: [
-          new TableCell({ borders: noBorder, children: [new Paragraph({ spacing: { after: 200 }, children: [new TextRun({ text: member.roleLabel, size: 24 })] })] }),
-          new TableCell({ borders: noBorder, children: [new Paragraph({ spacing: { after: 200 }, children: [new TextRun({ text: ":", size: 24 })] })] }),
-          new TableCell({ borders: noBorder, children: [new Paragraph({ spacing: { after: 200 }, children: [new TextRun({ text: member.name, size: 24 })] })] }),
+          new TableCell({ borders: noBorder, width: { size: 40, type: WidthType.PERCENTAGE }, children: [new Paragraph({ spacing: { after: 200 }, children: [new TextRun({ text: member.roleLabel, size: 24 })] })] }),
+          new TableCell({ borders: noBorder, width: { size: 5, type: WidthType.PERCENTAGE }, children: [new Paragraph({ spacing: { after: 200 }, children: [new TextRun({ text: ":", size: 24 })] })] }),
+          new TableCell({ borders: noBorder, width: { size: 55, type: WidthType.PERCENTAGE }, children: [new Paragraph({ spacing: { after: 200 }, children: [new TextRun({ text: member.name, size: 24 })] })] }),
         ],
       }),
     ];
@@ -239,9 +306,9 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
       tableRows.push(
         new TableRow({
           children: [
-            new TableCell({ borders: noBorder, children: [new Paragraph({ spacing: { after: 200 }, children: [new TextRun({ text: "Dept. Name", size: 24 })] })] }),
-            new TableCell({ borders: noBorder, children: [new Paragraph({ spacing: { after: 200 }, children: [new TextRun({ text: ":", size: 24 })] })] }),
-            new TableCell({ borders: noBorder, children: [new Paragraph({ spacing: { after: 200 }, children: [new TextRun({ text: member.department, size: 24 })] })] }),
+            new TableCell({ borders: noBorder, width: { size: 40, type: WidthType.PERCENTAGE }, children: [new Paragraph({ spacing: { after: 200 }, children: [new TextRun({ text: "Dept. Name", size: 24 })] })] }),
+            new TableCell({ borders: noBorder, width: { size: 5, type: WidthType.PERCENTAGE }, children: [new Paragraph({ spacing: { after: 200 }, children: [new TextRun({ text: ":", size: 24 })] })] }),
+            new TableCell({ borders: noBorder, width: { size: 55, type: WidthType.PERCENTAGE }, children: [new Paragraph({ spacing: { after: 200 }, children: [new TextRun({ text: member.department, size: 24 })] })] }),
           ],
         })
       );
@@ -250,9 +317,9 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
       tableRows.push(
         new TableRow({
           children: [
-            new TableCell({ borders: noBorder, children: [new Paragraph({ spacing: { after: 200 }, children: [new TextRun({ text: "Faculty Name", size: 24 })] })] }),
-            new TableCell({ borders: noBorder, children: [new Paragraph({ spacing: { after: 200 }, children: [new TextRun({ text: ":", size: 24 })] })] }),
-            new TableCell({ borders: noBorder, children: [new Paragraph({ spacing: { after: 200 }, children: [new TextRun({ text: member.faculty, size: 24 })] })] }),
+            new TableCell({ borders: noBorder, width: { size: 40, type: WidthType.PERCENTAGE }, children: [new Paragraph({ spacing: { after: 200 }, children: [new TextRun({ text: "Faculty Name", size: 24 })] })] }),
+            new TableCell({ borders: noBorder, width: { size: 5, type: WidthType.PERCENTAGE }, children: [new Paragraph({ spacing: { after: 200 }, children: [new TextRun({ text: ":", size: 24 })] })] }),
+            new TableCell({ borders: noBorder, width: { size: 55, type: WidthType.PERCENTAGE }, children: [new Paragraph({ spacing: { after: 200 }, children: [new TextRun({ text: member.faculty, size: 24 })] })] }),
           ],
         })
       );
@@ -261,6 +328,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
     examineeChildren.push(
       new Table({
         rows: tableRows,
+        columnWidths: [4000, 500, 5500], // Absolute sizes in TWIPs to prevent collapsing
         width: { size: 100, type: WidthType.PERCENTAGE },
       }),
       new Paragraph({ spacing: { after: 400 } })
@@ -404,10 +472,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
         spacing: { after: 1000 },
         children: [new TextRun({ text: "ABSTRACT", bold: true, size: 28 })],
       }),
-      new Paragraph({
-        spacing: { line: 360 },
-        children: [new TextRun({ text: data.abstract, size: 24 })],
-      }),
+      ...parseHtmlToDocx(data.abstract),
       new Paragraph({ children: [new PageBreak()] }),
     ],
   });
@@ -422,10 +487,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
         spacing: { after: 1000 },
         children: [new TextRun({ text: "ACKNOWLEDGMENTS", bold: true, size: 28 })],
       }),
-      new Paragraph({
-        spacing: { line: 360 },
-        children: [new TextRun({ text: data.acknowledgments, size: 24 })],
-      }),
+      ...parseHtmlToDocx(data.acknowledgments),
       new Paragraph({
         spacing: { before: 1500, after: 500 },
         children: [new TextRun({ text: "With Best Regards,", size: 24 })],
@@ -463,7 +525,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
       new Paragraph({
         heading: HeadingLevel.HEADING_1,
         alignment: AlignmentType.CENTER,
-        spacing: { before: 1000, after: 1000 },
+        spacing: { before: 400, after: 300 },
         children: [
           new TextRun({ text: `CHAPTER ${chapterNumber}`, bold: true, size: 32 }),
         ],
@@ -471,23 +533,16 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
       new Paragraph({
         heading: HeadingLevel.HEADING_2, // Subheading for TOC
         alignment: AlignmentType.CENTER,
-        spacing: { after: 1000 },
+        spacing: { after: 400 },
         children: [
           new TextRun({ text: chapter.title.toUpperCase(), bold: true, size: 28 }),
         ],
       }),
     ];
 
-    // Splitting content by newline to create paragraphs
-    const paragraphs = chapter.content.split('\n').filter(p => p.trim() !== '');
-    paragraphs.forEach(pText => {
-      chapterChildren.push(
-        new Paragraph({
-          spacing: { line: 360, after: 400 },
-          children: [new TextRun({ text: pText.trim(), size: 24 })],
-        })
-      );
-    });
+    // Use HTML parser for chapter content
+    const chapterParagraphs = parseHtmlToDocx(chapter.content);
+    chapterParagraphs.forEach(p => chapterChildren.push(p));
 
     // Render sub-topics
     if (chapter.subTopics && chapter.subTopics.length > 0) {
@@ -495,22 +550,15 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
         chapterChildren.push(
           new Paragraph({
             heading: HeadingLevel.HEADING_3,
-            spacing: { before: 800, after: 400 },
+            spacing: { before: 400, after: 100 },
             children: [
               new TextRun({ text: `${chapterNumber}.${subIndex + 1} ${subTopic.title}`, bold: true, size: 26 }),
             ],
           })
         );
         
-        const subParagraphs = subTopic.content.split('\n').filter(p => p.trim() !== '');
-        subParagraphs.forEach(pText => {
-          chapterChildren.push(
-            new Paragraph({
-              spacing: { line: 360, after: 400 },
-              children: [new TextRun({ text: pText.trim(), size: 24 })],
-            })
-          );
-        });
+        const subTopicParagraphs = parseHtmlToDocx(subTopic.content);
+        subTopicParagraphs.forEach(p => chapterChildren.push(p));
       });
     }
 

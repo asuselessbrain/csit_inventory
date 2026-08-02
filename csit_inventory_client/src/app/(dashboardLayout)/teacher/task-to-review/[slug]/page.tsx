@@ -194,7 +194,7 @@ export default async function TaskToReviewDetailsPage({
             </CardContent>
           </Card>
 
-          <TaskAction id={task.id} submittedTaskID={task.projectThesisUpdateLogs?.[task.projectThesisUpdateLogs.length - 1]?.id || ""} />
+          <TaskAction id={task.id} submittedTaskID={task.projectThesisUpdateLogs?.[task.projectThesisUpdateLogs.length - 1]?.id || ""} status={task.status} />
         </div>
       </div>
     </div>

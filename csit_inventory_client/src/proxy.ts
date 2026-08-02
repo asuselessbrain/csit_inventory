@@ -18,22 +18,22 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  
+
   if (role === "ADMIN") {
     if (pathname.startsWith("/student") || pathname.startsWith("/teacher")) {
-      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+      return NextResponse.redirect(new URL("/admin", request.url));
     }
   }
 
   if (role === "TEACHER") {
     if (pathname.startsWith("/admin") || pathname.startsWith("/student")) {
-      return NextResponse.redirect(new URL("/teacher/dashboard", request.url));
+      return NextResponse.redirect(new URL("/teacher", request.url));
     }
   }
 
   if (role === "STUDENT") {
     if (pathname.startsWith("/admin") || pathname.startsWith("/teacher")) {
-      return NextResponse.redirect(new URL("/student/dashboard", request.url));
+      return NextResponse.redirect(new URL("/student", request.url));
     }
   }
 
@@ -43,7 +43,7 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/admin/:path*",
-    "/teacher/:path*", 
+    "/teacher/:path*",
     "/student/:path*",
   ],
 };

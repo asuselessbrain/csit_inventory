@@ -19,6 +19,8 @@ model ProjectThesis {
   supervisorId      String
   supervisor        Teacher             @relation(fields: [supervisorId], references: [id])
   semester          SemesterType        @default(FIRST)
+  evaluatedMark     Float?
+  obtainedMark      Float?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

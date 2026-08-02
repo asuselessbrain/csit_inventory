@@ -10,7 +10,7 @@ import {
 import { createTask } from "@/services/taskService";
 import { IProposal } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Controller, FieldValues, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
@@ -48,6 +48,7 @@ export default function AssignTask({
   const [uploadedMaterialUrls, setUploadedMaterialUrls] = useState<string[]>(
     [],
   );
+  const closeRef = useRef<HTMLButtonElement>(null);
 
   const form = useForm({
     resolver: zodResolver(taskSchema),
@@ -105,6 +106,7 @@ export default function AssignTask({
   };
 
   const handleTaskSubmit = async (data: FieldValues) => {
+    toast.loading("Assigning task...", { id: toastId });
     // Upload files to Cloudinary if any
     const materialUrls = [...uploadedMaterialUrls];
 
@@ -154,6 +156,7 @@ export default function AssignTask({
       setUploadedFiles([]);
       setUploadedMaterialUrls([]);
       onSuccess?.();
+      closeRef.current?.click();
     } else {
       toast.error(res.errorMessage || "Failed to assign task", {
         id: toastId,
@@ -171,20 +174,20 @@ export default function AssignTask({
   };
 
   return (
-    <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+    <DialogContent className="w-[95vw] sm:max-w-4xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
       <DialogHeader>
         <DialogTitle className="text-2xl font-bold text-gray-900">
           Assign Task
         </DialogTitle>
-        <DialogDescription className="text-gray-600">
+        <DialogDescription className="text-gray-600 break-words">
           Create a new task for the proposal:{" "}
-          <strong>{proposal.projectTitle}</strong>
+          <strong className="break-all">{proposal.projectTitle}</strong>
         </DialogDescription>
       </DialogHeader>
 
       <form
         onSubmit={form.handleSubmit(handleTaskSubmit)}
-        className="p-6 sm:p-8 space-y-6"
+        className="space-y-6 pt-4"
       >
         {/* Title */}
         <Controller
@@ -413,41 +416,42 @@ export default function AssignTask({
         </div>
 
         {/* Form Actions */}
-        <DialogFooter className="flex gap-3 w-full">
+        <DialogFooter className="flex gap-3 w-full mt-6">
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="cursor-pointer disabled:cursor-no-drop w-full"
+          >
+            {isSubmitting ? (
+              <>
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Assigning...
+              </>
+            ) : (
+              "Assign Task"
+            )}
+          </Button>
           <DialogClose asChild>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="cursor-pointer disabled:cursor-no-drop w-full"
-            >
-              {isSubmitting ? (
-                <>
-                  <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Assigning...
-                </>
-              ) : (
-                "Assign Task"
-              )}
-            </Button>
+            <button ref={closeRef} className="hidden">Close</button>
           </DialogClose>
         </DialogFooter>
       </form>

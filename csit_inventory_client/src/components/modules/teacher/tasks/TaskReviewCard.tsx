@@ -54,7 +54,7 @@ export default function TaskReviewCard({ task }: { task: ITask }) {
 
       {/* Action */}
       <div className="flex justify-start pt-3 border-t border-slate-100 dark:border-slate-800/80">
-        <TaskAction taskId={task.id} submittedTaskID={task.projectThesisUpdateLogs?.[task.projectThesisUpdateLogs.length - 1]?.id || ""} />
+        <TaskAction taskId={task.id} submittedTaskID={task.projectThesisUpdateLogs?.[task.projectThesisUpdateLogs.length - 1]?.id || ""} status={task.status} />
       </div>
     </div>
   );

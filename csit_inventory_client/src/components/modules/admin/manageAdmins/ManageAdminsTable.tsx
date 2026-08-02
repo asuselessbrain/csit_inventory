@@ -17,7 +17,7 @@ import { formatDate } from "@/components/shared/ReusableFunction";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import AdminModal from "./CreateUpdateAdmin";
 import ReusableSorting from "@/components/shared/ReusableSorting";
-import ReusableFilter from "@/components/shared/ReusableFilter";
+import UnifiedFilter from "@/components/shared/UnifiedFilter";
 
 interface ManageAdminsTableProps {
   admins: {
@@ -44,13 +44,17 @@ export default function ManageAdminsTable({ admins }: ManageAdminsTableProps) {
       <div className="mb-6 flex items-center justify-between">
         <ReusableSearch placeholder="Search admins..." />
         <div className="flex items-center gap-6">
-          <ReusableFilter
-            options={[
-              { id: "false", name: "Active" },
-              { id: "true", name: "Deleted" },
+          <UnifiedFilter
+            filters={[
+              {
+                title: "Status",
+                queryKey: "isDeleted",
+                options: [
+                  { id: "false", name: "Active" },
+                  { id: "true", name: "Deleted" },
+                ],
+              },
             ]}
-            queryKey="isDeleted"
-            placeholder="Filter by status"
           />
           <ReusableSorting options={sortOptions} />
         </div>

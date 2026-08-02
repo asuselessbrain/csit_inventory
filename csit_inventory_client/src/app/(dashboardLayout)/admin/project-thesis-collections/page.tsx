@@ -1,13 +1,11 @@
 import ProjectThesisAction from "@/components/modules/teacher/projectThesisAction/ProjectThesisAction";
 import DownloadReportButton from "@/components/shared/DownloadButton";
-import ReusableFilter from "@/components/shared/ReusableFilter";
-import ReusableSearch from "@/components/shared/ReusableSearch";
+import UnifiedFilter from "@/components/shared/UnifiedFilter";import ReusableSearch from "@/components/shared/ReusableSearch";
 import ReusableSorting from "@/components/shared/ReusableSorting";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { getCourseForProjectThesis } from "@/services/courseService";
 import { getAllProposals } from "@/services/proposalService";
 import { ICourse, IProposal, SortOption } from "@/types";
 import { Eye } from "lucide-react";
@@ -48,7 +46,6 @@ export default async function ProjectThesisCollectionPage({
   };
 
   const response = await getAllProposals(queryParams);
-  const activeCourses = await getCourseForProjectThesis();
   const proposals = response?.data?.data || [];
   const sortOptions: SortOption[] = [
     { label: "Name (A → Z)", value: "projectTitle-asc" },
@@ -80,44 +77,38 @@ export default async function ProjectThesisCollectionPage({
 
         <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-start gap-3 sm:gap-4">
           <ReusableSearch placeholder="Search proposals..." />
-          <ReusableFilter
-            options={[
-              { id: "PROJECT", name: "Project" },
-              { id: "THESIS", name: "Thesis" },
+          <UnifiedFilter
+            filters={[
+              {
+                title: "Type",
+                queryKey: "type",
+                options: [
+                  { id: "PROJECT", name: "Project" },
+                  { id: "THESIS", name: "Thesis" },
+                ],
+              },
+              {
+                title: "Status",
+                queryKey: "status",
+                options: [
+                  { id: "PENDING", name: "Pending" },
+                  { id: "APPROVED", name: "Approved" },
+                  { id: "REJECTED", name: "Rejected" },
+                  { id: "in_PROGRESS", name: "In Progress" },
+                  { id: "COMPLETED", name: "Completed" },
+                ],
+              },
+              {
+                title: "Session",
+                queryKey: "session",
+                options: [
+                  { id: "2020-21", name: "2020-21" },
+                  { id: "2021-22", name: "2021-22" },
+                  { id: "2022-23", name: "2022-23" },
+                  { id: "2023-24", name: "2023-24" },
+                ],
+              },
             ]}
-            queryKey="type"
-            placeholder="Filter by type"
-          />
-          <ReusableFilter
-            options={
-              activeCourses.data?.map((course: ICourse) => ({
-                id: course.id,
-                name: `${course.courseCode}-${course.courseName}`,
-              })) || []
-            }
-            queryKey="courseId"
-            placeholder="Filter by course"
-          />
-          <ReusableFilter
-            options={[
-              { id: "PENDING", name: "Pending" },
-              { id: "APPROVED", name: "Approved" },
-              { id: "REJECTED", name: "Rejected" },
-              { id: "in_PROGRESS", name: "In Progress" },
-              { id: "COMPLETED", name: "Completed" },
-            ]}
-            queryKey="status"
-            placeholder="Filter by status"
-          />
-          <ReusableFilter
-            options={[
-              { id: "2020-21", name: "2020-21" },
-              { id: "2021-22", name: "2021-22" },
-              { id: "2022-23", name: "2022-23" },
-              { id: "2023-24", name: "2023-24" },
-            ]}
-            queryKey="session"
-            placeholder="Filter by session"
           />
           <ReusableSorting options={sortOptions} />
         </div>

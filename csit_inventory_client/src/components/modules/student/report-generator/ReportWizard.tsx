@@ -11,6 +11,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { generateDocx, ReportData } from "@/utils/docxGenerator";
 import { toast } from "sonner";
 import { saveAs } from "file-saver";
+import dynamic from "next/dynamic";
+import "react-quill-new/dist/quill.snow.css";
+
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
 const subTopicSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -75,7 +79,9 @@ function ChapterSubTopics({ control, chapterIndex }: { control: any; chapterInde
             <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
           )} />
           <FormField control={control} name={`chapters.${chapterIndex}.subTopics.${index}.content`} render={({ field }) => (
-            <FormItem><FormLabel>Content</FormLabel><FormControl><Textarea rows={4} {...field} /></FormControl><FormMessage /></FormItem>
+            <FormItem><FormLabel>Content</FormLabel><FormControl>
+              <div className="bg-white"><ReactQuill theme="snow" value={field.value} onChange={field.onChange} /></div>
+            </FormControl><FormMessage /></FormItem>
           )} />
         </div>
       ))}
@@ -174,7 +180,7 @@ function ReportPreview({ data }: { data: any }) {
 
       <div className="mt-12">
         <h2 className="text-xl font-bold uppercase mb-4">Abstract</h2>
-        <p className="whitespace-pre-wrap">{data.abstract}</p>
+        <div className="whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: data.abstract }} />
       </div>
 
       <div className="mt-12">
@@ -182,7 +188,7 @@ function ReportPreview({ data }: { data: any }) {
         {data.chapters?.map((chapter: any, i: number) => (
           <div key={i} className="mt-6 border-l-4 pl-4 border-slate-300">
             <h3 className="text-lg font-bold">Chapter {i + 1}: {chapter.title}</h3>
-            <p className="whitespace-pre-wrap mt-2">{chapter.content ? chapter.content.substring(0, 200) + '...' : ''}</p>
+            <div className="mt-2" dangerouslySetInnerHTML={{ __html: chapter.content ? chapter.content.substring(0, 500) + (chapter.content.length > 500 ? '...' : '') : '' }} />
           </div>
         ))}
       </div>
@@ -364,10 +370,14 @@ export default function ReportWizard({ projectThesisId }: ReportWizardProps) {
             <div className="space-y-4">
               <h2 className="text-xl font-semibold">Step 3: Preliminary Pages</h2>
               <FormField control={form.control} name="abstract" render={({ field }) => (
-                <FormItem><FormLabel>Abstract</FormLabel><FormControl><Textarea rows={6} {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Abstract</FormLabel><FormControl>
+                  <div className="bg-white"><ReactQuill theme="snow" value={field.value} onChange={field.onChange} /></div>
+                </FormControl><FormMessage /></FormItem>
               )} />
               <FormField control={form.control} name="acknowledgments" render={({ field }) => (
-                <FormItem><FormLabel>Acknowledgments</FormLabel><FormControl><Textarea rows={6} {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Acknowledgments</FormLabel><FormControl>
+                  <div className="bg-white"><ReactQuill theme="snow" value={field.value} onChange={field.onChange} /></div>
+                </FormControl><FormMessage /></FormItem>
               )} />
               <div className="flex gap-4">
                 <Button type="button" variant="outline" onClick={() => setStep(2)}>Previous</Button>
@@ -393,7 +403,9 @@ export default function ReportWizard({ projectThesisId }: ReportWizardProps) {
                     <FormItem><FormLabel>Chapter Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name={`chapters.${index}.content`} render={({ field }) => (
-                    <FormItem><FormLabel>Content</FormLabel><FormControl><Textarea rows={6} {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Content</FormLabel><FormControl>
+                      <div className="bg-white"><ReactQuill theme="snow" value={field.value} onChange={field.onChange} /></div>
+                    </FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name={`chapters.${index}.imageFile`} render={({ field: { onChange, value, ...rest } }) => (
                     <FormItem><FormLabel>Upload Image for this Chapter (Optional)</FormLabel><FormControl><Input type="file" accept="image/*" onChange={(e) => onChange(e.target.files)} {...rest} /></FormControl><FormMessage /></FormItem>

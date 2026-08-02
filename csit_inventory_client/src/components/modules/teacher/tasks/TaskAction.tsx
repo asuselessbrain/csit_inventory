@@ -8,17 +8,21 @@ import TeacherReviewTaskForm from "./TeacherReviewTaskForm";
 export default function TaskAction({
   taskId,
   submittedTaskID,
+  status,
 }: {
   taskId: string;
   submittedTaskID: string;
+  status?: string;
 }) {
+  const isDone = status === "DONE";
+
   return (
     <div className="flex flex-wrap gap-3">
       <Dialog>
         <DialogTrigger asChild>
-          <Button className="flex items-center gap-2 cursor-pointer disabled:cursor-no-drop">
+          <Button disabled={isDone} className="flex items-center gap-2 cursor-pointer disabled:cursor-not-allowed">
             <Check className="h-4 w-4" />
-            Mark as Done
+            {isDone ? "Task Completed" : "Mark as Done"}
           </Button>
         </DialogTrigger>
         <TeacherReviewTaskForm
@@ -30,8 +34,9 @@ export default function TaskAction({
       <Dialog>
         <DialogTrigger asChild>
           <Button
+            disabled={isDone}
             variant="destructive"
-            className="flex items-center gap-2 cursor-pointer disabled:cursor-no-drop"
+            className="flex items-center gap-2 cursor-pointer disabled:cursor-not-allowed"
           >
             <CircleSlash className="h-4 w-4" />
             Reject & Add Note

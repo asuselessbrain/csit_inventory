@@ -202,32 +202,7 @@ export default async function ProposalDetails({
             </p>
           </div>
 
-          {/* Progress Overview Card */}
-          <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Target className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                <CardTitle className="text-lg">Overall Progress</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                    {proposal.data.taskCompleted} of {proposal.data.totalTasks}{" "}
-                    tasks completed
-                  </span>
-                  <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                    {proposal.data.overallProgress}%
-                  </span>
-                </div>
-                <Progress
-                  value={proposal.data.overallProgress}
-                  className="h-3"
-                />
-              </div>
-            </CardContent>
-          </Card>
+
 
           <div className="grid gap-4">
             {proposal.data.tasks.map((task: ITask, idx: number) => {

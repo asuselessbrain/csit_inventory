@@ -184,7 +184,7 @@ export const updateProposal = async (id: string, data: FieldValues) => {
   }
 };
 
-export const completeProject = async (id: string) => {
+export const completeProject = async (id: string, evaluatedMark?: number) => {
   try {
     const res = await baseApi(
       `${baseUrl}/project-thesis/complete-project-thesis/${id}`,
@@ -193,6 +193,7 @@ export const completeProject = async (id: string) => {
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({ evaluatedMark }),
       },
     );
     revalidateTag("project", "max");

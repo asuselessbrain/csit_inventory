@@ -19,36 +19,18 @@ import { toast } from "sonner";
 import AssignTask from "../tasks/AssignTask";
 import { toastId } from "@/components/shared/toastId";
 import ApproveAndRejectProposal from "./ApproveAndRejectProposal";
+import MarkAsCompleted from "./MarkAsCompleted";
 
 export default function ProjectThesisAction({
   proposal,
 }: {
   proposal: IProposal;
 }) {
-  const markAsComplete = async () => {
-    const res = await completeProject(proposal.id);
-
-    if (res.success) {
-      toast.success(
-        res.message || "Project marked as completed successfully.",
-        {
-          id: toastId,
-        },
-      );
-    } else {
-      toast.error(
-        res.errorMessage || "Failed to mark the project as completed.",
-        {
-          id: toastId,
-        },
-      );
-    }
-  };
 
   return (
     <>
       {proposal.status === "PENDING" ? (
-        <div className="flex flex-wrap items-center gap-2.5 w-full">
+        <div className="flex flex-wrap items-center gap-4 w-full">
           <Dialog>
             <DialogTrigger asChild>
               <Button size="sm" className="gap-2 flex-1 min-w-[160px] justify-center cursor-pointer">
@@ -83,7 +65,7 @@ export default function ProjectThesisAction({
           <span>This proposal has been rejected.</span>
         </div>
       ) : proposal.status === "in_PROGRESS" ? (
-        <div className="flex flex-wrap items-center gap-2.5 w-full">
+        <div className="flex flex-wrap items-center gap-4 w-full">
           <Dialog>
             <DialogTrigger asChild>
               <Button size="sm" className="gap-2 flex-1 min-w-[130px] justify-center cursor-pointer">
@@ -94,15 +76,19 @@ export default function ProjectThesisAction({
             <AssignTask proposal={proposal} />
           </Dialog>
 
-          <Button
-            onClick={markAsComplete}
-            size="sm"
-            variant="outline"
-            className="gap-2 flex-1 min-w-[140px] justify-center cursor-pointer"
-          >
-            <CheckCheck className="h-4 w-4 shrink-0" />
-            <span>Mark as Completed</span>
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-2 flex-1 min-w-[140px] justify-center cursor-pointer"
+              >
+                <CheckCheck className="h-4 w-4 shrink-0" />
+                <span>Mark as Completed</span>
+              </Button>
+            </DialogTrigger>
+            <MarkAsCompleted id={proposal.id} />
+          </Dialog>
         </div>
       ) : (
         <div className="flex items-center gap-2 text-green-700 font-medium text-sm sm:text-base w-full">

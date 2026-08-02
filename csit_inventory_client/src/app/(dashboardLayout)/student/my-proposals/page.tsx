@@ -9,8 +9,7 @@ import { ICourse, IProposal, SortOption } from "@/types";
 import PaginationComponent from "@/components/shared/PaginationComponent";
 import ReusableSearch from "@/components/shared/ReusableSearch";
 import ReusableSorting from "@/components/shared/ReusableSorting";
-import ReusableFilter from "@/components/shared/ReusableFilter";
-import { getCourseForProjectThesis } from "@/services/courseService";
+import UnifiedFilter from "@/components/shared/UnifiedFilter";
 import DownloadReportButton from "@/components/shared/DownloadButton";
 
 export default async function MyProposalsPage({
@@ -44,7 +43,6 @@ export default async function MyProposalsPage({
 
   const response = await getSingleStudentProposal(queryParams);
   const proposals = response?.data?.data || [];
-  const activeCourses = await getCourseForProjectThesis();
 
   const sortOptions: SortOption[] = [
     { label: "Name (A → Z)", value: "projectTitle-asc" },
@@ -67,34 +65,28 @@ export default async function MyProposalsPage({
         <>
           <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-start gap-3 sm:gap-4">
             <ReusableSearch placeholder="Search proposals..." />
-            <ReusableFilter
-              options={[
-                { id: "PROJECT", name: "Project" },
-                { id: "THESIS", name: "Thesis" },
+            <UnifiedFilter
+              filters={[
+                {
+                  title: "Type",
+                  queryKey: "type",
+                  options: [
+                    { id: "PROJECT", name: "Project" },
+                    { id: "THESIS", name: "Thesis" },
+                  ],
+                },
+                {
+                  title: "Status",
+                  queryKey: "status",
+                  options: [
+                    { id: "PENDING", name: "Pending" },
+                    { id: "APPROVED", name: "Approved" },
+                    { id: "REJECTED", name: "Rejected" },
+                    { id: "in_PROGRESS", name: "In Progress" },
+                    { id: "COMPLETED", name: "Completed" },
+                  ],
+                },
               ]}
-              queryKey="type"
-              placeholder="Filter by type"
-            />
-            <ReusableFilter
-              options={
-                activeCourses.data?.map((course: ICourse) => ({
-                  id: course.id,
-                  name: `${course.courseCode}-${course.courseName}`,
-                })) || []
-              }
-              queryKey="courseId"
-              placeholder="Filter by course"
-            />
-            <ReusableFilter
-              options={[
-                { id: "PENDING", name: "Pending" },
-                { id: "APPROVED", name: "Approved" },
-                { id: "REJECTED", name: "Rejected" },
-                { id: "in_PROGRESS", name: "In Progress" },
-                { id: "COMPLETED", name: "Completed" },
-              ]}
-              queryKey="status"
-              placeholder="Filter by status"
             />
             <ReusableSorting options={sortOptions} />
           </div>

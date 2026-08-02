@@ -4,9 +4,7 @@ import { ICourse, ITask, SortOption } from "@/types";
 import PaginationComponent from "@/components/shared/PaginationComponent";
 import ReusableSearch from "@/components/shared/ReusableSearch";
 import ReusableSorting from "@/components/shared/ReusableSorting";
-import ReusableFilter from "@/components/shared/ReusableFilter";
-import { getCourseForProjectThesis } from "@/services/courseService";
-
+import UnifiedFilter from "@/components/shared/UnifiedFilter";
 export default async function MyTasksPage({
   searchParams,
 }: {
@@ -37,7 +35,6 @@ export default async function MyTasksPage({
   };
   const res = await getAllTaskForStudent(queryParams);
   const tasks = res?.data?.data || [];
-  const activeCourses = await getCourseForProjectThesis();
 
   const sortOptions: SortOption[] = [
     { label: "Name (A → Z)", value: "title-asc" },
@@ -63,34 +60,29 @@ export default async function MyTasksPage({
 
         <div className="mb-6 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-start gap-3 sm:gap-4">
           <ReusableSearch placeholder="Search tasks..." />
-          <ReusableFilter
-            options={
-              activeCourses.data?.map((course: ICourse) => ({
-                id: course.id,
-                name: `${course.courseCode}-${course.courseName}`,
-              })) || []
-            }
-            queryKey="courseId"
-            placeholder="Filter by course"
-          />
-          <ReusableFilter
-            options={[
-              { id: "TODO", name: "To Do" },
-              { id: "IN_PROGRESS", name: "In Progress" },
-              { id: "REVIEW", name: "Review" },
-              { id: "DONE", name: "Completed" },
-              { id: "FAILED", name: "Failed" },
+
+          <UnifiedFilter
+            filters={[
+              {
+                title: "Status",
+                queryKey: "status",
+                options: [
+                  { id: "TODO", name: "To Do" },
+                  { id: "IN_PROGRESS", name: "In Progress" },
+                  { id: "REVIEW", name: "Review" },
+                  { id: "DONE", name: "Completed" },
+                  { id: "FAILED", name: "Failed" },
+                ],
+              },
+              {
+                title: "Type",
+                queryKey: "type",
+                options: [
+                  { id: "PROJECT", name: "Project" },
+                  { id: "THESIS", name: "Thesis" },
+                ],
+              },
             ]}
-            queryKey="status"
-            placeholder="Filter by status"
-          />
-          <ReusableFilter
-            options={[
-              { id: "PROJECT", name: "Project" },
-              { id: "THESIS", name: "Thesis" },
-            ]}
-            queryKey="type"
-            placeholder="Filter by type"
           />
           <ReusableSorting options={sortOptions} />
         </div>

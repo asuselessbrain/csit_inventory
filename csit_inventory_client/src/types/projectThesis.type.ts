@@ -24,6 +24,8 @@ export interface IProposal {
     studentId: string
   }
   tasks: ITask[]
+  evaluatedMark?: number
+  obtainedMark?: number
   createdAt?: string
   updatedAt?: string
 }

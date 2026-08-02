@@ -4,8 +4,9 @@ import { Input } from "@/components/ui/input";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LucideSearch } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export default function ReusableSearch({ placeholder }: { placeholder?: string }) {
+export default function ReusableSearch({ placeholder, className }: { placeholder?: string, className?: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [value, setValue] = useState(searchParams.get("search") ?? "");
@@ -23,7 +24,7 @@ export default function ReusableSearch({ placeholder }: { placeholder?: string }
   }, [value, router])
 
   return (
-    <div className="w-full sm:w-1/2 relative">
+    <div className={cn("w-full flex-1 relative", className)}>
       <LucideSearch
         className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
         size={18}

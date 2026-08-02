@@ -12,10 +12,14 @@ import TeacherReviewTaskForm from "../TeacherReviewTaskForm";
 export default function TaskAction({
   id,
   submittedTaskID,
+  status,
 }: {
   id: string;
   submittedTaskID: string;
+  status?: string;
 }) {
+  const isDone = status === "DONE";
+
   return (
     <Card>
       <CardHeader>
@@ -24,9 +28,9 @@ export default function TaskAction({
       <CardContent className="space-y-3">
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="flex items-center gap-2 cursor-pointer disabled:cursor-no-drop w-full">
+            <Button disabled={isDone} className="flex items-center gap-2 cursor-pointer disabled:cursor-not-allowed w-full">
               <Check className="h-4 w-4" />
-              Mark as Done
+              {isDone ? "Task Completed" : "Mark as Done"}
             </Button>
           </DialogTrigger>
           <TeacherReviewTaskForm
@@ -39,8 +43,9 @@ export default function TaskAction({
         <Dialog>
           <DialogTrigger asChild>
             <Button
+              disabled={isDone}
               variant="destructive"
-              className="flex items-center gap-2 cursor-pointer disabled:cursor-no-drop w-full"
+              className="flex items-center gap-2 cursor-pointer disabled:cursor-not-allowed w-full"
             >
               <CircleSlash className="h-4 w-4" />
               Mark as Failed & Add Note
@@ -55,8 +60,9 @@ export default function TaskAction({
         <Dialog>
           <DialogTrigger asChild>
             <Button
+              disabled={isDone}
               variant="outline"
-              className="flex items-center gap-2 cursor-pointer disabled:cursor-no-drop w-full"
+              className="flex items-center gap-2 cursor-pointer disabled:cursor-not-allowed w-full"
             >
               <RefreshCcw className="h-4 w-4" />
               Allow Resubmit

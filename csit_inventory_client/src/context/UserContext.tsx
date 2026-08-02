@@ -12,9 +12,9 @@ interface IUserProviderValue {
 
 export const UserContext = createContext<IUserProviderValue | null>(null);
 
-export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState<IUser | null>(null);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+export const UserProvider = ({ children, initialUser }: { children: React.ReactNode, initialUser?: IUser | null }) => {
+    const [user, setUser] = useState<IUser | null>(initialUser !== undefined ? initialUser : null);
+    const [isLoading, setIsLoading] = useState<boolean>(initialUser !== undefined ? false : true);
 
     const fetchUser = async () => {
         setIsLoading(true);
@@ -29,8 +29,10 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     };
     
     useEffect(() => {
-        fetchUser();
-    }, []);
+        if (initialUser === undefined) {
+            fetchUser();
+        }
+    }, [initialUser]);
 
     return (
         <UserContext.Provider

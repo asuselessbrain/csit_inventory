@@ -92,8 +92,10 @@ const startProjectThesisInDB = catchAsync(
 const completeProjectThesisInDB = catchAsync(
   async (req: Request, res: Response) => {
     const { id } = req.params;
+    const { evaluatedMark } = req.body;
     const result = await ProjectThesisService.completeProjectThesisInDB(
       id as string,
+      evaluatedMark ? Number(evaluatedMark) : undefined
     );
     sendResponse(res, 200, "Project or Thesis completed successfully", result);
   },

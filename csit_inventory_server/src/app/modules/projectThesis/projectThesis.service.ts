@@ -266,9 +266,10 @@ const startProjectThesisInDB = async (id: string) => {
   return result;
 };
 
-const completeProjectThesisInDB = async (id: string) => {
+const completeProjectThesisInDB = async (id: string, evaluatedMark?: number) => {
   const isProjectThesisExist = await prisma.projectThesis.findUnique({
     where: { id },
+    include: { tasks: true },
   });
   if (!isProjectThesisExist) {
     throw new Error("Project or Thesis not found");
@@ -289,9 +290,19 @@ const completeProjectThesisInDB = async (id: string) => {
     throw new Error("Cannot complete Project or Thesis with incomplete tasks");
   }
 
+  const overallProgress = calculateOverall(isProjectThesisExist.tasks);
+  let obtainedMark = undefined;
+  if (evaluatedMark !== undefined) {
+    obtainedMark = (evaluatedMark * overallProgress) / 100;
+  }
+
   const result = await prisma.projectThesis.update({
     where: { id },
-    data: { status: ProjectThesisStatus.COMPLETED },
+    data: { 
+      status: ProjectThesisStatus.COMPLETED,
+      evaluatedMark,
+      obtainedMark,
+    },
   });
   return result;
 };

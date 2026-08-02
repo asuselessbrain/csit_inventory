@@ -36,8 +36,12 @@ export default function SubmitProposalForm() {
     useEffect(() => {
         const fetchCourses = async () => {
             const res = await getCourseForProjectThesis()
-
-            setCourses(res?.data)
+            if (res?.data) {
+                const filteredCourses = res.data.filter((course: ICourse) =>
+                    course.courseCode === "CSE410" || course.courseCode === "CSE420"
+                );
+                setCourses(filteredCourses);
+            }
         }
         fetchCourses()
     }, [])

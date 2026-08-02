@@ -28,7 +28,7 @@ import ReusableSearch from "@/components/shared/ReusableSearch";
 import { getSemesterFormate } from "@/components/shared/formatter";
 import { toastId } from "@/components/shared/toastId";
 import ReusableSorting from "@/components/shared/ReusableSorting";
-import ReusableFilter from "@/components/shared/ReusableFilter";
+import UnifiedFilter from "@/components/shared/UnifiedFilter";
 
 interface ManageCoursesTableProps {
   courses: {
@@ -113,18 +113,22 @@ export default function ManageCoursesTable({
         <ReusableSearch placeholder="Search courses..." />
 
         <div className="flex items-center gap-4">
-          <ReusableFilter
-            options={semesterOptions}
-            queryKey="semester"
-            placeholder="Filter by semester"
-          />
-          <ReusableFilter
-            options={[
-              { id: "ACTIVE", name: "Active" },
-              { id: "ARCHIVED", name: "Archived" },
+          <UnifiedFilter
+            filters={[
+              {
+                title: "Semester",
+                queryKey: "semester",
+                options: semesterOptions,
+              },
+              {
+                title: "Status",
+                queryKey: "status",
+                options: [
+                  { id: "ACTIVE", name: "Active" },
+                  { id: "ARCHIVED", name: "Archived" },
+                ],
+              },
             ]}
-            queryKey="status"
-            placeholder="Filter by status"
           />
           <ReusableSorting options={sortOptions} />
         </div>

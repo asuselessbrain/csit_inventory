@@ -77,6 +77,22 @@ export default async function ViewDetailsPage({
               </div>
               <Progress value={proposal.overallProgress} className="h-2" />
             </div>
+
+            {proposal.status === "COMPLETED" && proposal.evaluatedMark !== undefined && proposal.obtainedMark !== undefined && (
+              <div className="pt-4 border-t space-y-2">
+                <h3 className="font-medium text-sm">Evaluation Marks</h3>
+                <div className="flex flex-wrap gap-4 text-sm bg-muted/30 p-3 rounded-md border">
+                  <div>
+                    <span className="text-muted-foreground">Evaluated Out Of: </span>
+                    <span className="font-semibold text-gray-900">{proposal.evaluatedMark}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Obtained Marks: </span>
+                    <span className="font-bold text-green-700">{proposal.obtainedMark}</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Abstract */}
