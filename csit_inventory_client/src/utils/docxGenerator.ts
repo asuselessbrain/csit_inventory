@@ -189,6 +189,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
         spacing: { after: 2000 },
         children: [
           new ImageRun({
+            type: "png",
             data: data.logoBuffer,
             transformation: {
               width: 120,
@@ -569,6 +570,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
           spacing: { before: 1000, after: 1000 },
           children: [
             new ImageRun({
+              type: "png",
               data: chapter.imageBuffer,
               transformation: {
                 width: 500, // Roughly standard width
