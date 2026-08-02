@@ -142,6 +142,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       icon: LayoutDashboard,
     },
     {
+      title: "Project/Thesis Collections",
+      url: "/teacher/project-thesis-collections",
+      icon: Book,
+    },
+    {
       title: "Proposals",
       url: "/teacher/proposals",
       icon: FileText,
@@ -155,7 +160,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       title: "My Assign Course",
       url: "/teacher/my-assign-course",
       icon: BookOpen,
-    },
+    }
   ];
 
   return (

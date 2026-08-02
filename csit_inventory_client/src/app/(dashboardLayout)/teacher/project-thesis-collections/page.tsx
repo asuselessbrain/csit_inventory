@@ -1,36 +1,26 @@
-import { getSingleTeacherProposal } from "@/services/proposalService";
-import { Card, CardContent } from "@/components/ui/card";
+import ProjectThesisAction from "@/components/modules/teacher/projectThesisAction/ProjectThesisAction";
+import DownloadReportButton from "@/components/shared/DownloadButton";
+import UnifiedFilter from "@/components/shared/UnifiedFilter";
+import ReusableSearch from "@/components/shared/ReusableSearch";
+import ReusableSorting from "@/components/shared/ReusableSorting";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Eye } from "lucide-react";
-import { ICourse, IProposal, SortOption } from "@/types";
-import Link from "next/link";
-import ProjectThesisAction from "@/components/modules/teacher/projectThesisAction/ProjectThesisAction";
-import ReusableSearch from "@/components/shared/ReusableSearch";
-import PaginationComponent from "@/components/shared/PaginationComponent";
-import ReusableSorting from "@/components/shared/ReusableSorting";
+import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import UnifiedFilter from "@/components/shared/UnifiedFilter";import DownloadReportButton from "@/components/shared/DownloadButton";
+import { getSingleTeacherProposal } from "@/services/proposalService";
+import { ICourse, IProposal, SortOption } from "@/types";
+import { Eye } from "lucide-react";
+import Link from "next/link";
+import React from "react";
+import { getStatusBadge } from "../../teacher/proposals/page";
+import PaginationComponent from "@/components/shared/PaginationComponent";
 
-export const getStatusBadge = (status?: string) => {
-  switch (status) {
-    case "APPROVED":
-      return "default";
-    case "REJECTED":
-      return "destructive";
-    case "PENDING":
-    default:
-      return "secondary";
-  }
-};
-
-export default async function ProposalsPage({
+export default async function TeacherProjectThesisCollectionPage({
   searchParams,
 }: {
   searchParams: Promise<{
     page?: string;
     search?: string;
-    status?: string;
     sortBy?: string;
     type?: string;
     courseId?: string;
@@ -46,7 +36,7 @@ export default async function ProposalsPage({
   const queryParams = {
     skip: page - 1,
     searchTerm: params.search,
-    status: params.status || "PENDING,APPROVED,REJECTED,in_PROGRESS",
+    status: "COMPLETED",
     sortBy: params.sortBy,
     sortOrder: params.sortOrder,
     "student.session": params.session,
@@ -57,8 +47,6 @@ export default async function ProposalsPage({
 
   const response = await getSingleTeacherProposal(queryParams);
   const proposals = response?.data?.data || [];
-  console.log(response);
-
   const sortOptions: SortOption[] = [
     { label: "Name (A → Z)", value: "projectTitle-asc" },
     { label: "Name (Z → A)", value: "projectTitle-desc" },
@@ -72,20 +60,22 @@ export default async function ProposalsPage({
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
-              Submitted Proposals
+              Project/Thesis Collections
             </h1>
             <p className="mt-1 text-sm sm:text-base text-gray-600">
-              View, review, and manage proposals submitted by students under
-              your supervision
+              View your completed projects and theses
             </p>
           </div>
           <div className="w-full md:w-auto">
-            <DownloadReportButton forWho="teacher" queryParams={queryParams} />
+            <DownloadReportButton
+              forWho="teacher"
+              queryParams={queryParams}
+            />
           </div>
         </div>
 
         <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-start gap-3 sm:gap-4">
-          <ReusableSearch placeholder="Search proposals..." />
+          <ReusableSearch placeholder="Search completed projects..." />
           <UnifiedFilter
             filters={[
               {
@@ -94,16 +84,6 @@ export default async function ProposalsPage({
                 options: [
                   { id: "PROJECT", name: "Project" },
                   { id: "THESIS", name: "Thesis" },
-                ],
-              },
-              {
-                title: "Status",
-                queryKey: "status",
-                options: [
-                  { id: "PENDING", name: "Pending" },
-                  { id: "APPROVED", name: "Approved" },
-                  { id: "REJECTED", name: "Rejected" },
-                  { id: "in_PROGRESS", name: "In Progress" },
                 ],
               },
               {
@@ -125,7 +105,7 @@ export default async function ProposalsPage({
           {proposals.length === 0 ? (
             <Card>
               <CardContent className="pt-6 text-center text-muted-foreground">
-                No proposals to review
+                No completed projects found
               </CardContent>
             </Card>
           ) : (
@@ -142,12 +122,11 @@ export default async function ProposalsPage({
                         {proposal.projectTitle}
                       </h3>
 
-                      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                       <Badge
                         variant={getStatusBadge(proposal.status)}
                         className="w-fit whitespace-nowrap"
                       >
-                        {proposal.status || "PENDING"}
+                        {proposal.status || "COMPLETED"}
                       </Badge>
                     </div>
 
@@ -186,8 +165,6 @@ export default async function ProposalsPage({
 
                     {/* Actions */}
                     <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 pt-2 border-t border-gray-100">
-                      <ProjectThesisAction proposal={proposal} />
-
                       <Link
                         href={`/teacher/proposals/${proposal?.id}`}
                         className="w-full sm:w-auto sm:ml-auto"
@@ -208,7 +185,7 @@ export default async function ProposalsPage({
             </div>
           )}
         </div>
-        <PaginationComponent totalPage={response?.data.meta.totalPages} />
+        <PaginationComponent totalPage={response?.data?.meta?.totalPages || 0} />
       </div>
     </div>
   );
