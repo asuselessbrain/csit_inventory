@@ -23,7 +23,7 @@ const subTopicSchema = z.object({
 
 const chapterSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  content: z.string().min(1, "Content is required"),
+  content: z.string().optional(),
   imageFile: z.any().optional(),
   subTopics: z.array(subTopicSchema).optional(),
 });
@@ -215,7 +215,6 @@ export default function ReportWizard({ projectThesisId }: ReportWizardProps) {
         { roleLabel: "Name of Internal Member", name: "Professor Dr. Abdul Masud", department: "Dept. of Computer Science and Information Technology", faculty: "Faculty of Computer Science and Engineering" },
         { roleLabel: "Name of Internal Member", name: "Assistant Professor Md. Mahbubur Rahman", department: "Dept. of Computer Science and Information Technology", faculty: "Faculty of Computer Science and Engineering" },
         { roleLabel: "Name of External Member", name: "Muhtasim", department: "Dept. of Computer Science and Information Technology", faculty: "Faculty of Computer Science and Engineering" },
-        { roleLabel: "Dean Faculty of CSE", name: "Professor Dr. Khokon Hossen", department: "", faculty: "" },
       ],
     },
   });
@@ -232,6 +231,15 @@ export default function ReportWizard({ projectThesisId }: ReportWizardProps) {
       reader.onerror = reject;
       reader.readAsArrayBuffer(file);
     });
+  };
+
+  const handleNext = async (fieldsToValidate: (keyof ReportFormValues)[], targetStep: number) => {
+    const isValid = await form.trigger(fieldsToValidate);
+    if (isValid) {
+      setStep(targetStep);
+    } else {
+      toast.error("Please fill all required fields in this step");
+    }
   };
 
   const onSubmit = async (data: ReportFormValues) => {
@@ -264,7 +272,7 @@ export default function ReportWizard({ projectThesisId }: ReportWizardProps) {
       };
 
       const blob = await generateDocx(reportData);
-      
+
       if (submitToPlatform && projectThesisId) {
         const file = new File([blob], "Project_Report.docx", { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
         const formData = new FormData();
@@ -290,7 +298,7 @@ export default function ReportWizard({ projectThesisId }: ReportWizardProps) {
       } else {
         toast.success("Report generated successfully!");
       }
-      
+
       // Also download locally for convenience
       saveAs(blob, "Project_Report.docx");
 
@@ -359,9 +367,13 @@ export default function ReportWizard({ projectThesisId }: ReportWizardProps) {
             <div className="space-y-4">
               <h2 className="text-xl font-semibold">Step 2: Board of Examinee</h2>
               <BoardMembers control={form.control} />
-              <div className="flex gap-4">
-                <Button type="button" variant="outline" onClick={() => setStep(1)}>Previous</Button>
-                <Button type="button" onClick={() => setStep(3)}>Next</Button>
+              <div className="flex justify-between pt-6">
+                <Button type="button" variant="outline" onClick={() => setStep(1)}>
+                  Previous
+                </Button>
+                <Button type="button" onClick={() => handleNext(["boardMembers"], 3)}>
+                  Next
+                </Button>
               </div>
             </div>
           )}
@@ -379,9 +391,13 @@ export default function ReportWizard({ projectThesisId }: ReportWizardProps) {
                   <div className="bg-white"><ReactQuill theme="snow" value={field.value} onChange={field.onChange} /></div>
                 </FormControl><FormMessage /></FormItem>
               )} />
-              <div className="flex gap-4">
-                <Button type="button" variant="outline" onClick={() => setStep(2)}>Previous</Button>
-                <Button type="button" onClick={() => setStep(4)}>Next</Button>
+              <div className="flex justify-between pt-6">
+                <Button type="button" variant="outline" onClick={() => setStep(2)}>
+                  Previous
+                </Button>
+                <Button type="button" onClick={() => handleNext(["abstract", "acknowledgments"], 4)}>
+                  Next
+                </Button>
               </div>
             </div>
           )}
@@ -410,7 +426,7 @@ export default function ReportWizard({ projectThesisId }: ReportWizardProps) {
                   <FormField control={form.control} name={`chapters.${index}.imageFile`} render={({ field: { onChange, value, ...rest } }) => (
                     <FormItem><FormLabel>Upload Image for this Chapter (Optional)</FormLabel><FormControl><Input type="file" accept="image/*" onChange={(e) => onChange(e.target.files)} {...rest} /></FormControl><FormMessage /></FormItem>
                   )} />
-                  
+
                   <ChapterSubTopics control={form.control} chapterIndex={index} />
                   <Button type="button" size="sm" variant="secondary" onClick={() => insert(index + 1, { title: "", content: "" })}>
                     Add Chapter After This
@@ -423,7 +439,7 @@ export default function ReportWizard({ projectThesisId }: ReportWizardProps) {
               <div className="flex gap-4 pt-6">
                 <Button type="button" variant="outline" onClick={() => setStep(3)}>Previous</Button>
                 <div className="flex-1 flex items-center justify-end gap-4">
-                  <Button type="button" onClick={() => setStep(5)}>
+                  <Button type="button" onClick={() => handleNext(["chapters"], 5)}>
                     Next (Preview)
                   </Button>
                 </div>
@@ -440,8 +456,8 @@ export default function ReportWizard({ projectThesisId }: ReportWizardProps) {
                 <div className="flex-1 flex items-center justify-end gap-4">
                   {projectThesisId && (
                     <label className="flex items-center gap-2 cursor-pointer border p-2 rounded-md hover:bg-slate-50">
-                      <input 
-                        type="checkbox" 
+                      <input
+                        type="checkbox"
                         className="w-4 h-4 cursor-pointer"
                         checked={submitToPlatform}
                         onChange={(e) => setSubmitToPlatform(e.target.checked)}

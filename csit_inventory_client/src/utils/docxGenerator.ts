@@ -7,7 +7,7 @@ export interface SubTopic {
 
 export interface Chapter {
   title: string;
-  content: string;
+  content?: string;
   imageBuffer?: ArrayBuffer;
   subTopics?: SubTopic[];
 }
@@ -67,7 +67,7 @@ export const parseHtmlToDocx = (htmlStr: string): Paragraph[] => {
     return runs;
   };
 
-  const pSpacing = { line: 360, after: 400 };
+  const pSpacing = { line: 360, after: 200 };
 
   doc.body.childNodes.forEach((node) => {
     if (node.nodeType === Node.ELEMENT_NODE) {
@@ -112,7 +112,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
   const titlePageChildren: any[] = [
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      spacing: { before: 1000, after: 1000 },
+      spacing: { before: 1000, after: 200 },
       children: [
         new TextRun({
           text: data.title,
@@ -127,7 +127,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
     titlePageChildren.push(
       new Paragraph({
         alignment: AlignmentType.CENTER,
-        spacing: { after: 1000 },
+        spacing: { after: 400 },
         children: [
           new TextRun({
             text: data.subtitle,
@@ -142,7 +142,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
   titlePageChildren.push(
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      spacing: { after: 1000 },
+      spacing: { before: 1200, after: 200 },
       children: [
         new TextRun({
           text: "by",
@@ -152,7 +152,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
     }),
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      spacing: { after: 1500 },
+      spacing: { after: 600 },
       children: [
         new TextRun({
           text: data.studentName,
@@ -162,7 +162,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
     }),
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      spacing: { after: 1000 },
+      spacing: { before: 800, after: 200 },
       children: [
         new TextRun({
           text: "PROJECT SUBMITTED IN PARTIAL FULLFILLMENT OF THE DEGREE OF",
@@ -172,7 +172,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
     }),
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      spacing: { after: 2000 },
+      spacing: { after: 800 },
       children: [
         new TextRun({
           text: "BACHELOR OF SCIENCE IN COMPUTER SCIENCE & ENGINEERING",
@@ -186,7 +186,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
     titlePageChildren.push(
       new Paragraph({
         alignment: AlignmentType.CENTER,
-        spacing: { after: 2000 },
+        spacing: { after: 800 },
         children: [
           new ImageRun({
             type: "png",
@@ -201,13 +201,13 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
     );
   } else {
     // Spacer if no logo
-    titlePageChildren.push(new Paragraph({ spacing: { after: 2000 } }));
+    titlePageChildren.push(new Paragraph({ spacing: { after: 800 } }));
   }
 
   titlePageChildren.push(
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      spacing: { after: 500 },
+      spacing: { after: 200 },
       children: [
         new TextRun({
           text: "FACULTY OF COMPUTER SCIENCE & ENGINEERING",
@@ -217,7 +217,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
     }),
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      spacing: { after: 2000 },
+      spacing: { after: 800 },
       children: [
         new TextRun({
           text: "PATUAKHALI SCIENCE & TECHNOLOGY UNIVERSITY",
@@ -227,7 +227,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
     }),
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      spacing: { before: 500 },
+      spacing: { before: 1500 },
       children: [
         new TextRun({
           text: data.submissionDate,
@@ -252,7 +252,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
       new Paragraph({
         heading: HeadingLevel.HEADING_2,
         alignment: AlignmentType.LEFT,
-        spacing: { after: 1000 },
+        spacing: { after: 400 },
         children: [new TextRun({ text: "DECLARATION OF ORIGINAL WORK", bold: true, size: 28 })],
       }),
       new Paragraph({
@@ -273,7 +273,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
     new Paragraph({
       heading: HeadingLevel.HEADING_2,
       alignment: AlignmentType.CENTER,
-      spacing: { after: 1000 },
+      spacing: { after: 400 },
       children: [new TextRun({ text: "Board of Examinee", bold: true, size: 28 })],
     }),
   ];
@@ -357,7 +357,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
       new Paragraph({
         heading: HeadingLevel.HEADING_2,
         alignment: AlignmentType.LEFT,
-        spacing: { after: 1000 },
+        spacing: { after: 400 },
         children: [new TextRun({ text: "Certificate", bold: true, size: 28 })],
       }),
       new Paragraph({
@@ -382,31 +382,31 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
         children: [new TextRun({ text: `Reg. No: ${data.studentRegNo}`, size: 24 })],
       }),
       new Paragraph({
-        spacing: { after: 1500 },
+        spacing: { after: 4000 },
         children: [new TextRun({ text: `Session: ${data.session}`, size: 24 })],
       }),
       new Paragraph({
-        spacing: { after: 500 },
+        spacing: { after: 300 },
         children: [new TextRun({ text: "Supervised By", bold: true, size: 24 })],
       }),
       new Paragraph({
-        spacing: { after: 500 },
+        spacing: { after: 100 },
         children: [new TextRun({ text: data.supervisorName, bold: true, size: 24 })],
       }),
       new Paragraph({
-        spacing: { after: 500 },
+        spacing: { after: 100 },
         children: [new TextRun({ text: data.supervisorDesignation, size: 24 })],
       }),
       new Paragraph({
-        spacing: { after: 500 },
+        spacing: { after: 100 },
         children: [new TextRun({ text: data.supervisorDept, size: 24 })],
       }),
       new Paragraph({
-        spacing: { after: 500 },
+        spacing: { after: 100 },
         children: [new TextRun({ text: data.supervisorFaculty, size: 24 })],
       }),
       new Paragraph({
-        spacing: { after: 500 },
+        spacing: { after: 100 },
         children: [new TextRun({ text: "Patuakhali Science & Technology University", size: 24 })],
       }),
       new Paragraph({ children: [new PageBreak()] }),
@@ -420,7 +420,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
       new Paragraph({
         heading: HeadingLevel.HEADING_2,
         alignment: AlignmentType.LEFT,
-        spacing: { after: 1000 },
+        spacing: { after: 400 },
         children: [new TextRun({ text: "DEDICATION", bold: true, size: 28 })],
       }),
       new Paragraph({
@@ -443,7 +443,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
       new Paragraph({
         heading: HeadingLevel.HEADING_2,
         alignment: AlignmentType.LEFT,
-        spacing: { after: 1000 },
+        spacing: { after: 400 },
         children: [new TextRun({ text: "Letter of Approval", bold: true, size: 28 })],
       }),
       new Paragraph({
@@ -456,8 +456,32 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
         ],
       }),
       new Paragraph({
-        spacing: { before: 2000, after: 1500 },
-        children: [new TextRun({ text: "Approved\n………………………………\n" + data.supervisorName, bold: true, size: 24 })],
+        spacing: { before: 6000, after: 400 },
+        children: [new TextRun({ text: "Approved", bold: true, size: 24 })],
+      }),
+      new Paragraph({
+        spacing: { after: 200 },
+        children: [new TextRun({ text: ".....................................................", bold: true, size: 24 })],
+      }),
+      new Paragraph({
+        spacing: { after: 100 },
+        children: [new TextRun({ text: data.supervisorName, bold: true, size: 24 })],
+      }),
+      new Paragraph({
+        spacing: { after: 100 },
+        children: [new TextRun({ text: data.supervisorDesignation, size: 24 })],
+      }),
+      new Paragraph({
+        spacing: { after: 100 },
+        children: [new TextRun({ text: data.supervisorDept, size: 24 })],
+      }),
+      new Paragraph({
+        spacing: { after: 100 },
+        children: [new TextRun({ text: data.supervisorFaculty, size: 24 })],
+      }),
+      new Paragraph({
+        spacing: { after: 1500 },
+        children: [new TextRun({ text: "Patuakhali Science & Technology University", size: 24 })],
       }),
       new Paragraph({ children: [new PageBreak()] }),
     ],
@@ -470,7 +494,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
       new Paragraph({
         heading: HeadingLevel.HEADING_2,
         alignment: AlignmentType.LEFT,
-        spacing: { after: 1000 },
+        spacing: { after: 400 },
         children: [new TextRun({ text: "ABSTRACT", bold: true, size: 28 })],
       }),
       ...parseHtmlToDocx(data.abstract),
@@ -485,16 +509,16 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
       new Paragraph({
         heading: HeadingLevel.HEADING_2,
         alignment: AlignmentType.LEFT,
-        spacing: { after: 1000 },
+        spacing: { after: 400 },
         children: [new TextRun({ text: "ACKNOWLEDGMENTS", bold: true, size: 28 })],
       }),
       ...parseHtmlToDocx(data.acknowledgments),
       new Paragraph({
-        spacing: { before: 1500, after: 500 },
+        spacing: { before: 4000, after: 100 },
         children: [new TextRun({ text: "With Best Regards,", size: 24 })],
       }),
       new Paragraph({
-        spacing: { before: 500 },
+        spacing: { after: 0 },
         children: [new TextRun({ text: data.studentName, size: 24 })],
       }),
       new Paragraph({ children: [new PageBreak()] }),
@@ -508,7 +532,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
       new Paragraph({
         heading: HeadingLevel.HEADING_2,
         alignment: AlignmentType.LEFT,
-        spacing: { after: 1000 },
+        spacing: { after: 400 },
         children: [new TextRun({ text: "Contents", bold: true, size: 28, color: "0070C0" })],
       }),
       new TableOfContents("Table of Contents", {
@@ -542,7 +566,7 @@ export const generateDocx = async (data: ReportData): Promise<Blob> => {
     ];
 
     // Use HTML parser for chapter content
-    const chapterParagraphs = parseHtmlToDocx(chapter.content);
+    const chapterParagraphs = parseHtmlToDocx(chapter.content || "");
     chapterParagraphs.forEach(p => chapterChildren.push(p));
 
     // Render sub-topics

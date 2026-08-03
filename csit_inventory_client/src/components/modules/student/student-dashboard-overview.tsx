@@ -184,29 +184,6 @@ export default function StudentDashboardOverview({
         </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-start justify-between">
-            <div className="space-y-1">
-              <CardTitle className="text-xl">
-                {overview?.projectTitle || "Untitled Project"}
-              </CardTitle>
-              <CardDescription>Your current project</CardDescription>
-            </div>
-            {getStatusBadge(overview?.status)}
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Progress</span>
-              <span className="font-medium">{overview?.progress ?? 0}%</span>
-            </div>
-            <Progress value={overview?.progress ?? 0} className="h-2" />
-          </div>
-        </CardContent>
-      </Card>
-
       <div className="grid gap-4 md:grid-cols-3">
         {stats.map((stat) => (
           <StatCard key={stat.title} {...stat} />

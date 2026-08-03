@@ -184,6 +184,7 @@ export default function AdminDashboardOverview({
                       border: "none",
                       color: "#f8fafc",
                     }}
+                    itemStyle={{ color: "#f8fafc" }}
                   />
                   <Area
                     type="monotone"
@@ -234,6 +235,7 @@ export default function AdminDashboardOverview({
                       border: "none",
                       color: "#f8fafc",
                     }}
+                    itemStyle={{ color: "#f8fafc" }}
                   />
                   <Legend verticalAlign="bottom" height={24} />
                 </PieChart>

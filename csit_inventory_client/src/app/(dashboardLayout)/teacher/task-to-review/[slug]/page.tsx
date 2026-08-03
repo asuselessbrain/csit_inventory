@@ -1,7 +1,7 @@
 import { getSingleTask } from "@/services/taskService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, Upload } from "lucide-react";
+import { Calendar, Clock, Upload, Link as LinkIcon } from "lucide-react";
 import TaskProjectCourseCard from "@/components/modules/teacher/tasks/taskDetails/TaskProjectCourseCard";
 import TaskRequirements from "@/components/modules/teacher/tasks/taskDetails/TaskRequirements";
 import ReferenceMaterialAndAttachment from "@/components/modules/teacher/tasks/taskDetails/ReferenceMaterialAndAttachment";
@@ -171,6 +171,39 @@ export default async function TaskToReviewDetailsPage({
                   (log: IProjectThesisUpdateLog) => log.fileUrl,
                 )}
               />
+            )}
+
+          {task.projectThesisUpdateLogs &&
+            task.projectThesisUpdateLogs.some(
+              (log: IProjectThesisUpdateLog) => log.liveLink
+            ) && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Live Links</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2">
+                    {task.projectThesisUpdateLogs
+                      .filter((log: IProjectThesisUpdateLog) => log.liveLink)
+                      .map((log: IProjectThesisUpdateLog, index: number) => (
+                        <li
+                          key={index}
+                          className="flex items-center gap-3 p-3 border rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition"
+                        >
+                          <LinkIcon className="h-5 w-5 text-blue-500 shrink-0" />
+                          <a
+                            href={log.liveLink!}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-sm text-blue-600 dark:text-blue-400 hover:underline break-all"
+                          >
+                            {log.liveLink}
+                          </a>
+                        </li>
+                      ))}
+                  </ul>
+                </CardContent>
+              </Card>
             )}
         </div>
 

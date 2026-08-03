@@ -32,14 +32,14 @@ export function TeamSwitcher({
                 size="lg"
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer"
               >
-                <div className="relative">
+                <div className="flex aspect-square size-8 items-center justify-center relative">
                   <div className="absolute inset-0 bg-linear-to-r from-indigo-400 to-blue-400 dark:from-indigo-600 dark:to-blue-600 rounded-full blur-lg opacity-30"></div>
                   <Image
                     width={40}
                     height={40}
                     src="https://res.cloudinary.com/dwduymu1l/image/upload/v1769187917/Patuakhali_Science_and_Technology_University_logo_rv2zwu.png"
                     alt="Patuakhali_Science_and_Technology_University"
-                    className="relative mx-auto h-12 w-12"
+                    className="relative object-contain size-full"
                   />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
